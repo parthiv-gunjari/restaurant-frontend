@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }) => {
 
   // If token doesn't exist, redirect to login
   if (!token) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/restaurant-frontend/admin/login" replace />;
   }
 
   return children;
