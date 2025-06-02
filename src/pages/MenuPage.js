@@ -14,7 +14,7 @@ function MenuPage() {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    axios.get('http://localhost:5051/api/menu')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/menu`)
       .then(res => {
         const data = res.data;
         const uniqueCategories = [...new Set(data.map(item => item.category))];
@@ -103,7 +103,7 @@ function MenuPage() {
                   <div className="col-md-4 mb-4" key={item._id}>
                     <div className={`card h-100 shadow-sm ${!item.inStock ? 'bg-light text-muted' : ''}`}>
                       <img
-                        src={item.image?.startsWith('http') ? item.image : `http://localhost:5051${item.image || ''}`}
+                        src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || ''}`}
                         className="card-img-top"
                         alt={item.name}
                         style={{

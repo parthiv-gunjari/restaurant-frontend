@@ -14,7 +14,7 @@ function OrderHistoryPage() {
 
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:5051/api/orders/history?email=${encodeURIComponent(email)}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/history?email=${encodeURIComponent(email)}`);
       setOrders(res.data);
     } catch (err) {
       console.error("❌ Error fetching history:", err);

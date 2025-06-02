@@ -100,7 +100,7 @@ useEffect(() => {
     console.log('Submitting order payload:', payload);
 
     try {
-      const res = await axios.post('http://localhost:5051/api/orders', payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL?.replace(/\/$/, '')}/api/orders`, payload);
 
       clearCart();
       setForm({ name: '', email: '', notes: '' });

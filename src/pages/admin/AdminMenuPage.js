@@ -27,7 +27,7 @@ function AdminMenuPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      const res = await axios.get('http://localhost:5051/api/menu', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/menu`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -76,9 +76,9 @@ function AdminMenuPage() {
       };
 
       if (editingId) {
-        await axios.put(`http://localhost:5051/api/menu/${editingId}`, formPayload, config);
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/menu/${editingId}`, formPayload, config);
       } else {
-        await axios.post('http://localhost:5051/api/menu', formPayload, config);
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/menu`, formPayload, config);
       }
       setFormData({
         name: '',
@@ -112,7 +112,7 @@ function AdminMenuPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      await axios.delete(`http://localhost:5051/api/menu/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/menu/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -209,7 +209,7 @@ function AdminMenuPage() {
                         </div>
                         {(item.image || item.imageUrl) && (
                           <img
-                            src={item.image?.startsWith('http') ? item.image : `http://localhost:5051${item.image || item.imageUrl}`}
+                            src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || item.imageUrl}`}
                             alt={item.name}
                             className="img-fluid mb-3 d-block mx-auto rounded"
                             style={{ height: '180px', width: '100%', objectFit: 'cover' }}

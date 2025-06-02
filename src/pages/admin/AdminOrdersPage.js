@@ -17,7 +17,7 @@ function AdminOrdersPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      const res = await axios.get('http://localhost:5051/api/orders', {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders`, {
         params: {
           page,
           name: filters.name,
@@ -59,7 +59,7 @@ function AdminOrdersPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      await axios.patch(`http://localhost:5051/api/orders/${orderId}/complete`, {}, {
+      await axios.patch(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}/complete`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
