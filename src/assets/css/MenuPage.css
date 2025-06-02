@@ -1,0 +1,53 @@
+.menu-heading {
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.category-heading {
+  margin-top: 2rem;
+  font-weight: 600;
+  border-left: 5px solid #007bff;
+  padding-left: 10px;
+}
+
+.menu-card {
+  transition: transform 0.2s;
+}
+
+.menu-card:hover {
+  transform: scale(1.02);
+}
+
+
+
+.menu-img {
+  height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+@media (max-width: 768px) {
+  .menu-img {
+    height: 160px;
+  }
+}
+.custom-badge {
+  padding: 0.4em 0.8em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+
+.badge-new {
+  animation: pulse 2s infinite;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
