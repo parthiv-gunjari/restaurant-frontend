@@ -19,10 +19,10 @@ const AdminNavbar = () => {
 
       <div className="collapse navbar-collapse" id="adminNavbar">
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-          <li className="nav-item"><Link className="nav-link" to="/restaurant-frontend/admin/home">Home</Link></li>
-          <li className="nav-item"><Link className="nav-link" to="/restaurant-frontend/admin/orders">Orders</Link></li>
-          <li className="nav-item"><Link className="nav-link" to="/restaurant-frontend/admin/completed">Completed</Link></li>
-          <li className="nav-item"><Link className="nav-link" to="/restaurant-frontend/admin/menu">Update Menu</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/home">Home</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/orders">Orders</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/completed">Completed</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/menu">Update Menu</Link></li>
         </ul>
         <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
       </div>

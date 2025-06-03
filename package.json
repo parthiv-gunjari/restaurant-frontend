@@ -1,5 +1,5 @@
 {
-  "homepage": "https://parthiv-gunjari.github.io/restaurant-frontend",
+  "homepage": "/restaurant-frontend",
   "name": "client",
   "version": "0.1.0",
   "private": true,
@@ -14,6 +14,7 @@
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.1",
     "react-scripts": "^5.0.1",
     "react-toastify": "^11.0.5",

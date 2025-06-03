@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
@@ -23,7 +23,7 @@ function AdminHomePage() {
   const [selectedRange, setSelectedRange] = useState('today');
   const navigate = useNavigate();
 
-  const fetchStats = async (range = selectedRange) => {
+  const fetchStats = useCallback(async (range = selectedRange) => {
     try {
       const token = localStorage.getItem('adminToken');
       if (!token) {
@@ -44,11 +44,10 @@ function AdminHomePage() {
 
       const chartData = chartRes.data;
 
-      // Format labels to show weekdays for 1-week range
       if (range === 'week' && Array.isArray(chartData.labels)) {
         chartData.labels = chartData.labels.map(dateStr => {
           const day = new Date(dateStr);
-          return day.toLocaleDateString('en-US', { weekday: 'short' }); // "Mon", "Tue", etc.
+          return day.toLocaleDateString('en-US', { weekday: 'short' });
         });
       }
 
@@ -61,20 +60,21 @@ function AdminHomePage() {
         navigate('/admin/login');
       }
     }
-  };
+  }, [from, to, selectedRange, navigate]);
 
   useEffect(() => {
     fetchStats();
-    // eslint-disable-next-line
-  }, []);
+  }, [fetchStats]);
 
-  const StatCard = ({ icon, label, value, bg }) => (
+  const StatCard = ({ Icon, label, value, bg }) => (
     <div className="col-md-3">
       <div className={`card text-white ${bg} shadow`}>
         <div className="card-body text-center">
-          <div className="mb-2" style={{ fontSize: '1.8rem' }}>{icon}</div>
+          <div className="mb-2" style={{ fontSize: '1.8rem' }}>
+            {Icon && typeof Icon === 'function' ? <Icon /> : null}
+          </div>
           <h6>{label}</h6>
-          <h3>{value}</h3>
+          <h3>{String(value)}</h3>
         </div>
       </div>
     </div>
@@ -86,7 +86,6 @@ function AdminHomePage() {
       <div className="container mt-4">
         <h2 className="mb-4">📊 Admin Dashboard</h2>
 
-        {/* 📅 Date Range Filter */}
         <div className="row mb-4 g-2">
           <div className="col-md-3">
             <input type="date" className="form-control" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -115,15 +114,13 @@ function AdminHomePage() {
           </div>
         </div>
 
-        {/* 📊 Stats Cards */}
         <div className="row g-4 mb-5">
-          <StatCard icon={<FaClipboardList />} label="Orders" value={stats.totalOrdersToday} bg="bg-success" />
-          <StatCard icon={<FaClock />} label="Pending" value={stats.pendingCount} bg="bg-warning" />
-          <StatCard icon={<FaCheckCircle />} label="Completed" value={stats.completedCount} bg="bg-primary" />
-          <StatCard icon={<FaDollarSign />} label="Revenue" value={`$${stats.totalRevenue.toFixed(2)}`} bg="bg-dark" />
+          <StatCard Icon={FaClipboardList} label="Orders" value={stats.totalOrdersToday} bg="bg-success" />
+          <StatCard Icon={FaClock} label="Pending" value={stats.pendingCount} bg="bg-warning" />
+          <StatCard Icon={FaCheckCircle} label="Completed" value={stats.completedCount} bg="bg-primary" />
+          <StatCard Icon={FaDollarSign} label="Revenue" value={`$${stats.totalRevenue.toFixed(2)}`} bg="bg-dark" />
         </div>
 
-        {/* 🥇 Top Items */}
         <div className="mt-4">
           <h4 className="mb-3">🍽️ Top 3 Most Ordered Items</h4>
           <ul className="list-group">
@@ -142,7 +139,6 @@ function AdminHomePage() {
           </ul>
         </div>
 
-        {/* 📉 Revenue Chart */}
         {revenueData?.labels && (
           <div className="mt-5" style={{ height: '300px' }}>
             <h4 className="mb-3">📈 Revenue Overview</h4>
