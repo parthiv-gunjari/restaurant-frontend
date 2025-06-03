@@ -58,7 +58,7 @@ export function CartProvider({ children }) {
     };
 
     try {
-      const res = await axios.post('http://localhost:5051/api/orders', orderPayload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/orders`, orderPayload);
       clearCart();
       return res.data.order; // for displaying order.id in alert
     } catch (err) {

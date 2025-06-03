@@ -29,7 +29,7 @@ function LayoutWrapper({ children }) {
 
 function AppRouter() {
   return (
-    <Router>
+    <Router basename="/restaurant-frontend">
       <LayoutWrapper>
         <Routes>
           {/* Public Routes */}
