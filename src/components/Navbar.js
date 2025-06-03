@@ -10,17 +10,17 @@ function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 d-none d-lg-flex">
-        <Link className="navbar-brand" to="/">MyRestaurant</Link>
+        <Link className="navbar-brand" to="/restaurant-frontend/">MyRestaurant</Link>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/menu">Menu</Link>
+              <Link className="nav-link" to="/restaurant-frontend/menu">Menu</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/order-history">Order History</Link>
+              <Link className="nav-link" to="/restaurant-frontend/order-history">Order History</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/cart">
+              <Link className="nav-link" to="/restaurant-frontend/cart">
                 Cart{' '}
                 {totalItems > 0 && (
                   <span className="badge bg-warning text-dark ms-1">{totalItems}</span>
@@ -28,7 +28,7 @@ function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/checkout">Checkout</Link>
+              <Link className="nav-link" to="/restaurant-frontend/checkout">Checkout</Link>
             </li>
           </ul>
         </div>
@@ -36,12 +36,12 @@ function Navbar() {
 
       {/* Mobile Bottom Navbar */}
       <nav className="navbar navbar-dark bg-dark fixed-bottom d-flex d-lg-none justify-content-around py-2">
-        <Link className="nav-link text-white text-center" to="/menu">
+        <Link className="nav-link text-white text-center" to="/restaurant-frontend/menu">
           <div style={{ fontSize: '1.4rem' }}>🍽️</div>
           <small>Menu</small>
         </Link>
         
-        <Link className="nav-link text-white text-center position-relative" to="/cart">
+        <Link className="nav-link text-white text-center position-relative" to="/restaurant-frontend/cart">
           <div style={{ fontSize: '1.4rem' }}>🛒</div>
           <small>Cart</small>
           {totalItems > 0 && (
@@ -53,11 +53,11 @@ function Navbar() {
             </span>
           )}
         </Link>
-        <Link className="nav-link text-white text-center" to="/checkout">
+        <Link className="nav-link text-white text-center" to="/restaurant-frontend/checkout">
           <div style={{ fontSize: '1.4rem' }}>💳</div>
           <small>Checkout</small>
         </Link>
-        <Link className="nav-link text-white text-center" to="/order-history">
+        <Link className="nav-link text-white text-center" to="/restaurant-frontend/order-history">
           <div style={{ fontSize: '1.4rem' }}>📜</div>
           <small>Orders</small>
         </Link>
