@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './AdminLogin.css'; // Custom CSS (see below)
+import './AdminLogin.css';
 import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
@@ -14,9 +14,13 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/login`, { username, password });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/login`, {
+        username,   // ✅ correct key based on backend schema
+        password
+      });
+
       localStorage.setItem('adminToken', res.data.token);
-      navigate('/admin/home'); // Adjust route to your actual admin dashboard
+      navigate('/admin/home');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');
     }

@@ -1,6 +1,6 @@
 // src/AppRouter.jsx
 import React from 'react';
-import { Routes, Route, useLocation, BrowserRouter } from 'react-router-dom';
+import { Routes, Route, useLocation, HashRouter, BrowserRouter } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import CartPage from './pages/CartPage';
@@ -16,7 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const RoutesWrapper = () => {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith('/admin');
+  const isAdmin = location.pathname.includes('/admin');
 
   return (
     <>
@@ -41,10 +41,12 @@ const RoutesWrapper = () => {
 };
 
 function AppRouter() {
+  const Router = process.env.NODE_ENV === 'production' ? HashRouter : BrowserRouter;
+
   return (
-    <BrowserRouter basename="/restaurant-frontend">
+    <Router>
       <RoutesWrapper />
-    </BrowserRouter>
+    </Router>
   );
 }
 
