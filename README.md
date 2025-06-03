@@ -1,4 +1,4 @@
-# 🍽️ Full-Stack Restaurant Ordering & Management App
+# Full-Stack Restaurant Ordering & Management App
 
 A comprehensive restaurant application built with the **MERN stack (MongoDB, Express.js, React.js, Node.js)**. The project includes two distinct interfaces:
 
