@@ -53,9 +53,9 @@ function HomePage() {
       <div className="container my-5" style={{ maxWidth: '900px' }}>
         <h3 className="text-center mb-3">About</h3>
         <p className="text-center">
-          Parthiv&apos;s Kitchen is born out of a deep-rooted passion for preserving the culinary legacy of Telangana and Andhra Pradesh. Our goal is simple — to bring the warmth, flavor, and comfort of home-style Indian meals to your plate, no matter where you are. Each recipe is a tribute to the generations of mothers and grandmothers who’ve cooked with love, patience, and uncompromising attention to tradition. Whether it&apos;s the spicy punch of a Rayalaseema curry or the comforting richness of a Telugu thali, we aim to deliver authenticity in every bite.
+          Parthiv’s Kitchen is all about celebrating the true taste of Telangana and Andhra food. Our goal is to bring the comforting flavors of South Indian home-cooked meals right to your plate — the kind of food that reminds you of your mom’s kitchen, the smell of fresh spices, and the love that goes into every meal at home. Every recipe we use is inspired by family traditions and passed down through generations. From the spicy kick of Rayalaseema curries to the warm, simple comfort of pappu and pachadi, we stay true to authentic Telugu flavors in every dish.
           <br /><br />
-          From sizzling street-style snacks to soulful homemade curries, our dishes are crafted with fresh ingredients and native spices that instantly transport you back to the bustling kitchens and vibrant food streets of South India. Dining at Parthiv’s Kitchen is not just about satisfying hunger — it’s about reliving memories, embracing heritage, and feeling the joy of comfort food served with heart.
+          We don’t just serve food — we bring back memories. Our menu is full of dishes you’d find in everyday Andhra and Telangana homes, as well as on the streets — from crispy snacks to tasty rice bowls and full thali meals. We choose only fresh ingredients, grind our spices the traditional way, and cook each dish with the same care you’d expect at home. Whether you visit us in person or order online, Parthiv’s Kitchen is your way to enjoy real, heartwarming South Indian food, wherever you are.
         </p>
       </div>
     </div>
