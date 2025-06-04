@@ -84,7 +84,7 @@ useEffect(() => {
 
           Thanks for choosing us!<br />
           
-          – Team Parthiv’s and Divya's Restaurant
+          – Team Parthiv’s Kitchen.
         </div>
       </div>
     `;
@@ -157,9 +157,11 @@ useEffect(() => {
           />
         </div>
 
-        <button className="btn btn-success" onClick={handlePlaceOrder}>
-          Confirm Order
-        </button>
+        <div className="d-flex justify-content-center">
+          <button className="btn btn-success" onClick={handlePlaceOrder}>
+            Confirm Order
+          </button>
+        </div>
 
         <div
           id="success-msg"

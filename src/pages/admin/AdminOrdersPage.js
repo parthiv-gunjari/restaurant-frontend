@@ -98,7 +98,7 @@ function AdminOrdersPage() {
       </head>
       <body>
         <div class="ticket-box">
-          <div class="restaurant-title">🍴 Parthiv's Restaurant</div>
+          <div class="restaurant-title">🍴 Parthiv's Kitchen</div>
           <div>
             <span class="ticket-label">Order ID:</span> ${order._id}<br/>
             <span class="ticket-label">Customer:</span> ${order.name}<br/>

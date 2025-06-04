@@ -29,15 +29,20 @@ function OrderHistoryPage() {
     <div className="container mt-4">
       <h2>📜 Order History</h2>
 
-      <div className="mb-3">
+      <div className="mb-3 d-flex flex-column align-items-center">
         <input
           type="email"
           className="form-control mb-2"
+          style={{ width: '100%', maxWidth: '400px' }}
           placeholder="Enter your email"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={fetchHistory}>
+        <button
+          className="btn btn-primary"
+          style={{ width: '100%', maxWidth: '400px' }}
+          onClick={fetchHistory}
+        >
           {loading ? "Loading..." : "Fetch Order History"}
         </button>
       </div>

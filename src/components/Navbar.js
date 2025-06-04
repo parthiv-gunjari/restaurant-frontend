@@ -10,7 +10,7 @@ function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 d-none d-lg-flex">
-        <Link className="navbar-brand" to="/">MyRestaurant</Link>
+        <Link className="navbar-brand" to="/">Parthiv's Kitchen</Link>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
@@ -35,7 +35,7 @@ function Navbar() {
       </nav>
 
       {/* Mobile Bottom Navbar */}
-      <nav className="navbar navbar-dark bg-dark fixed-bottom d-flex d-lg-none justify-content-around py-2">
+      <nav className="navbar navbar-dark bg-dark fixed-bottom d-flex d-lg-none justify-content-around p-0">
         <Link className="nav-link text-white text-center" to="/menu">
           <div style={{ fontSize: '1.4rem' }}>🍽️</div>
           <small>Menu</small>
@@ -62,6 +62,15 @@ function Navbar() {
           <small>Orders</small>
         </Link>
       </nav>
+      <style>
+        {`
+          @media (max-width: 991.98px) {
+            body {
+              padding-bottom: 60px; /* approximate height of mobile navbar */
+            }
+          }
+        `}
+      </style>
     </>
   );
 }
