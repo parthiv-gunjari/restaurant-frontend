@@ -61,30 +61,32 @@ function MenuPage() {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Menu</h2>
+      <h2 className="text-center mb-4 sticky-filter-bar bg-white " style={{ position: 'sticky', top: 0, zIndex: 1020 }}>Menu</h2>
 
       {/* Filters */}
-      <div className="row mb-4 justify-content-center">
-        <div className="col-md-4 mb-2">
-          <select
-            className="form-select"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="All">All Categories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-4 mb-2">
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Search by item name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      <div className="sticky-filter-bar bg-white py-3" style={{ position: 'sticky', top: 30, zIndex: 1020 }}>
+        <div className="row mb-4 justify-content-center">
+          <div className="col-md-4 mb-2">
+            <select
+              className="form-select"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="All">All Categories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-4 mb-2">
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Search by item name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 

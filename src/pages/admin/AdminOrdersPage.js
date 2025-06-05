@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useRef } from 'react';
 import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +12,9 @@ function AdminOrdersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+
+  const prevOrderCountRef = useRef(0);
+  const alarmAudio = useRef(null);
 
   const fetchOrders = async () => {
     try {
@@ -30,6 +34,13 @@ function AdminOrdersPage() {
       });
       setOrders(res.data.orders || []);
       setTotalPages(res.data.totalPages || 1);
+      if (res.data.orders.length > prevOrderCountRef.current) {
+        if (alarmAudio.current) {
+          alarmAudio.current.play().catch(e => console.error("🔇 Failed to play alarm sound:", e));
+        }
+        toast.info("🔔 New order received!");
+      }
+      prevOrderCountRef.current = res.data.orders.length;
     } catch (err) {
       console.error("❌ Error fetching orders:", err);
       if (err.response?.status === 401) {
@@ -43,6 +54,12 @@ function AdminOrdersPage() {
     fetchOrders();
     // eslint-disable-next-line
   }, [page]);
+
+  useEffect(() => {
+    alarmAudio.current = new Audio('/alarm.mp3');
+    alarmAudio.current.load();
+    alarmAudio.current.play().catch(e => console.error("🔇 Autoplay blocked. Alarm will play on new order.", e));
+  }, []);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
