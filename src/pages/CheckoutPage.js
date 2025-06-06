@@ -2,6 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import Spinner from 'react-bootstrap/Spinner';
+
+const storeHours = {
+  0: { open: '11:00', close: '22:00' }, // Sunday (11 AM – 10 PM)
+  1: { open: '11:00', close: '23:00' }, // Monday
+  2: { open: '11:00', close: '23:00' },
+  3: { open: '11:00', close: '23:00' },
+  4: { open: '11:00', close: '23:00' },
+  5: { open: '00:00', close: '24:00' }, // Friday (24 hours)
+  6: { open: '11:00', close: '24:00' }, // Saturday
+};
 
 function CheckoutPage() {
   const { clearCart } = useCart();
@@ -15,26 +26,44 @@ function CheckoutPage() {
   });
 
   const [cartItems, setCartItems] = useState([]);
+  const [storeClosed, setStoreClosed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-useEffect(() => {
-  if (location.state) {
-    // Use default values to ensure controlled fields always have string values
-    const {
-      name = '',
-      email = '',
-      notes = '',
-      items = [],
-    } = location.state;
-    setForm({ name, email, notes });
-    setCartItems(items);
-  }
-}, [location.state]);
+  useEffect(() => {
+    if (location.state) {
+      // Use default values to ensure controlled fields always have string values
+      const {
+        name = '',
+        email = '',
+        notes = '',
+        items = [],
+      } = location.state;
+      setForm({ name, email, notes });
+      setCartItems(items);
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const isStoreOpen = () => {
+    const now = new Date();
+    const day = now.getDay();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const [openH, openM] = storeHours[day].open.split(':').map(Number);
+    const [closeH, closeM] = storeHours[day].close.split(':').map(Number);
+    const openTime = openH * 60 + openM;
+    const closeTime = closeH * 60 + closeM;
+    return currentTime >= openTime && currentTime < closeTime;
+  };
+
   const handlePlaceOrder = async () => {
+    if (!isStoreOpen()) {
+      setStoreClosed(true);
+      return;
+    }
+
     if (!form.name || !form.email) {
       alert("❗ Please fill in both name and email.");
       return;
@@ -99,8 +128,9 @@ useEffect(() => {
 
     console.log('Submitting order payload:', payload);
 
+    setLoading(true);
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL?.replace(/\/$/, '')}/api/orders`, payload);
+      await axios.post(`${process.env.REACT_APP_API_URL?.replace(/\/$/, '')}/api/orders`, payload);
 
       clearCart();
       setForm({ name: '', email: '', notes: '' });
@@ -111,12 +141,16 @@ useEffect(() => {
         setTimeout(() => {
           msg.style.display = 'none';
           navigate('/');
+          setLoading(false);
         }, 2500);
+      } else {
+        setLoading(false);
       }
     } catch (err) {
       // Enhanced error logging: log err.response.data if present
       console.error("Checkout error:", err.response?.data || err.message);
       alert("❌ Failed to place order.");
+      setLoading(false);
     }
   };
 
@@ -157,8 +191,27 @@ useEffect(() => {
           />
         </div>
 
+        {loading && (
+          <div className="text-center mb-3">
+            {Spinner ? (
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            ) : (
+              <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="d-flex justify-content-center">
-          <button className="btn btn-success" onClick={handlePlaceOrder}>
+          <button
+            className="btn btn-success"
+            onClick={handlePlaceOrder}
+            disabled={storeClosed}
+            style={storeClosed ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+          >
             Confirm Order
           </button>
         </div>
@@ -171,6 +224,30 @@ useEffect(() => {
           ✅ Order placed successfully!
         </div>
       </div>
+      {storeClosed && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Store Closed</h5>
+              </div>
+              <div className="modal-body">
+                <p>Sorry! Our kitchen is currently closed. Please try placing your order during store hours.</p>
+                <p><strong>Store Hours:</strong><br />
+                  Monday–Thursday: 11 AM – 11 PM<br />
+                  Friday–Saturday: 11 AM – 12 AM (Midnight)<br />
+                  Sunday: 11 AM – 10 PM
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setStoreClosed(false)}>
+                  Okay
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -105,6 +105,7 @@ function MenuPage() {
                   <div className="col-md-4 mb-4" key={item._id}>
                     <div className={`card h-100 shadow-sm ${!item.inStock ? 'bg-light text-muted' : ''}`}>
                       <img
+                        loading="lazy"
                         src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || ''}`}
                         className="card-img-top"
                         alt={item.name}

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import { useNavigate } from 'react-router-dom';
@@ -11,10 +10,12 @@ function AdminOrdersPage() {
   const [filters, setFilters] = useState({ name: '', email: '', date: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const navigate = useNavigate();
 
   const prevOrderCountRef = useRef(0);
   const alarmAudio = useRef(null);
+  const acknowledgedOrdersRef = useRef([]);
 
   const fetchOrders = async () => {
     try {
@@ -34,11 +35,18 @@ function AdminOrdersPage() {
       });
       setOrders(res.data.orders || []);
       setTotalPages(res.data.totalPages || 1);
-      if (res.data.orders.length > prevOrderCountRef.current) {
-        if (alarmAudio.current) {
-          alarmAudio.current.play().catch(e => console.error("🔇 Failed to play alarm sound:", e));
-        }
-        toast.info("🔔 New order received!");
+      // --- New logic for truly new orders ---
+      const unacknowledgedNewOrders = res.data.orders.filter(
+        (order) =>
+          order.status !== 'Completed' &&
+          !acknowledgedOrdersRef.current.includes(order._id)
+      );
+
+      if (unacknowledgedNewOrders.length > 0) {
+        const newOrderId = unacknowledgedNewOrders[0]._id;
+        setShowNewOrderModal(true);
+        acknowledgedOrdersRef.current.push(newOrderId);
+        localStorage.setItem('acknowledgedOrders', JSON.stringify(acknowledgedOrdersRef.current));
       }
       prevOrderCountRef.current = res.data.orders.length;
     } catch (err) {
@@ -52,14 +60,56 @@ function AdminOrdersPage() {
 
   useEffect(() => {
     fetchOrders();
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
     // eslint-disable-next-line
   }, [page]);
 
   useEffect(() => {
-    alarmAudio.current = new Audio('/alarm.mp3');
-    alarmAudio.current.load();
-    alarmAudio.current.play().catch(e => console.error("🔇 Autoplay blocked. Alarm will play on new order.", e));
+    const saved = localStorage.getItem('acknowledgedOrders');
+    if (saved) {
+      acknowledgedOrdersRef.current = JSON.parse(saved);
+    }
   }, []);
+
+  useEffect(() => {
+    alarmAudio.current = new Audio(process.env.PUBLIC_URL + '/restaurant-bell.mp3');
+    alarmAudio.current.volume = 1.0; // Max volume
+    alarmAudio.current.load();
+    // Removed initial play to avoid autoplay error before user interaction
+    console.log("✅ Alarm sound loaded. Will play on new order.");
+  }, []);
+
+useEffect(() => {
+  if (showNewOrderModal && alarmAudio.current) {
+    const playAlarm = () => {
+      alarmAudio.current.loop = true;
+      alarmAudio.current
+        .play()
+        .then(() => console.log("🔔 Alarm playing"))
+        .catch(err => console.error("🔇 Autoplay failed:", err));
+    };
+
+    // Try to play immediately (may fail due to autoplay policy)
+    playAlarm();
+
+    // Optional: Also retry on first user interaction as a fallback
+    const handleUserInteraction = () => {
+      playAlarm();
+      document.body.removeEventListener('click', handleUserInteraction);
+    };
+
+    document.body.addEventListener('click', handleUserInteraction);
+
+    // Cleanup to stop alarm when modal is dismissed or component unmounts/rerenders
+    return () => {
+      if (alarmAudio.current) {
+        alarmAudio.current.pause();
+        alarmAudio.current.currentTime = 0;
+      }
+    };
+  }
+}, [showNewOrderModal]);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -86,6 +136,28 @@ function AdminOrdersPage() {
     } catch (err) {
       console.error("❌ Failed to complete order:", err);
       toast.error("❌ Failed to complete order.");
+    }
+  };
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) return navigate('/admin/login');
+
+      // Console log the full request URL for debugging
+      const url = `${process.env.REACT_APP_API_URL}/api/orders/${orderId}/status`;
+      console.log("🔗 PATCH Order Status URL:", url, "orderId:", orderId, "newStatus:", newStatus);
+      await axios.patch(url, { status: newStatus }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      toast.success(`Order status updated to ${newStatus}`);
+      fetchOrders();
+    } catch (err) {
+      console.error("❌ Failed to update status:", err);
+      toast.error("❌ Failed to update status.");
     }
   };
 
@@ -220,8 +292,11 @@ function AdminOrdersPage() {
                       </div>
                     </div>
                     <div className="card-footer text-end bg-white border-0 text-center">
-                      <button className="btn btn-success btn-sm" onClick={() => markAsCompleted(order._id)}>
-                        Mark as Completed
+                      <button
+                        className="btn btn-success btn-sm"
+                        onClick={() => markAsCompleted(order._id)}
+                      >
+                        ✅ Mark as Completed
                       </button>
                     </div>
                   </div>
@@ -239,6 +314,34 @@ function AdminOrdersPage() {
         </div>
       </div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop />
+      {showNewOrderModal && (
+        <div className="modal d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">🔔 New Order Alert</h5>
+              </div>
+              <div className="modal-body">
+                <p>A new customer order has arrived. Please check the dashboard.</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    if (alarmAudio.current) {
+                      alarmAudio.current.pause();
+                      alarmAudio.current.currentTime = 0;
+                    }
+                    setShowNewOrderModal(false);
+                  }}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

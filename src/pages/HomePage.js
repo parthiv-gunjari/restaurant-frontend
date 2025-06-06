@@ -58,6 +58,15 @@ function HomePage() {
           We don’t just serve food — we bring back memories. Our menu is full of dishes you’d find in everyday Andhra and Telangana homes, as well as on the streets — from crispy snacks to tasty rice bowls and full thali meals. We choose only fresh ingredients, grind our spices the traditional way, and cook each dish with the same care you’d expect at home. Whether you visit us in person or order online, Parthiv’s Kitchen is your way to enjoy real, heartwarming South Indian food, wherever you are.
         </p>
       </div>
+      {/* Store Hours Section */}
+      <div className="container my-5" style={{ maxWidth: '900px' }}>
+        <h3 className="text-center mb-3">Store Hours</h3>
+        <ul className="list-unstyled text-center">
+          <li><strong>Monday - Thursday:</strong> 11 AM to 11 PM</li>
+          <li><strong>Friday - Saturday:</strong> 11 AM to 12 AM (Midnight)</li>
+          <li><strong>Sunday:</strong> 11 AM to 10 PM</li>
+        </ul>
+      </div>
     </div>
   );
 }
