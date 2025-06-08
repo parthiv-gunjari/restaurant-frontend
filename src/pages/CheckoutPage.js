@@ -10,7 +10,7 @@ const storeHours = {
   2: { open: '11:00', close: '23:00' },
   3: { open: '11:00', close: '23:00' },
   4: { open: '11:00', close: '23:00' },
-  5: { open: '00:00', close: '24:00' }, // Friday (24 hours)
+  5: { open: '11:00', close: '24:00' }, // Friday (24 hours)
   6: { open: '11:00', close: '24:00' }, // Saturday
 };
 
@@ -111,9 +111,7 @@ function CheckoutPage() {
           Instructions:<br />
           <em>"${form.notes || 'No special instructions'}"</em><br /><br />
 
-          Thanks for choosing us!<br />
-          
-          – Team Parthiv’s Kitchen.
+         
         </div>
       </div>
     `;
@@ -123,7 +121,7 @@ function CheckoutPage() {
       email: form.email,
       items: cartItems,
       notes: form.notes,
-      itemsHtml // add this line
+      itemsHtml // re-enable itemsHtml for email
     };
 
     console.log('Submitting order payload:', payload);

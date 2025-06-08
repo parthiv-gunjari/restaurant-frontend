@@ -1,13 +1,30 @@
 // /client/src/pages/HomePage.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/HomePage.css';
 import poster1 from '../assets/images/poster-1.jpg';
 import poster2 from '../assets/images/poster-2.jpeg';
 import poster3 from '../assets/images/poster-3.jpg';
+import biryaniImg from '../assets/images/65-biryani.jpg';
+import vadaImg from '../assets/images/sambar-vada.jpg';
+import pulusuImg from '../assets/images/Royyala-pulusu.jpg';
 
 function HomePage() {
   const navigate = useNavigate();
+  const [menuItems, setMenuItems] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/menu`)
+      .then(res => {
+        const data = res.data;
+        const topOrdered = [...data]
+          .sort((a, b) => (b.orderCount || 0) - (a.orderCount || 0))
+          .slice(0, 3);
+        setMenuItems(topOrdered);
+      })
+      .catch(err => console.error("Error fetching popular picks:", err));
+  }, []);
 
   return (
     <div className="homepage-container">
@@ -58,6 +75,69 @@ function HomePage() {
           We don’t just serve food — we bring back memories. Our menu is full of dishes you’d find in everyday Andhra and Telangana homes, as well as on the streets — from crispy snacks to tasty rice bowls and full thali meals. We choose only fresh ingredients, grind our spices the traditional way, and cook each dish with the same care you’d expect at home. Whether you visit us in person or order online, Parthiv’s Kitchen is your way to enjoy real, heartwarming South Indian food, wherever you are.
         </p>
       </div>
+
+      {/* Today's Specials Section */}
+      <div className="container my-5">
+        <h3 className="text-center mb-4">🍽️ Today’s Specials</h3>
+        <div className="row text-center">
+          <div className="col-md-4 mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <img src={biryaniImg} alt="Boneless Biryani" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <div className="card-body">
+                <h5 className="card-title fw-bold">
+                  Boneless Chicken Biryani <span className="badge bg-danger ms-2">🔥 Hot</span>
+                </h5>
+                <p className="card-text text-muted">Spicy and flavorful biryani served with raita and salan.</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4 mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <img src={vadaImg} alt="Garelu Sambar" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <div className="card-body">
+                <h5 className="card-title fw-bold">
+                  Medu Vada with Sambar <span className="badge bg-warning text-dark ms-2">🆕 New</span>
+                </h5>
+                <p className="card-text text-muted">Crispy lentil fritters served with hot sambar and chutneys.</p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4 mb-4">
+            <div className="card shadow-sm border-0 rounded-4">
+              <img src={pulusuImg} alt="Royyala Pulusu" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <div className="card-body">
+                <h5 className="card-title fw-bold">
+                  Royyala Pulusu <span className="badge bg-success ms-2">⭐ Chef’s Pick</span>
+                </h5>
+                <p className="card-text text-muted">A tangy prawn curry cooked the Andhra way.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Dishes Section */}
+      <div className="container my-5">
+        <h3 className="text-center mb-4">🌟 Popular Picks</h3>
+        <div className="row justify-content-center">
+          {menuItems.slice(0, 3).map((item) => (
+            <div className="col-12 col-sm-6 col-md-4 mb-4" key={item._id}>
+              <div className="card shadow-sm h-100 border-0 rounded-4">
+                <img
+                  src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || ''}`}
+                  alt={item.name}
+                  className="card-img-top rounded-top-4"
+                  style={{ height: '220px', objectFit: 'cover' }}
+                />
+                <div className="card-body text-center">
+                  <h5 className="card-title fw-bold">{item.name}</h5>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Store Hours Section */}
       <div className="container my-5" style={{ maxWidth: '900px' }}>
         <h3 className="text-center mb-3">Store Hours</h3>

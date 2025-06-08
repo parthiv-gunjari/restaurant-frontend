@@ -36,17 +36,21 @@ function AdminOrdersPage() {
       setOrders(res.data.orders || []);
       setTotalPages(res.data.totalPages || 1);
       // --- New logic for truly new orders ---
-      const unacknowledgedNewOrders = res.data.orders.filter(
+      const currentOrderIds = res.data.orders.map(order => order._id);
+      const storedAcknowledged = acknowledgedOrdersRef.current || [];
+
+      // Filter new and unacknowledged orders
+      const trulyNewOrders = res.data.orders.filter(
         (order) =>
           order.status !== 'Completed' &&
-          !acknowledgedOrdersRef.current.includes(order._id)
+          !storedAcknowledged.includes(order._id)
       );
 
-      if (unacknowledgedNewOrders.length > 0) {
-        const newOrderId = unacknowledgedNewOrders[0]._id;
-        setShowNewOrderModal(true);
+      if (trulyNewOrders.length > 0) {
+        const newOrderId = trulyNewOrders[0]._id;
         acknowledgedOrdersRef.current.push(newOrderId);
         localStorage.setItem('acknowledgedOrders', JSON.stringify(acknowledgedOrdersRef.current));
+        setShowNewOrderModal(true);
       }
       prevOrderCountRef.current = res.data.orders.length;
     } catch (err) {
@@ -315,18 +319,23 @@ useEffect(() => {
       </div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop />
       {showNewOrderModal && (
-        <div className="modal d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">🔔 New Order Alert</h5>
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+              <div className="modal-header bg-success text-white">
+                <h5 className="modal-title d-flex align-items-center">
+                  <i className="fas fa-bell me-2"></i>
+                  <span>New Order Alert</span>
+                </h5>
               </div>
-              <div className="modal-body">
-                <p>A new customer order has arrived. Please check the dashboard.</p>
+              <div className="modal-body text-center">
+                <p className="fs-5 fw-semibold text-success m-0">
+                  A new customer order has arrived. Please check the dashboard.
+                </p>
               </div>
-              <div className="modal-footer">
+              <div className="modal-footer border-0 d-flex justify-content-center">
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-outline-success px-4 py-2 fw-semibold"
                   onClick={() => {
                     if (alarmAudio.current) {
                       alarmAudio.current.pause();
