@@ -5,13 +5,13 @@ import { useCart } from '../context/CartContext';
 import Spinner from 'react-bootstrap/Spinner';
 
 const storeHours = {
-  0: { open: '11:00', close: '22:00' }, // Sunday (11 AM – 10 PM)
-  1: { open: '11:00', close: '23:00' }, // Monday
-  2: { open: '11:00', close: '23:00' },
-  3: { open: '11:00', close: '23:00' },
-  4: { open: '11:00', close: '23:00' },
-  5: { open: '11:00', close: '24:00' }, // Friday (24 hours)
-  6: { open: '11:00', close: '24:00' }, // Saturday
+  0: { open: '00:00', close: '24:00' }, // Sunday
+  1: { open: '00:00', close: '24:00' }, // Monday
+  2: { open: '00:00', close: '24:00' },
+  3: { open: '00:00', close: '24:00' },
+  4: { open: '00:00', close: '24:00' },
+  5: { open: '00:00', close: '24:00' }, // Friday
+  6: { open: '00:00', close: '24:00' }, // Saturday
 };
 
 function CheckoutPage() {
@@ -43,6 +43,7 @@ function CheckoutPage() {
     }
   }, [location.state]);
 
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -59,6 +60,13 @@ function CheckoutPage() {
   };
 
   const handlePlaceOrder = async () => {
+    console.log('ordersPaused:', localStorage.getItem('ordersPaused'));
+    const paused = localStorage.getItem('ordersPaused') === 'true';
+    if (paused) {
+      alert("🚫 Orders are temporarily paused by the admin.");
+      return;
+    }
+
     if (!isStoreOpen()) {
       setStoreClosed(true);
       return;
@@ -246,6 +254,29 @@ function CheckoutPage() {
           </div>
         </div>
       )}
+      {(() => {
+        const ordersPaused = localStorage.getItem('ordersPaused') === 'true';
+        return ordersPaused ? (
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0 shadow">
+                <div className="modal-header bg-danger text-white">
+                  <h5 className="modal-title"><i className="fas fa-exclamation-triangle me-2"></i> Incoming Orders Paused</h5>
+                </div>
+                <div className="modal-body text-center">
+                  <h5 className="text-danger fw-bold">Orders are currently paused for all customers.</h5>
+                  <p className="mt-3"><i className="fas fa-stopwatch me-2"></i> Orders will resume once admin lifts the pause.</p>
+                </div>
+                <div className="modal-footer justify-content-center">
+                  <button className="btn btn-outline-secondary" onClick={() => window.location.reload()}>
+                    Okay
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null;
+      })()}
     </div>
   );
 }

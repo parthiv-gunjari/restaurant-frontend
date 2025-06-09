@@ -36,6 +36,10 @@ function Navbar() {
 
       {/* Mobile Bottom Navbar */}
       <nav className="navbar navbar-dark bg-dark fixed-bottom d-flex d-lg-none justify-content-around p-0">
+        <Link className="nav-link text-white text-center" to="/">
+          <div style={{ fontSize: '1.4rem' }}>🏠</div>
+          <small>Home</small>
+        </Link>
         <Link className="nav-link text-white text-center" to="/menu">
           <div style={{ fontSize: '1.4rem' }}>🍽️</div>
           <small>Menu</small>

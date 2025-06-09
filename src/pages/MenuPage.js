@@ -100,9 +100,9 @@ function MenuPage() {
           return (
             <div key={cat} className="mb-5">
               <h4 className="mb-3">{cat} <span className="text-muted">({items.length})</span></h4>
-              <div className="row">
+              <div className="row gx-3 gy-4">
                 {items.map(item => (
-                  <div className="col-md-4 mb-4" key={item._id}>
+                  <div className="col-6 col-md-3 mb-4" key={item._id}>
                     <div className={`card h-100 shadow-sm ${!item.inStock ? 'bg-light text-muted' : ''}`}>
                       <img
                         loading="lazy"

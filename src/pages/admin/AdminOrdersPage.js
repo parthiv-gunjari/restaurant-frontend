@@ -11,13 +11,20 @@ function AdminOrdersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
+  const [showPausedModal, setShowPausedModal] = useState(true);
   const navigate = useNavigate();
+
+  const [ordersPaused, setOrdersPaused] = useState(false);
+  const [pausedAt, setPausedAt] = useState(null);
+  const pauseTimerRef = useRef(null);
+  const [elapsedPauseTime, setElapsedPauseTime] = useState('00:00');
 
   const prevOrderCountRef = useRef(0);
   const alarmAudio = useRef(null);
   const acknowledgedOrdersRef = useRef([]);
 
   const fetchOrders = async () => {
+    if (ordersPaused) return; // ⛔ Don't fetch if orders are paused
     try {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
@@ -74,6 +81,14 @@ function AdminOrdersPage() {
     if (saved) {
       acknowledgedOrdersRef.current = JSON.parse(saved);
     }
+
+    const savedPaused = localStorage.getItem('ordersPaused') === 'true';
+    const savedPausedAt = localStorage.getItem('pausedAt');
+    if (savedPaused && savedPausedAt) {
+      setOrdersPaused(true);
+      setPausedAt(new Date(savedPausedAt));
+      // If pausedAt exists, start the timer immediately
+    }
   }, []);
 
   useEffect(() => {
@@ -114,6 +129,22 @@ useEffect(() => {
     };
   }
 }, [showNewOrderModal]);
+
+useEffect(() => {
+  if (ordersPaused && pausedAt) {
+    pauseTimerRef.current = setInterval(() => {
+      const now = new Date();
+      const diff = Math.floor((now - new Date(pausedAt)) / 1000);
+      const minutes = String(Math.floor(diff / 60)).padStart(2, '0');
+      const seconds = String(diff % 60).padStart(2, '0');
+      setElapsedPauseTime(`${minutes}:${seconds}`);
+    }, 1000);
+  } else {
+    clearInterval(pauseTimerRef.current);
+  }
+
+  return () => clearInterval(pauseTimerRef.current);
+}, [ordersPaused, pausedAt]);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -241,10 +272,43 @@ useEffect(() => {
     }
   };
 
+  const handlePauseOrders = () => {
+    const now = new Date();
+    setOrdersPaused(true);
+    setPausedAt(now);
+    setShowPausedModal(true);
+    localStorage.setItem('ordersPaused', 'true');
+    localStorage.setItem('pausedAt', now.toISOString());
+  };
+
+  const handleResumeOrders = () => {
+    setOrdersPaused(false);
+    setPausedAt(null);
+    setElapsedPauseTime('00:00');
+    localStorage.removeItem('ordersPaused');
+    localStorage.removeItem('pausedAt');
+    toast.success("✅ Orders have been resumed!");
+  };
+
   return (
     <>
       <AdminNavbar />
       <div className="container mt-4">
+        <div className="text-end my-3 d-flex gap-2 justify-content-end">
+          <button
+            className="btn btn-danger fw-semibold"
+            onClick={handlePauseOrders}
+          >
+            ⏸️ Pause Incoming Orders
+          </button>
+          <button
+            className="btn btn-success fw-semibold"
+            onClick={handleResumeOrders}
+          >
+            ▶️ Resume Orders
+          </button>
+        </div>
+
         <h2>📦 Pending Customer Orders</h2>
 
         {/* 🔍 Filter Form */}
@@ -316,6 +380,7 @@ useEffect(() => {
           <span>Page {page} of {totalPages}</span>
           <button className="btn btn-outline-secondary" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next →</button>
         </div>
+
       </div>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop />
       {showNewOrderModal && (
@@ -333,9 +398,22 @@ useEffect(() => {
                   A new customer order has arrived. Please check the dashboard.
                 </p>
               </div>
-              <div className="modal-footer border-0 d-flex justify-content-center">
+              <div className="modal-footer border-0 d-flex justify-content-center gap-2">
                 <button
-                  className="btn btn-outline-success px-4 py-2 fw-semibold"
+                  className="btn btn-danger px-4 py-2 fw-semibold"
+                  onClick={() => {
+                    if (alarmAudio.current) {
+                      alarmAudio.current.pause();
+                      alarmAudio.current.currentTime = 0;
+                    }
+                    handlePauseOrders();
+                    setShowNewOrderModal(false);
+                  }}
+                >
+                  ⏸️ Pause Orders
+                </button>
+                <button
+                  className="btn btn-outline-dark px-4 py-2 fw-semibold"
                   onClick={() => {
                     if (alarmAudio.current) {
                       alarmAudio.current.pause();
@@ -344,7 +422,43 @@ useEffect(() => {
                     setShowNewOrderModal(false);
                   }}
                 >
-                  OK
+                  ❌ Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {ordersPaused && showPausedModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+              <div className="modal-header bg-danger text-white">
+                <h5 className="modal-title d-flex align-items-center">
+                  <i className="fas fa-triangle-exclamation me-2"></i>
+                  Incoming Orders Paused
+                </h5>
+              </div>
+              <div className="modal-body text-center">
+                <p className="fs-5 fw-semibold text-danger m-0">
+                  Orders are currently paused for all customers.
+                </p>
+                <p className="mt-3">⏱️ Paused since: <strong>{elapsedPauseTime}</strong></p>
+              </div>
+              <div className="modal-footer border-0 d-flex justify-content-center gap-2">
+                <button
+                  className="btn btn-success px-4 py-2 fw-semibold"
+                  onClick={handleResumeOrders}
+                >
+                  ▶️ Resume Orders
+                </button>
+                <button
+                  className="btn btn-outline-dark px-4 py-2 fw-semibold"
+                  onClick={() => {
+                    setShowPausedModal(false);
+                  }}
+                >
+                  ❌ Close
                 </button>
               </div>
             </div>

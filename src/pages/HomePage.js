@@ -1,5 +1,7 @@
 // /client/src/pages/HomePage.jsx
 import React, { useEffect, useState } from 'react';
+// Add the following in your public/index.html <head> for better font styling:
+// <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/HomePage.css';
@@ -30,7 +32,25 @@ function HomePage() {
     <div className="homepage-container">
       {/* Branding Section */}
       <div className="branding text-center py-3 bg-warning-subtle">
-        <h1 style={{ fontWeight: 'bold', fontFamily: 'serif' }}>Parthiv&apos;s Kitchen</h1>
+        <h1 style={{
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 800,
+          fontSize: '3rem',
+          letterSpacing: '1px',
+          color: '#1f1f1f',
+          display: 'inline-block'
+        }}>
+          <span role="img" aria-label="chef" style={{ marginRight: '8px' }}>👨‍🍳</span>
+          Parthiv&apos;s{' '}
+          <span style={{
+            background: 'linear-gradient(45deg, #d35400, #e67e22)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginLeft: '28px'
+          }}>
+            Kitchen
+          </span>
+        </h1>
         <p className="text-muted">Authentic Telangana & Andhra Flavors</p>
       </div>
       {/* Carousel Section */}
