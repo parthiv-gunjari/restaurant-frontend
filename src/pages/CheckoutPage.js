@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import BASE_URL from '../utils/api';
 import { useCart } from '../context/CartContext';
 import Spinner from 'react-bootstrap/Spinner';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from './CheckoutForm'; // you'll create this component next
 
 const storeHours = {
   0: { open: '00:00', close: '24:00' }, // Sunday
@@ -13,6 +17,8 @@ const storeHours = {
   5: { open: '00:00', close: '24:00' }, // Friday
   6: { open: '00:00', close: '24:00' }, // Saturday
 };
+
+const stripePromise = loadStripe('pk_test_51RbF2F01yFGmy84L80DwTLIfKq8xEDCFG95g8Fh5v6VXUFlEpfieY7sna1jmIdx5gwAV8Xf6LuVAX1VZ9sgRE0o100wa7inwJh');
 
 function CheckoutPage() {
   const { clearCart } = useCart();
@@ -59,107 +65,6 @@ function CheckoutPage() {
     return currentTime >= openTime && currentTime < closeTime;
   };
 
-  const handlePlaceOrder = async () => {
-    console.log('ordersPaused:', localStorage.getItem('ordersPaused'));
-    const paused = localStorage.getItem('ordersPaused') === 'true';
-    if (paused) {
-      alert("🚫 Orders are temporarily paused by the admin.");
-      return;
-    }
-
-    if (!isStoreOpen()) {
-      setStoreClosed(true);
-      return;
-    }
-
-    if (!form.name || !form.email) {
-      alert("❗ Please fill in both name and email.");
-      return;
-    }
-
-    // Defensive check: ensure cartItems is not empty before placing order
-    if (!cartItems || cartItems.length === 0) {
-      alert("❗ Your cart is empty.");
-      return;
-    }
-
-    // Build email-style order summary
-    const itemRows = cartItems.map(item => `
-      <tr>
-        <td>${item.name}</td>
-        <td>${item.quantity}</td>
-        <td>$${(item.price * item.quantity).toFixed(2)}</td>
-      </tr>
-    `).join('');
-
-    const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
-
-    const itemsHtml = `
-      <div style="font-family: Arial, sans-serif;">
-        <h3 style="text-align:center;">🧾 Order Summary</h3>
-        <table style="width:100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th style="border-bottom: 1px solid #ddd; text-align:left;">Item</th>
-              <th style="border-bottom: 1px solid #ddd; text-align:left;">Qty</th>
-              <th style="border-bottom: 1px solid #ddd; text-align:left;">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itemRows}
-            <tr>
-              <td colspan="2" style="border-top: 1px solid #ccc;"><strong>Total</strong></td>
-              <td style="border-top: 1px solid #ccc;"><strong>$${totalAmount}</strong></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div style="margin-top: 20px; font-size: 0.95rem; line-height: 1.5;">
-          📍 We’ll notify you once your order is ready for pickup.<br />
-          Instructions:<br />
-          <em>"${form.notes || 'No special instructions'}"</em><br /><br />
-
-         
-        </div>
-      </div>
-    `;
-
-    const payload = {
-      name: form.name,
-      email: form.email,
-      items: cartItems,
-      notes: form.notes,
-      itemsHtml // re-enable itemsHtml for email
-    };
-
-    console.log('Submitting order payload:', payload);
-
-    setLoading(true);
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL?.replace(/\/$/, '')}/api/orders`, payload);
-
-      clearCart();
-      setForm({ name: '', email: '', notes: '' });
-
-      const msg = document.getElementById('success-msg');
-      if (msg) {
-        msg.style.display = 'block';
-        setTimeout(() => {
-          msg.style.display = 'none';
-          navigate('/');
-          setLoading(false);
-        }, 2500);
-      } else {
-        setLoading(false);
-      }
-    } catch (err) {
-      // Enhanced error logging: log err.response.data if present
-      console.error("Checkout error:", err.response?.data || err.message);
-      alert("❌ Failed to place order.");
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="container mt-4">
       <h2>Finalize Your Order</h2>
@@ -197,30 +102,17 @@ function CheckoutPage() {
           />
         </div>
 
-        {loading && (
-          <div className="text-center mb-3">
-            {Spinner ? (
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            ) : (
-              <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="d-flex justify-content-center">
-          <button
-            className="btn btn-success"
-            onClick={handlePlaceOrder}
-            disabled={storeClosed}
-            style={storeClosed ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
-          >
-            Confirm Order
-          </button>
-        </div>
+        <Elements stripe={stripePromise}>
+          <CheckoutForm
+            form={form}
+            setForm={setForm}
+            cartItems={cartItems}
+            clearCart={clearCart}
+            storeClosed={storeClosed}
+            setStoreClosed={setStoreClosed}
+            isStoreOpen={isStoreOpen}
+          />
+        </Elements>
 
         <div
           id="success-msg"

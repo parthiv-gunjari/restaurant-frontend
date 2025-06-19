@@ -14,7 +14,10 @@ function CartPage() {
     }
     navigate('/checkout', {
       state: {
-        items: cart
+        items: cart,
+        name: '',
+        email: '',
+        notes: ''
       }
     });
   };

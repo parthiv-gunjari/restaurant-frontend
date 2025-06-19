@@ -29,7 +29,7 @@ function AdminOrdersPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`, {
         params: {
           page,
           name: filters.name,
@@ -161,7 +161,7 @@ useEffect(() => {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      await axios.patch(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}/complete`, {}, {
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/complete`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -180,7 +180,7 @@ useEffect(() => {
       if (!token) return navigate('/admin/login');
 
       // Console log the full request URL for debugging
-      const url = `${process.env.REACT_APP_API_URL}/api/orders/${orderId}/status`;
+      const url = `${import.meta.env.VITE_API_URL}/api/orders/${orderId}/status`;
       console.log("🔗 PATCH Order Status URL:", url, "orderId:", orderId, "newStatus:", newStatus);
       await axios.patch(url, { status: newStatus }, {
         headers: {

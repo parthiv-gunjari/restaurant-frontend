@@ -11,13 +11,14 @@ import poster3 from '../assets/images/poster-3.jpg';
 import biryaniImg from '../assets/images/65-biryani.jpg';
 import vadaImg from '../assets/images/sambar-vada.jpg';
 import pulusuImg from '../assets/images/Royyala-pulusu.jpg';
+import BASE_URL from '../utils/api';
 
 function HomePage() {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/menu`)
+    axios.get(`${BASE_URL}/api/menu`)
       .then(res => {
         const data = res.data;
         const topOrdered = [...data]
@@ -144,7 +145,7 @@ function HomePage() {
             <div className="col-12 col-sm-6 col-md-4 mb-4" key={item._id}>
               <div className="card shadow-sm h-100 border-0 rounded-4">
                 <img
-                  src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || ''}`}
+                  src={item.image?.startsWith('http') ? item.image : `${BASE_URL}${item.image || ''}`}
                   alt={item.name}
                   className="card-img-top rounded-top-4"
                   style={{ height: '220px', objectFit: 'cover' }}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import BASE_URL from '../utils/api';
 
 function OrderHistoryPage() {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ function OrderHistoryPage() {
 
     setLoading(true);
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/history?email=${encodeURIComponent(email)}`);
+      const res = await axios.get(`${BASE_URL}/api/orders/history?email=${encodeURIComponent(email)}`);
       setOrders(res.data);
     } catch (err) {
       console.error("❌ Error fetching history:", err);

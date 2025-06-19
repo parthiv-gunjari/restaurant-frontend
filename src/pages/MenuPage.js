@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import '../assets/css/MenuPage.css'; // optional: for custom styling
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import BASE_URL from '../utils/api';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -14,7 +15,7 @@ function MenuPage() {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/menu`)
+    axios.get(`${BASE_URL}/api/menu`)
       .then(res => {
         const data = res.data;
         const uniqueCategories = [...new Set(data.map(item => item.category))];
@@ -106,7 +107,7 @@ function MenuPage() {
                     <div className={`card h-100 shadow-sm ${!item.inStock ? 'bg-light text-muted' : ''}`}>
                       <img
                         loading="lazy"
-                        src={item.image?.startsWith('http') ? item.image : `${process.env.REACT_APP_API_URL}${item.image || ''}`}
+                        src={item.image?.startsWith('http') ? item.image : `${BASE_URL}${item.image || ''}`}
                         className="card-img-top"
                         alt={item.name}
                         style={{

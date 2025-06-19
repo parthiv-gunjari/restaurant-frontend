@@ -32,11 +32,11 @@ function AdminHomePage() {
       }
 
       const [analyticsRes, chartRes] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_URL}/api/orders/analytics`, {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/orders/analytics`, {
           params: { from, to },
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${process.env.REACT_APP_API_URL}/api/orders/revenue-chart`, {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/orders/revenue-chart`, {
           params: { range },
           headers: { Authorization: `Bearer ${token}` }
         })

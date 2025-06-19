@@ -18,7 +18,7 @@ function AdminCompletedOrdersPage() {
         return;
       }
 
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/completed`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders/completed`, {
         params: {
           page,
           name: filters.name || undefined,
@@ -95,6 +95,16 @@ function AdminCompletedOrdersPage() {
                     </p>
                     {order.notes && (
                       <p className="mb-1 text-muted"><em>📝 Notes: {order.notes}</em></p>
+                    )}
+                    {order.cardBrand && order.last4 && (
+                      <p className="mb-1 text-muted" style={{ fontSize: '0.85rem' }}>
+                        💳 Paid with: {order.cardBrand.toUpperCase()} •••• {order.last4}
+                      </p>
+                    )}
+                    {order.paymentIntentId && (
+                      <p className="mb-1 text-muted" style={{ fontSize: '0.8rem' }}>
+                        🔁 Transaction ID: <span className="text-dark">{order.paymentIntentId}</span>
+                      </p>
                     )}
                   </div>
                   <div className="d-flex flex-column align-items-end w-100 w-sm-auto">
