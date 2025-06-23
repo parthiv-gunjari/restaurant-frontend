@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import BASE_URL from '../utils/api';
+import { BASE_URL } from '../utils/api';
 
 function OrderHistoryPage() {
   const [email, setEmail] = useState('');
@@ -48,9 +48,9 @@ function OrderHistoryPage() {
         </button>
       </div>
 
-      {orders.length > 0 && (
-        <div className="mt-4">
-          {orders.map(order => (
+      <div className="mt-4">
+        {orders.length > 0 ? (
+          orders.map(order => (
             <div key={order._id} className="card mb-3">
               <div className="card-header">
                 <strong>Order ID:</strong> {order._id}<br />
@@ -59,15 +59,27 @@ function OrderHistoryPage() {
               </div>
               <ul className="list-group list-group-flush">
                 {order.items.map((item, idx) => (
-                  <li key={idx} className="list-group-item">
-                    {item.name} × {item.quantity} — ${item.price.toFixed(2)}
+                  <li key={idx} className="list-group-item d-flex justify-content-between">
+                    <span>{item.name} × {item.quantity}</span>
+                    <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </li>
                 ))}
+                <li className="list-group-item fw-bold d-flex justify-content-between">
+                  <span>Total:</span>
+                  <span>
+                    $
+                    {order.items
+                      .reduce((total, item) => total + item.price * item.quantity, 0)
+                      .toFixed(2)}
+                  </span>
+                </li>
               </ul>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p className="text-center text-muted">No orders found.</p>
+        )}
+      </div>
     </div>
   );
 }

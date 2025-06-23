@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
+import { BASE_URL } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import AdminNavbar from '../../components/AdminNavbar';
 import { FaClipboardList, FaClock, FaCheckCircle, FaDollarSign, FaCrown } from 'react-icons/fa';
@@ -32,11 +33,11 @@ function AdminHomePage() {
       }
 
       const [analyticsRes, chartRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/api/orders/analytics`, {
+        axios.get(`${BASE_URL}/api/orders/analytics`, {
           params: { from, to },
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${import.meta.env.VITE_API_URL}/api/orders/revenue-chart`, {
+        axios.get(`${BASE_URL}/api/orders/revenue-chart`, {
           params: { range },
           headers: { Authorization: `Bearer ${token}` }
         })

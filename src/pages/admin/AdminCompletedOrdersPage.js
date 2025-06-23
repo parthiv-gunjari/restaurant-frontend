@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../utils/api';
 
 function AdminCompletedOrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -18,7 +19,7 @@ function AdminCompletedOrdersPage() {
         return;
       }
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders/completed`, {
+      const res = await axios.get(`${BASE_URL}/api/orders/completed`, {
         params: {
           page,
           name: filters.name || undefined,

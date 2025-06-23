@@ -1,4 +1,4 @@
-// src/AppRouter.jsx
+// src/AppRouter.js
 import React from 'react';
 import { Routes, Route, useLocation, HashRouter, BrowserRouter } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -41,7 +41,7 @@ const RoutesWrapper = () => {
 };
 
 function AppRouter() {
-  const Router = process.env.NODE_ENV === 'production' ? HashRouter : BrowserRouter;
+  const Router = process.env.NODE_ENV === 'production' ? BrowserRouter : HashRouter;
 
   return (
     <Router>

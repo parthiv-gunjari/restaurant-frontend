@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BASE_URL from '../utils/api';
+import { BASE_URL } from '../utils/api';
 import {
   CardNumberElement,
   CardExpiryElement,
@@ -66,15 +66,17 @@ const CheckoutForm = ({ form, setForm, cartItems, clearCart, storeClosed, setSto
         setErrorMessage(result.error.message);
         setLoading(false);
       } else if (result.paymentIntent.status === 'succeeded') {
-        const cardDetails = result.paymentIntent.charges?.data?.[0]?.payment_method_details?.card;
+        const cardDetailsRes = await axios.get(`${BASE_URL}/api/stripe/fetch-payment-intent/${result.paymentIntent.id}`);
+        const cardDetails = cardDetailsRes.data || {};
+
         await axios.post(`${BASE_URL}/api/stripe/save-order`, {
           form,
           cartItems,
           paymentIntentId: result.paymentIntent.id,
-          paymentStatus: 'Pending',
-          cardBrand: cardDetails?.brand || 'Unknown',
+          paymentStatus: result.paymentIntent.status,
+          cardBrand: cardDetails?.cardBrand || 'Unknown',
           last4: cardDetails?.last4 || 'XXXX',
-          notes: form.notes // ✅ ensure notes are included in the payload
+          notes: form.notes
         });
 
         setPaymentSuccess(true);

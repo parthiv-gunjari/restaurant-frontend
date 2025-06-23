@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../utils/api';
 
 function AdminMenuPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -27,7 +28,7 @@ function AdminMenuPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/menu`, {
+      const res = await axios.get(`${BASE_URL}/api/menu`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -76,9 +77,9 @@ function AdminMenuPage() {
       };
 
       if (editingId) {
-        await axios.put(`${import.meta.env.VITE_API_URL}/api/menu/${editingId}`, formPayload, config);
+        await axios.put(`${BASE_URL}/api/menu/${editingId}`, formPayload, config);
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/menu`, formPayload, config);
+        await axios.post(`${BASE_URL}/api/menu`, formPayload, config);
       }
       setFormData({
         name: '',
@@ -112,7 +113,7 @@ function AdminMenuPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/menu/${id}`, {
+      await axios.delete(`${BASE_URL}/api/menu/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -209,7 +210,7 @@ function AdminMenuPage() {
                         </div>
                         {(item.image || item.imageUrl) && (
                           <img
-                            src={item.image?.startsWith('http') ? item.image : `${import.meta.env.VITE_API_URL}${item.image || item.imageUrl}`}
+                            src={item.image?.startsWith('http') ? item.image : `${BASE_URL}${item.image || item.imageUrl}`}
                             alt={item.name}
                             className="img-fluid mb-3 d-block mx-auto rounded"
                             style={{ height: '180px', width: '100%', objectFit: 'cover' }}

@@ -4,6 +4,7 @@ import AdminNavbar from '../../components/AdminNavbar';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { BASE_URL } from '../../utils/api';
 
 function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -29,7 +30,7 @@ function AdminOrdersPage() {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders`, {
+      const res = await axios.get(`${BASE_URL}/api/orders`, {
         params: {
           page,
           name: filters.name,
@@ -161,7 +162,7 @@ useEffect(() => {
       const token = localStorage.getItem('adminToken');
       if (!token) return navigate('/admin/login');
 
-      await axios.patch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/complete`, {}, {
+      await axios.patch(`${BASE_URL}/api/orders/${orderId}/complete`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -180,7 +181,7 @@ useEffect(() => {
       if (!token) return navigate('/admin/login');
 
       // Console log the full request URL for debugging
-      const url = `${import.meta.env.VITE_API_URL}/api/orders/${orderId}/status`;
+      const url = `${BASE_URL}/api/orders/${orderId}/status`;
       console.log("🔗 PATCH Order Status URL:", url, "orderId:", orderId, "newStatus:", newStatus);
       await axios.patch(url, { status: newStatus }, {
         headers: {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import BASE_URL from '../utils/api';
+import { BASE_URL } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import Spinner from 'react-bootstrap/Spinner';
 import { Elements } from '@stripe/react-stripe-js';

@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import '../assets/css/MenuPage.css'; // optional: for custom styling
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import BASE_URL from '../utils/api';
+import { BASE_URL } from '../utils/api';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);

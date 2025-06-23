@@ -11,7 +11,7 @@ import poster3 from '../assets/images/poster-3.jpg';
 import biryaniImg from '../assets/images/65-biryani.jpg';
 import vadaImg from '../assets/images/sambar-vada.jpg';
 import pulusuImg from '../assets/images/Royyala-pulusu.jpg';
-import BASE_URL from '../utils/api';
+import { BASE_URL } from '../utils/api';
 
 function HomePage() {
   const navigate = useNavigate();

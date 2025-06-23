@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../../utils/api';
 import './AdminLogin.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,14 +15,15 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
-        username,   // ✅ correct key based on backend schema
+      const res = await axios.post(`${BASE_URL}/api/admin/login`, {
+        username,
         password
       });
 
       localStorage.setItem('adminToken', res.data.token);
       navigate('/admin/home');
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.error || 'Login failed');
     }
   };

@@ -37,6 +37,7 @@ function CartPage() {
                   <div className="card-body d-flex justify-content-between align-items-center">
                     <div>
                       <h5 className="card-title">{item.name}</h5>
+                      <p className="card-text mb-1">Price: ${item.price.toFixed(2)}</p>
                       <p className="card-text mb-1">Quantity: <strong>{item.quantity}</strong></p>
                       <div className="btn-group" role="group">
                         <button onClick={() => decrementItem(item._id)} className="btn btn-sm btn-outline-secondary">−</button>
