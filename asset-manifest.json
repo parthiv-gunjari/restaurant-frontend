@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/restaurant-frontend/static/css/main.5311e907.css",
-    "main.js": "/restaurant-frontend/static/js/main.5b1f63e1.js",
+    "main.js": "/restaurant-frontend/static/js/main.6fd12786.js",
     "static/media/sambar-vada.jpg": "/restaurant-frontend/static/media/sambar-vada.01bad0cf35accad36262.jpg",
     "static/media/65-biryani.jpg": "/restaurant-frontend/static/media/65-biryani.a2aa5adc1eebd87ac1c9.jpg",
     "static/media/poster-1.jpg": "/restaurant-frontend/static/media/poster-1.55e4a40d69fa35999f07.jpg",
@@ -10,10 +10,10 @@
     "static/media/Royyala-pulusu.jpg": "/restaurant-frontend/static/media/Royyala-pulusu.88755d9fd132896a33de.jpg",
     "index.html": "/restaurant-frontend/index.html",
     "main.5311e907.css.map": "/restaurant-frontend/static/css/main.5311e907.css.map",
-    "main.5b1f63e1.js.map": "/restaurant-frontend/static/js/main.5b1f63e1.js.map"
+    "main.6fd12786.js.map": "/restaurant-frontend/static/js/main.6fd12786.js.map"
   },
   "entrypoints": [
     "static/css/main.5311e907.css",
-    "static/js/main.5b1f63e1.js"
+    "static/js/main.6fd12786.js"
   ]
 }
