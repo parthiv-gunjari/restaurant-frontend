@@ -9,6 +9,7 @@ function AdminCompletedOrdersPage() {
   const [filters, setFilters] = useState({ name: '', email: '', date: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -24,7 +25,8 @@ function AdminCompletedOrdersPage() {
           page,
           name: filters.name || undefined,
           email: filters.email || undefined,
-          date: filters.date || undefined
+          date: filters.date || undefined,
+          limit: 12 // 🔼 Increase the number of results per page
         },
         headers: {
           Authorization: `Bearer ${token}`
@@ -88,39 +90,14 @@ function AdminCompletedOrdersPage() {
             {orders.map(order => (
               <div key={order._id} className="col-md-6 col-lg-4">
                 <div className="card shadow-sm p-3 h-100" style={{ backgroundColor: '#fff7ec' }}>
-                  <div className="text-truncate">
-                    <p className="mb-1 fw-bold">🧾 Order ID: <span className="text-dark">{order._id}</span></p>
-                    <p className="mb-1">👤 <strong>{order.name}</strong></p>
-                    <p className="mb-1 text-muted" style={{ fontSize: '0.85rem' }}>
-                      ⏱️ {new Date(order.timestamp).toLocaleString()}
-                    </p>
-                    {order.notes && (
-                      <p className="mb-1 text-muted"><em>📝 Notes: {order.notes}</em></p>
-                    )}
-                    {order.cardBrand && order.last4 && (
-                      <p className="mb-1 text-muted" style={{ fontSize: '0.85rem' }}>
-                        💳 Paid with: {order.cardBrand.toUpperCase()} •••• {order.last4}
-                      </p>
-                    )}
-                    {order.paymentIntentId && (
-                      <p className="mb-1 text-muted" style={{ fontSize: '0.8rem' }}>
-                        🔁 Transaction ID: <span className="text-dark">{order.paymentIntentId}</span>
-                      </p>
-                    )}
-                  </div>
-                  <div className="d-flex flex-column align-items-end w-100 w-sm-auto">
-                    <ul className="list-group mb-2">
-                      {order.items.map((item, idx) => (
-                        <li
-                          key={idx}
-                          className="list-group-item d-flex justify-content-between align-items-center px-3 py-2"
-                        >
-                          <span>{item.name} × {item.quantity}</span>
-                          <span className="fw-bold">${(item.price * item.quantity).toFixed(2)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <p className="mb-1 fw-bold">🧾 Order ID: <span className="text-dark">{order.orderCode || order._id}</span></p>
+                  <p className="mb-1">👤 <strong>{order.name}</strong></p>
+                  <button
+                    className="btn btn-outline-primary btn-sm mt-2"
+                    onClick={() => setSelectedOrder(order)}
+                  >
+                    Preview
+                  </button>
                 </div>
               </div>
             ))}
@@ -133,6 +110,43 @@ function AdminCompletedOrdersPage() {
           <span>Page {page} of {totalPages}</span>
           <button className="btn btn-outline-secondary" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next →</button>
         </div>
+
+        {selectedOrder && (
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog modal-lg modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header bg-primary text-white">
+                  <h5 className="modal-title">Order Details</h5>
+                  <button type="button" className="btn-close" onClick={() => setSelectedOrder(null)}></button>
+                </div>
+                <div className="modal-body">
+                  <p><strong>Order ID:</strong> {selectedOrder.orderCode || selectedOrder._id}</p>
+                  <p><strong>Name:</strong> {selectedOrder.name}</p>
+                  <p><strong>Email:</strong> {selectedOrder.email}</p>
+                  <p><strong>Date:</strong> {new Date(selectedOrder.timestamp).toLocaleString()}</p>
+                  {selectedOrder.notes && <p><strong>Notes:</strong> {selectedOrder.notes}</p>}
+                  {selectedOrder.cardBrand && selectedOrder.last4 && (
+                    <p><strong>Payment:</strong> {selectedOrder.cardBrand.toUpperCase()} •••• {selectedOrder.last4}</p>
+                  )}
+                  {selectedOrder.paymentIntentId && (
+                    <p><strong>Transaction ID:</strong> {selectedOrder.paymentIntentId}</p>
+                  )}
+                  <ul className="list-group mt-3">
+                    {selectedOrder.items.map((item, idx) => (
+                      <li key={idx} className="list-group-item d-flex justify-content-between">
+                        <span>{item.name} × {item.quantity}</span>
+                        <span className="fw-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-secondary" onClick={() => setSelectedOrder(null)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

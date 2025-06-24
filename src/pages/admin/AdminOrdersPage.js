@@ -8,6 +8,7 @@ import { BASE_URL } from '../../utils/api';
 
 function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [todayStats, setTodayStats] = useState({ total: 0, pending: 0, completed: 0 });
   const [filters, setFilters] = useState({ name: '', email: '', date: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -35,7 +36,8 @@ function AdminOrdersPage() {
           page,
           name: filters.name,
           email: filters.email,
-          date: filters.date
+          date: filters.date,
+          limit: 12
         },
         headers: {
           Authorization: `Bearer ${token}`
@@ -43,6 +45,27 @@ function AdminOrdersPage() {
       });
       setOrders(res.data.orders || []);
       setTotalPages(res.data.totalPages || 1);
+      // --- Today's stats logic ---
+      const allOrdersRes = await axios.get(`${BASE_URL}/api/orders`, {
+        params: { page: 1, limit: 1000 },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const allTodayOrders = allOrdersRes.data.orders.filter(order => {
+        const orderDate = new Date(order.timestamp);
+        const todayDate = new Date();
+        return (
+          orderDate.getDate() === todayDate.getDate() &&
+          orderDate.getMonth() === todayDate.getMonth() &&
+          orderDate.getFullYear() === todayDate.getFullYear()
+        );
+      });
+      const total = allTodayOrders.length;
+      const pending = allTodayOrders.filter(order => order.status !== 'Completed').length;
+      const completed = allTodayOrders.filter(order => order.status === 'Completed').length;
+      setTodayStats({ total, pending, completed });
       // --- New logic for truly new orders ---
       const currentOrderIds = res.data.orders.map(order => order._id);
       const storedAcknowledged = acknowledgedOrdersRef.current || [];
@@ -203,7 +226,7 @@ useEffect(() => {
     const ticketHtml = `
       <html>
       <head>
-        <title>Order Ticket - ${order._id}</title>
+        <title>Order Ticket - ${order.orderCode || order._id}</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 24px; background: #fff; }
           .restaurant-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 8px; text-align:center;}
@@ -225,7 +248,7 @@ useEffect(() => {
         <div class="ticket-box">
           <div class="restaurant-title">🍴 Parthiv's Kitchen</div>
           <div>
-            <span class="ticket-label">Order ID:</span> ${order._id}<br/>
+            <span class="ticket-label">Order ID:</span> ${order.orderCode || order._id}<br/>
             <span class="ticket-label">Customer:</span> ${order.name}<br/>
             <span class="ticket-label">Time:</span> ${new Date(order.timestamp).toLocaleString()}
           </div>
@@ -310,6 +333,15 @@ useEffect(() => {
           </button>
         </div>
 
+        <div className="mb-3">
+          <h5>📊 Today's Stats</h5>
+          <div className="d-flex gap-4 flex-wrap">
+            <span><strong>Total Orders:</strong> {todayStats.total}</span>
+            <span><strong>Pending:</strong> {todayStats.pending}</span>
+            <span><strong>Completed:</strong> {todayStats.completed}</span>
+          </div>
+        </div>
+
         <h2>📦 Pending Customer Orders</h2>
 
         {/* 🔍 Filter Form */}
@@ -334,13 +366,13 @@ useEffect(() => {
         ) : (
           <div className="row">
             {orders.map(order => (
-              <div key={order._id} className="col-md-6 col-lg-4 mb-3">
+              <div key={order.orderCode || order._id} className="col-md-6 col-lg-4 mb-3">
                 <div className="card h-100 shadow-sm border-primary">
                   <div style={{ backgroundColor: '  #ffebcc' }}>
                     <div className="card-body d-flex align-items-center justify-content-between">
                       <div>
                         <div>
-                          <span className="fw-bold">Order:</span> <span>{order._id}</span>
+                          <span className="fw-bold">Order ID:</span> <span>{order.orderCode || order._id}</span>
                         </div>
                         <div>
                           <span className="fw-bold">Name:</span> <span>{order.name}</span>

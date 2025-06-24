@@ -41,6 +41,16 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Parthiv's Kitchen</title>
+    <script>
+  // Redirect to #/ if missing (for GitHub Pages)
+  if (
+    window.location.hostname === "parthiv-gunjari.github.io" &&
+    window.location.pathname === "/restaurant-frontend/" &&
+    !window.location.hash
+  ) {
+    window.location.replace("/restaurant-frontend/#/");
+  }
+</script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
