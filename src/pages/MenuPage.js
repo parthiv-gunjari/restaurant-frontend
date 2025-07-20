@@ -12,7 +12,8 @@ function MenuPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const { addToCart } = useCart();
+  const [showFilters, setShowFilters] = useState(false);
+  const { addToCart, incrementItem, decrementItem, getQuantity } = useCart();
 
   useEffect(() => {
     axios.get(`${BASE_URL}/api/menu`)
@@ -61,34 +62,84 @@ function MenuPage() {
   }, [selectedCategory, searchTerm, menuItems]);
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4 sticky-filter-bar bg-white " style={{ position: 'sticky', top: 0, zIndex: 1020 }}>Menu</h2>
-
-      {/* Filters */}
-      <div className="sticky-filter-bar bg-white py-3" style={{ position: 'sticky', top: 30, zIndex: 1020 }}>
-        <div className="row mb-4 justify-content-center">
-          <div className="col-md-4 mb-2">
-            <select
-              className="form-select"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="All">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-4 mb-2">
-            <input
-              className="form-control"
-              type="text"
-              placeholder="Search by item name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+    <div className="container mt-0 pt-0">
+      <div className="sticky-top bg-white py-2 d-lg-none" style={{ zIndex: 1050 }}>
+        <div className="d-flex justify-content-between align-items-center px-3">
+          <h2 className="mb-0">Menu</h2>
+          <button
+            className="btn btn-outline-dark btn-sm"
+            onClick={() => setShowFilters(prev => !prev)}
+          >
+            <i className="bi bi-funnel"></i> Filters
+          </button>
         </div>
+        {showFilters && (
+          <div className="p-3 border-top">
+            <div className="mb-2">
+              <label className="form-label fw-bold">Category</label>
+              <select
+                className="form-select"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="All">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label fw-bold">Search</label>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Search by item name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="d-none d-lg-block">
+        <h2 className="text-center mb-4">Menu</h2>
+
+        <button
+          className="btn btn-outline-dark position-fixed"
+          style={{ top: '80px', right: '20px', zIndex: 1050 }}
+          onClick={() => setShowFilters(prev => !prev)}
+        >
+          <i className="bi bi-funnel"></i> Filters
+        </button>
+
+        {showFilters && (
+          <div className="card p-3 shadow position-fixed bg-white d-none d-lg-block" style={{ top: '130px', right: '20px', zIndex: 1040, width: '300px' }}>
+            <div className="mb-3">
+              <label className="form-label fw-bold">Category</label>
+              <select
+                className="form-select"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="All">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label fw-bold">Search</label>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Search by item name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Items by Category */}
@@ -130,16 +181,30 @@ function MenuPage() {
                         </h5>
                         <p className="card-text">{item.description}</p>
                         <p><strong>${item.price.toFixed(2)}</strong></p>
-                        <button
-                          className="btn btn-outline-primary w-100"
-                          onClick={() => {
-                            addToCart(item);
-                            toast.success(`${item.name} added to cart!`);
-                          }}
-                          disabled={!item.inStock}
-                        >
-                          {item.inStock ? 'Add to Cart' : 'Out of Stock'}
-                        </button>
+                        {item.inStock ? (
+                          <div className="d-flex justify-content-center align-items-center gap-2">
+                            <button
+                              className={`btn ${getQuantity(item._id) === 1 ? 'btn-outline-danger' : 'btn-outline-secondary'}`}
+                              onClick={() => {
+                                decrementItem(item);
+                              }}
+                            >
+                              <i className={`bi ${getQuantity(item._id) === 1 ? 'bi-trash-fill' : 'bi-dash'}`}></i>
+                            </button>
+                            <span>{getQuantity(item._id)}</span>
+                            <button
+                              className="btn btn-outline-secondary"
+                              onClick={() => {
+                                incrementItem(item);
+                                toast.success(`${item.name} added to cart!`);
+                              }}
+                            >
+                              <i className="bi bi-plus"></i>
+                            </button>
+                          </div>
+                        ) : (
+                          <button className="btn btn-outline-secondary w-100" disabled>Out of Stock</button>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -58,3 +58,43 @@
     object-fit: cover;
   }
 }
+.full-width-carousel {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.full-width-carousel .carousel-item img {
+  object-fit: cover;
+  height: 450px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .full-width-carousel .carousel-item img {
+    height: 300px;
+    object-fit: cover;
+  }
+}
+
+.mobile-topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #d35400;
+  font-size: 0.85rem;
+  z-index: 1055;
+}
+
+@media (max-width: 991.98px) {
+  .homepage-container {
+    margin-top: 30px; /* offset to prevent overlap */
+  }
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.mobile-topbar {
+  animation: pulse 2s infinite;
+}

@@ -21,7 +21,7 @@ const storeHours = {
 const stripePromise = loadStripe('pk_test_51RbF2F01yFGmy84L80DwTLIfKq8xEDCFG95g8Fh5v6VXUFlEpfieY7sna1jmIdx5gwAV8Xf6LuVAX1VZ9sgRE0o100wa7inwJh');
 
 function CheckoutPage() {
-  const { clearCart } = useCart();
+  const { cart, clearCart } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,8 +36,11 @@ function CheckoutPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (location.state) {
-      // Use default values to ensure controlled fields always have string values
+    if (
+      location.state &&
+      Array.isArray(location.state.items) &&
+      location.state.items.length > 0
+    ) {
       const {
         name = '',
         email = '',
@@ -46,8 +49,11 @@ function CheckoutPage() {
       } = location.state;
       setForm({ name, email, notes });
       setCartItems(items);
+    } else {
+      // fallback to context cart
+      setCartItems(cart);
     }
-  }, [location.state]);
+  }, [location.state, cart]);
 
 
   const handleChange = (e) => {

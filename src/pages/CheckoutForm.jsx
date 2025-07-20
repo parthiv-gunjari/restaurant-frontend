@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext'; // Add this at the top
 import { BASE_URL } from '../utils/api';
 import {
   CardNumberElement,
@@ -9,9 +10,11 @@ import {
 } from '@stripe/react-stripe-js';
 import axios from 'axios';
 
-const CheckoutForm = ({ form, setForm, cartItems, clearCart, storeClosed, setStoreClosed, isStoreOpen }) => {
+const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, storeClosed, setStoreClosed, isStoreOpen }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const { cart: contextCartItems } = useCart(); // Get fallback cart from context
+  const cartItems = (propCartItems && propCartItems.length > 0) ? propCartItems : contextCartItems;
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState(false);

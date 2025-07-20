@@ -4,20 +4,48 @@ import React, { useEffect, useState } from 'react';
 // <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../assets/css/HomePage.css';
-import poster1 from '../assets/images/poster-1.jpg';
-import poster2 from '../assets/images/poster-2.jpeg';
-import poster3 from '../assets/images/poster-3.jpg';
+import muttonBiryaniPoster from '../assets/images/muttondumbiryani.jpg';
+import jeeraRicePoster from '../assets/images/jeerarice.jpg';
+import paneerButterMasalaPoster from '../assets/images/pannerbuttermasala.jpg';
+import curdRicePoster from '../assets/images/curdrice.jpg';
+import dosaVadaPoster from '../assets/images/dosavada.jpg';
+import eggPoster from '../assets/images/egg.jpg';
+import plainDosaPoster from '../assets/images/plaindosa.jpg';
 import biryaniImg from '../assets/images/65-biryani.jpg';
 import vadaImg from '../assets/images/sambar-vada.jpg';
 import pulusuImg from '../assets/images/Royyala-pulusu.jpg';
+import ankpurChickenImg from '../assets/images/chickencurry.jpg';
+import chilliFishImg from '../assets/images/chillifish.jpg';
+import eggFryImg from '../assets/images/eggfry.jpg';
 import { BASE_URL } from '../utils/api';
 
 function HomePage() {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
+  const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
+    const handleScroll = () => {
+      setShowScroll(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    toast.info("Waking up our kitchen... please wait a moment while we load our items 🍽️", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
     axios.get(`${BASE_URL}/api/menu`)
       .then(res => {
         const data = res.data;
@@ -31,6 +59,10 @@ function HomePage() {
 
   return (
     <div className="homepage-container">
+      {/* Thin Top Bar for Mobile */}
+      <div className="mobile-topbar d-lg-none text-white text-center py-1 px-2">
+        🔥 Order Now & Taste the Spice of Telangana!
+      </div>
       {/* Branding Section */}
       <div className="branding text-center py-3 bg-warning-subtle">
         <h1 style={{
@@ -55,22 +87,35 @@ function HomePage() {
         <p className="text-muted">Authentic Telangana & Andhra Flavors</p>
       </div>
       {/* Carousel Section */}
-      <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
+     <div id="carouselExampleIndicators" className="carousel slide full-width-carousel" data-bs-ride="carousel" data-bs-interval="2000">
         <div className="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+          {[...Array(7)].map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              data-bs-target="#carouselExampleIndicators"
+              data-bs-slide-to={index}
+              className={index === 0 ? 'active' : ''}
+            ></button>
+          ))}
         </div>
         <div className="carousel-inner">
-          <div className="carousel-item active">
-            <img src={poster1} className="d-block w-100" alt="Poster 1" style={{ height: '350px', objectFit: 'cover' }} />
-          </div>
-          <div className="carousel-item">
-            <img src={poster2} className="d-block w-100" alt="Poster 2" style={{ height: '350px', objectFit: 'cover' }} />
-          </div>
-          <div className="carousel-item">
-            <img src={poster3} className="d-block w-100" alt="Poster 3" style={{ height: '350px', objectFit: 'cover' }} />
-          </div>
+          {[muttonBiryaniPoster, jeeraRicePoster, paneerButterMasalaPoster, curdRicePoster, dosaVadaPoster, eggPoster, plainDosaPoster].map((img, index) => (
+            <div key={index} className={`carousel-item${index === 0 ? ' active' : ''}`}>
+              <img
+                loading="lazy"
+                src={img}
+                className="d-block w-100"
+                alt={`Poster ${index + 1}`}
+                style={{
+                  height: '450px',
+                  width: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                }}
+              />
+            </div>
+          ))}
         </div>
         <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
           <span className="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -91,10 +136,14 @@ function HomePage() {
       <div className="container my-5" style={{ maxWidth: '900px' }}>
         <h3 className="text-center mb-3">About</h3>
         <p className="text-center">
-          Parthiv’s Kitchen is all about celebrating the true taste of Telangana and Andhra food. Our goal is to bring the comforting flavors of South Indian home-cooked meals right to your plate — the kind of food that reminds you of your mom’s kitchen, the smell of fresh spices, and the love that goes into every meal at home. Every recipe we use is inspired by family traditions and passed down through generations. From the spicy kick of Rayalaseema curries to the warm, simple comfort of pappu and pachadi, we stay true to authentic Telugu flavors in every dish.
-          <br /><br />
-          We don’t just serve food — we bring back memories. Our menu is full of dishes you’d find in everyday Andhra and Telangana homes, as well as on the streets — from crispy snacks to tasty rice bowls and full thali meals. We choose only fresh ingredients, grind our spices the traditional way, and cook each dish with the same care you’d expect at home. Whether you visit us in person or order online, Parthiv’s Kitchen is your way to enjoy real, heartwarming South Indian food, wherever you are.
-        </p>
+  At Parthiv’s Kitchen, we celebrate the bold, comforting flavors of Telangana and Andhra cuisine. Our mission is to bring the warmth of South Indian home-cooked meals right to your plate — the kind that reminds you of your mom’s kitchen, the aroma of fresh spices, and the love poured into every dish.
+  <br /><br />
+  Every recipe is rooted in tradition, inspired by family, and passed down through generations. From the spicy punch of Telangana-style curries to the soul-soothing comfort of pappu and pachadi, we stay true to authentic Telugu flavors in every bite.
+  <br /><br />
+  But we don’t just serve food — we serve memories. Our menu reflects everyday meals from Andhra and Telangana homes, street-side favorites, and festive specialties. We use fresh ingredients, grind our spices the traditional way, and cook with the same care you’d expect in your own home.
+  <br /><br />
+  Whether you’re dining with us or ordering online, Parthiv’s Kitchen is your destination for real, heartwarming South Indian food — wherever you are.
+</p>
       </div>
 
       {/* Today's Specials Section */}
@@ -103,59 +152,73 @@ function HomePage() {
         <div className="row text-center">
           <div className="col-md-4 mb-4">
             <div className="card shadow-sm border-0 rounded-4">
-              <img src={biryaniImg} alt="Boneless Biryani" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <img loading="lazy" src={ankpurChickenImg} alt="Ankpur Chicken" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
               <div className="card-body">
                 <h5 className="card-title fw-bold">
-                  Boneless Chicken Biryani <span className="badge bg-danger ms-2">🔥 Hot</span>
+                  Ankapur Chicken <span className="badge bg-danger ms-2">🔥 Hot</span>
                 </h5>
-                <p className="card-text text-muted">Spicy and flavorful biryani served with raita and salan.</p>
+                <p className="card-text text-muted">Fiery chicken curry bursting with village-style flavors.</p>
               </div>
             </div>
           </div>
           <div className="col-md-4 mb-4">
             <div className="card shadow-sm border-0 rounded-4">
-              <img src={vadaImg} alt="Garelu Sambar" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <img loading="lazy" src={chilliFishImg} alt="Chilli Fish" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
               <div className="card-body">
                 <h5 className="card-title fw-bold">
-                  Medu Vada with Sambar <span className="badge bg-warning text-dark ms-2">🆕 New</span>
+                  Chilli Fish <span className="badge bg-warning text-dark ms-2">🆕 New</span>
                 </h5>
-                <p className="card-text text-muted">Crispy lentil fritters served with hot sambar and chutneys.</p>
+                <p className="card-text text-muted">Crispy fried fish tossed in spicy Indo-Chinese sauce.</p>
               </div>
             </div>
           </div>
           <div className="col-md-4 mb-4">
             <div className="card shadow-sm border-0 rounded-4">
-              <img src={pulusuImg} alt="Royyala Pulusu" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
+              <img loading="lazy" src={eggFryImg} alt="Egg Fry" className="card-img-top rounded-top-4" style={{ height: '220px', objectFit: 'cover' }} />
               <div className="card-body">
                 <h5 className="card-title fw-bold">
-                  Royyala Pulusu <span className="badge bg-success ms-2">⭐ Chef’s Pick</span>
+                  Egg Fry <span className="badge bg-success ms-2">⭐ Chef’s Pick</span>
                 </h5>
-                <p className="card-text text-muted">A tangy prawn curry cooked the Andhra way.</p>
+                <p className="card-text text-muted">Simple yet bold — masala-coated egg fry perfection.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Featured Dishes Section */}
-      <div className="container my-5">
-        <h3 className="text-center mb-4">🌟 Popular Picks</h3>
-        <div className="row justify-content-center">
-          {menuItems.slice(0, 3).map((item) => (
-            <div className="col-12 col-sm-6 col-md-4 mb-4" key={item._id}>
-              <div className="card shadow-sm h-100 border-0 rounded-4">
-                <img
-                  src={item.image?.startsWith('http') ? item.image : `${BASE_URL}${item.image || ''}`}
-                  alt={item.name}
-                  className="card-img-top rounded-top-4"
-                  style={{ height: '220px', objectFit: 'cover' }}
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title fw-bold">{item.name}</h5>
-                </div>
-              </div>
-            </div>
-          ))}
+      {/* Catering Section */}
+      <div className="container my-5" style={{ maxWidth: '900px' }}>
+        <h3 className="text-center mb-4">🍱 Catering Services</h3>
+        <p className="text-center text-muted">
+          Planning a party, event, or family gathering? Parthiv’s Kitchen offers delicious, homestyle South Indian catering tailored for every occasion.
+        </p>
+        <div className="row text-center mt-4">
+          <div className="col-md-4 mb-3">
+            <i className="bi bi-people-fill fs-1 text-primary"></i>
+            <h5 className="mt-2 fw-bold">Events We Serve</h5>
+            <p className="text-muted small">House parties, birthdays, pujas, corporate events & more.</p>
+          </div>
+          <div className="col-md-4 mb-3">
+            <i className="bi bi-box-seam fs-1 text-success"></i>
+            <h5 className="mt-2 fw-bold">Flexible Menu</h5>
+            <p className="text-muted small">Choose from biryanis, curries, snacks, sweets — all freshly made.</p>
+          </div>
+          <div className="col-md-4 mb-3">
+            <i className="bi bi-telephone-forward-fill fs-1 text-warning"></i>
+            <h5 className="mt-2 fw-bold">Book Now</h5>
+            <p className="text-muted small">Call <strong>+1 9408435294</strong> or email <strong>parthivskitchen7@gmail.com</strong></p>
+          </div>
+        </div>
+        <div className="text-center mt-4">
+          <button
+            className="btn btn-outline-primary px-4 py-2"
+            onClick={() =>
+              window.location.href =
+                'mailto:parthivskitchen7@gmail.com?subject=Catering%20Quote%20Request'
+            }
+          >
+            Get a Catering Quote
+          </button>
         </div>
       </div>
 
@@ -168,6 +231,95 @@ function HomePage() {
           <li><strong>Sunday:</strong> 11 AM to 10 PM</li>
         </ul>
       </div>
+
+      {/* Contact Section */}
+      <div className="container my-5" style={{ maxWidth: '900px' }}>
+        <h3 className="text-center mb-3">📞 Contact Us</h3>
+        <div className="row justify-content-center text-center">
+          <div className="col-12 col-md-6 col-lg-3 mb-3">
+            <a href="mailto:parthivskitchen7@gmail.com" className="text-decoration-none text-dark">
+              <div className="d-flex flex-column align-items-center">
+                <i className="bi bi-envelope-fill fs-3 mb-2"></i>
+                <div>Email</div>
+                <small>parthivskitchen7@gmail.com</small>
+              </div>
+            </a>
+          </div>
+          <div className="col-12 col-md-6 col-lg-3 mb-3">
+            <a href="tel:+919876543210" className="text-decoration-none text-dark">
+              <div className="d-flex flex-column align-items-center">
+                <i className="bi bi-telephone-fill fs-3 mb-2"></i>
+                <div>Phone</div>
+                <small>+1 9408435294</small>
+              </div>
+            </a>
+          </div>
+          <div className="col-12 col-md-6 col-lg-3 mb-3">
+            <a href="https://wa.me/19408435294" target="_blank" rel="noopener noreferrer" className="text-decoration-none text-dark">
+              <div className="d-flex flex-column align-items-center">
+                <i className="bi bi-whatsapp fs-3 mb-2" style={{ color: "#25D366" }}></i>
+                <div>WhatsApp</div>
+                <small>Chat Now</small>
+              </div>
+            </a>
+          </div>
+          <div className="col-12 col-md-6 col-lg-3 mb-3">
+            <a href="https://instagram.com/parthivskitchen" target="_blank" rel="noopener noreferrer" className="text-decoration-none text-dark">
+              <div className="d-flex flex-column align-items-center">
+                <i className="bi bi-instagram fs-3 mb-2" style={{ color: "#C13584" }}></i>
+                <div>Instagram</div>
+                <small>@parthivskitchen</small>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      {showScroll && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="btn btn-dark position-fixed"
+          style={{ bottom: '80px', right: '20px', zIndex: 1000, borderRadius: '50%', width: '40px', height: '40px' }}
+        >
+          ↑
+        </button>
+      )}
+      {/* Floating Start Order Button (Mobile Only) */}
+      <button
+        className="btn btn-warning d-lg-none position-fixed"
+        style={{
+          bottom: '170px',
+          left: '10px',
+          zIndex: 1000,
+          borderRadius: '50px',
+          padding: '10px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          opacity: 0.92,
+        }}
+        onClick={() => navigate('/menu')}
+      >
+        🍽️ Start Order
+      </button>
+      {/* Floating Start Order Button (Large Screens) */}
+      <button
+        className="btn btn-warning d-none d-lg-inline-block position-fixed"
+        style={{
+          bottom: '140px',
+          left: '20px',
+          zIndex: 1000,
+          borderRadius: '50px',
+          padding: '10px 20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          opacity: 0.92,
+        }}
+        onClick={() => navigate('/menu')}
+      >
+        🍽️ Start Order
+      </button>
+    {/* Footer */}
+    <footer className="text-center text-muted py-4 bg-light mt-5" style={{ fontSize: '0.9rem' }}>
+      © 2025 Parthiv's Kitchen | All rights reserved | Designed by Parthiv Kumar
+    </footer>
+    <ToastContainer />
     </div>
   );
 }

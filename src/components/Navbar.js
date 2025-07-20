@@ -9,16 +9,17 @@ function Navbar() {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 d-none d-lg-flex">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 d-none d-lg-flex fixed-top">
         <Link className="navbar-brand" to="/">Parthiv's Kitchen</Link>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/menu">Menu</Link>
+              <Link className="nav-link" to="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/order-history">Order History</Link>
+              <Link className="nav-link" to="/menu">Menu</Link>
             </li>
+           
             <li className="nav-item">
               <Link className="nav-link" to="/cart">
                 Cart{' '}
@@ -29,6 +30,9 @@ function Navbar() {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/checkout">Checkout</Link>
+            </li>
+             <li className="nav-item">
+              <Link className="nav-link" to="/order-history">Order History</Link>
             </li>
           </ul>
         </div>
@@ -71,6 +75,11 @@ function Navbar() {
           @media (max-width: 991.98px) {
             body {
               padding-bottom: 60px; /* approximate height of mobile navbar */
+            }
+          }
+          @media (min-width: 992px) {
+            body {
+              padding-top: 56px; /* height of fixed-top navbar */
             }
           }
         `}

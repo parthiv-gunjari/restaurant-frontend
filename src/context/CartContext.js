@@ -30,24 +30,40 @@ export function CartProvider({ children }) {
     );
   };
 
-  const incrementItem = (id) => {
-    setCartItems(prev =>
-      prev.map(i => i._id === id ? { ...i, quantity: i.quantity + 1 } : i)
-    );
+  const incrementItem = (item) => {
+    setCartItems(prev => {
+      const existing = prev.find(i => i._id === item._id);
+      if (existing) {
+        return prev.map(i =>
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
   };
 
-  const decrementItem = (id) => {
-    setCartItems(prev =>
-      prev.map(i =>
-        i._id === id
-          ? { ...i, quantity: i.quantity > 1 ? i.quantity - 1 : 1 }
-          : i
-      )
-    );
+  const decrementItem = (item) => {
+    setCartItems(prev => {
+      const existing = prev.find(i => i._id === item._id);
+      if (!existing) return prev;
+
+      if (existing.quantity === 1) {
+        return prev.filter(i => i._id !== item._id);
+      }
+
+      return prev.map(i =>
+        i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
+      );
+    });
   };
 
   const clearCart = () => {
     setCartItems([]);
+  };
+
+  const getQuantity = (id) => {
+    const item = cartItems.find(i => i._id === id);
+    return item ? item.quantity : 0;
   };
 
   const placeOrder = async () => {
@@ -77,7 +93,8 @@ export function CartProvider({ children }) {
         incrementItem,
         decrementItem,
         placeOrder,
-        clearCart
+        clearCart,
+        getQuantity
       }}
     >
       {children}
