@@ -1,6 +1,6 @@
 {
-  "homepage": "https://parthiv-gunjari.github.io/restaurant-frontend",
-  "name": "client",
+  "homepage": ".",
+    "name": "client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
