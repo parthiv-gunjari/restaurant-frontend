@@ -1,19 +1,26 @@
 {
   "files": {
-    "main.css": "/restaurant-frontend/static/css/main.5311e907.css",
-    "main.js": "/restaurant-frontend/static/js/main.a7b88f2d.js",
+    "main.css": "/restaurant-frontend/static/css/main.1392a154.css",
+    "main.js": "/restaurant-frontend/static/js/main.f7dd6a51.js",
+    "static/media/chickencurry.jpg": "/restaurant-frontend/static/media/chickencurry.8f0c71e4552cc692a286.jpg",
+    "static/media/pannerbuttermasala.jpg": "/restaurant-frontend/static/media/pannerbuttermasala.356bca0b80f878edf460.jpg",
+    "static/media/chillifish.jpg": "/restaurant-frontend/static/media/chillifish.adb26db4cb8ff23c9568.jpg",
+    "static/media/egg.jpg": "/restaurant-frontend/static/media/egg.55076c382933ac464617.jpg",
+    "static/media/eggfry.jpg": "/restaurant-frontend/static/media/eggfry.89b7c59f3efc1fcb3964.jpg",
+    "static/media/dosavada.jpg": "/restaurant-frontend/static/media/dosavada.c34bdbeb888afd881ba0.jpg",
+    "static/media/curdrice.jpg": "/restaurant-frontend/static/media/curdrice.aeda9b18ca20485c578f.jpg",
+    "static/media/muttondumbiryani.jpg": "/restaurant-frontend/static/media/muttondumbiryani.53ea52ed67d1bc34544e.jpg",
+    "static/media/jeerarice.jpg": "/restaurant-frontend/static/media/jeerarice.aed33c24f9e6c832574a.jpg",
+    "static/media/plaindosa.jpg": "/restaurant-frontend/static/media/plaindosa.219135e026629049efe9.jpg",
     "static/media/sambar-vada.jpg": "/restaurant-frontend/static/media/sambar-vada.01bad0cf35accad36262.jpg",
     "static/media/65-biryani.jpg": "/restaurant-frontend/static/media/65-biryani.a2aa5adc1eebd87ac1c9.jpg",
-    "static/media/poster-1.jpg": "/restaurant-frontend/static/media/poster-1.55e4a40d69fa35999f07.jpg",
-    "static/media/poster-2.jpeg": "/restaurant-frontend/static/media/poster-2.2046dcfadd8dc71969e6.jpeg",
-    "static/media/poster-3.jpg": "/restaurant-frontend/static/media/poster-3.f53a6984c6ab7c3b986a.jpg",
     "static/media/Royyala-pulusu.jpg": "/restaurant-frontend/static/media/Royyala-pulusu.88755d9fd132896a33de.jpg",
     "index.html": "/restaurant-frontend/index.html",
-    "main.5311e907.css.map": "/restaurant-frontend/static/css/main.5311e907.css.map",
-    "main.a7b88f2d.js.map": "/restaurant-frontend/static/js/main.a7b88f2d.js.map"
+    "main.1392a154.css.map": "/restaurant-frontend/static/css/main.1392a154.css.map",
+    "main.f7dd6a51.js.map": "/restaurant-frontend/static/js/main.f7dd6a51.js.map"
   },
   "entrypoints": [
-    "static/css/main.5311e907.css",
-    "static/js/main.a7b88f2d.js"
+    "static/css/main.1392a154.css",
+    "static/js/main.f7dd6a51.js"
   ]
 }
