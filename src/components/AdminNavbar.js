@@ -7,7 +7,7 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken'); // Clear token
-    navigate('/restaurant-frontend/admin/login'); // Redirect to login
+    navigate('/admin/login'); // Redirect to login
   };
 
   return (
