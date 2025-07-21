@@ -13,10 +13,18 @@ import AdminCompletedOrdersPage from './pages/admin/AdminCompletedOrdersPage';
 import AdminMenuPage from './pages/admin/AdminMenuPage';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import { Analytics } from "@vercel/analytics/react";
 
 const RoutesWrapper = () => {
   const location = useLocation();
   const isAdmin = location.pathname.includes('/admin');
+
+  React.useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://vercel.com/analytics/script.js';
+    script.defer = true;
+    document.body.appendChild(script);
+  }, []);
 
   return (
     <>
@@ -36,6 +44,7 @@ const RoutesWrapper = () => {
         <Route path="/admin/completed" element={<ProtectedRoute><AdminCompletedOrdersPage /></ProtectedRoute>} />
         <Route path="/admin/menu" element={<ProtectedRoute><AdminMenuPage /></ProtectedRoute>} />
       </Routes>
+      <Analytics />
     </>
   );
 };

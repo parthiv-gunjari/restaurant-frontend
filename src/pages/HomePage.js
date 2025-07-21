@@ -37,15 +37,20 @@ function HomePage() {
   }, []);
 
   useEffect(() => {
-    toast.info("Waking up our kitchen... please wait a moment while we load our items 🍽️", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    const firstVisit = sessionStorage.getItem("hasVisited");
+    if (!firstVisit) {
+      toast.info("Waking up our kitchen... please wait a moment while we load our items 🍽️", {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      sessionStorage.setItem("hasVisited", "true");
+    }
+
     axios.get(`${BASE_URL}/api/menu`)
       .then(res => {
         const data = res.data;
