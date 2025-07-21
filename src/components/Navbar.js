@@ -10,7 +10,10 @@ function Navbar() {
     <>
       {/* Desktop Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 d-none d-lg-flex fixed-top">
-        <Link className="navbar-brand" to="/">Parthiv's Kitchen</Link>
+        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
+          <img src="/navicon.png" alt="Logo" style={{ height: '30px', width: '30px' }} />
+          Parthiv's Kitchen
+        </Link>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
