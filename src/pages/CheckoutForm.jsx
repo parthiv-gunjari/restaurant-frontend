@@ -110,7 +110,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
           </div>
         </div>
         <div className="col-md-6 mb-3">
-          <label className="form-label">CVC</label>
+          <label className="form-label">CVV</label>
           <div className="form-control p-2">
             <CardCvcElement options={{ style: { base: { fontSize: '16px' } } }} />
           </div>
