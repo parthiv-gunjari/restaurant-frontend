@@ -1,0 +1,61 @@
+.menu-card {
+  cursor: pointer;
+  padding: 8px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 0.95rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.menu-card span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.menu-items {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+
+  .menu-card {
+    font-size: 0.875rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .menu-items {
+    max-height: 50vh;
+  }
+
+  .category-list {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .table-grid {
+    display: grid;
+    grid-template-columns: 1fr repeat(4, minmax(160px, 1fr)) 1fr;
+    gap: 12px;
+  }
+
+  .table-row {
+    display: contents;
+  }
+
+  .table-card {
+    grid-column: auto;
+  }
+}

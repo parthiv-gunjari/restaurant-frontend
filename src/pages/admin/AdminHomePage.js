@@ -34,7 +34,7 @@ function AdminHomePage() {
 
       const [analyticsRes, chartRes] = await Promise.all([
         axios.get(`${BASE_URL}/api/orders/analytics`, {
-          params: { from, to },
+          params: { from, to, includeDineIn: true },
           headers: { Authorization: `Bearer ${token}` }
         }),
         axios.get(`${BASE_URL}/api/orders/revenue-chart`, {
@@ -119,7 +119,7 @@ function AdminHomePage() {
           <StatCard Icon={FaClipboardList} label="Orders" value={stats.totalOrdersToday} bg="bg-success" />
           <StatCard Icon={FaClock} label="Pending" value={stats.pendingCount} bg="bg-warning" />
           <StatCard Icon={FaCheckCircle} label="Completed" value={stats.completedCount} bg="bg-primary" />
-          <StatCard Icon={FaDollarSign} label="Revenue" value={`$${stats.totalRevenue.toFixed(2)}`} bg="bg-dark" />
+          <StatCard Icon={FaDollarSign} label="Revenue" value={`$${Number(stats.totalRevenue || 0).toFixed(2)}`} bg="bg-dark" />
         </div>
 
         <div className="mt-4">

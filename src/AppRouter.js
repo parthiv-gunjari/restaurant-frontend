@@ -11,6 +11,9 @@ import AdminHomePage from './pages/admin/AdminHomePage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminCompletedOrdersPage from './pages/admin/AdminCompletedOrdersPage';
 import AdminMenuPage from './pages/admin/AdminMenuPage';
+import DineInOrderTables from './pages/admin/DineInOrderTables';
+import DineInOrderPage from './pages/admin/DineInOrderPage';
+import AdminOrderModificationsPage from './pages/admin/AdminOrderModificationsPage';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Analytics } from "@vercel/analytics/react";
@@ -43,6 +46,9 @@ const RoutesWrapper = () => {
         <Route path="/admin/orders" element={<ProtectedRoute><AdminOrdersPage /></ProtectedRoute>} />
         <Route path="/admin/completed" element={<ProtectedRoute><AdminCompletedOrdersPage /></ProtectedRoute>} />
         <Route path="/admin/menu" element={<ProtectedRoute><AdminMenuPage /></ProtectedRoute>} />
+        <Route path="/admin/dinein-tables" element={<ProtectedRoute><DineInOrderTables /></ProtectedRoute>} />
+        <Route path="/admin/dinein-order/:id" element={<ProtectedRoute><DineInOrderPage /></ProtectedRoute>} />
+        <Route path="/admin/modifications" element={<ProtectedRoute><AdminOrderModificationsPage /></ProtectedRoute>} />
       </Routes>
       <Analytics />
     </>

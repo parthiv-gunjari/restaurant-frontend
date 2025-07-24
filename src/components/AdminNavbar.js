@@ -23,6 +23,8 @@ const AdminNavbar = () => {
           <li className="nav-item"><Link className="nav-link" to="/admin/orders">Orders</Link></li>
           <li className="nav-item"><Link className="nav-link" to="/admin/completed">Completed</Link></li>
           <li className="nav-item"><Link className="nav-link" to="/admin/menu">Update Menu</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/dinein-tables">Dine-In Tables</Link></li>
+          <li className="nav-item"><Link className="nav-link" to="/admin/modifications">Modifications</Link></li>
         </ul>
         <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
       </div>

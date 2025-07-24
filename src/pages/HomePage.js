@@ -21,11 +21,15 @@ import ankpurChickenImg from '../assets/images/chickencurry.jpg';
 import chilliFishImg from '../assets/images/chillifish.jpg';
 import eggFryImg from '../assets/images/eggfry.jpg';
 import { BASE_URL } from '../utils/api';
+import { isStoreOpen } from '../utils/storeStatus';
 
 function HomePage() {
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [showScroll, setShowScroll] = useState(false);
+  const [ordersPaused, setOrdersPaused] = useState(false);
+
+  const storeOpen = isStoreOpen();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,6 +54,9 @@ function HomePage() {
       });
       sessionStorage.setItem("hasVisited", "true");
     }
+    // Check ordersPaused status from localStorage
+    const paused = localStorage.getItem('ordersPaused') === 'true';
+    setOrdersPaused(paused);
 
     axios.get(`${BASE_URL}/api/menu`)
       .then(res => {
@@ -60,6 +67,20 @@ function HomePage() {
         setMenuItems(topOrdered);
       })
       .catch(err => console.error("Error fetching popular picks:", err));
+  }, []);
+
+  // Listen for changes to ordersPaused in localStorage (cross-tab/programmatic)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'ordersPaused') {
+        setOrdersPaused(e.newValue === 'true');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return (
@@ -90,6 +111,29 @@ function HomePage() {
           </span>
         </h1>
         <p className="text-muted">Authentic Telangana & Andhra Flavors</p>
+        {!storeOpen && (
+          <div className="alert alert-danger text-center my-3" style={{ fontWeight: 'bold', fontSize: '1rem' }}>
+            ⏳ We're currently <strong>closed</strong>. Please check back during our store hours.
+          </div>
+        )}
+        {ordersPaused && (
+  <div className="d-flex justify-content-center my-3">
+    <div
+      className="alert alert-warning d-flex align-items-center shadow-sm border-start border-5 border-warning-subtle p-3"
+      style={{
+        backgroundColor: '#fff8e1',
+        maxWidth: '700px',
+        width: '100%',
+      }}
+    >
+      <i className="bi bi-exclamation-triangle-fill text-warning me-3 fs-4"></i>
+      <div>
+        <h6 className="mb-1 fw-bold text-dark">Orders Paused</h6>
+        <p className="mb-0 text-muted">We're temporarily not accepting orders at the moment. Please check back soon.</p>
+      </div>
+    </div>
+  </div>
+)}
       </div>
       {/* Carousel Section */}
      <div id="carouselExampleIndicators" className="carousel slide full-width-carousel" data-bs-ride="carousel" data-bs-interval="2000">

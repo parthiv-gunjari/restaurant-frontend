@@ -4,7 +4,7 @@ import { BASE_URL } from '../../utils/api';
 import './AdminLogin.css';
 import { useNavigate } from 'react-router-dom';
 
-const AdminLogin = () => {
+const UserLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,8 +20,15 @@ const AdminLogin = () => {
         password
       });
 
-      localStorage.setItem('adminToken', res.data.token);
-      navigate('/admin/home');
+      const { token, role } = res.data;
+      localStorage.setItem('adminToken', token);
+      localStorage.setItem('role', role);
+
+      if (role === 'admin' || role === 'manager') {
+        navigate('/admin/home');
+      } else {
+        setError('Access denied: Not authorized for this portal');
+      }
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.error || 'Login failed');
@@ -30,7 +37,7 @@ const AdminLogin = () => {
 
   return (
     <div className="admin-login-container">
-      <h2>Admin Login</h2>
+      <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
           type="text"
@@ -55,4 +62,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default UserLogin;

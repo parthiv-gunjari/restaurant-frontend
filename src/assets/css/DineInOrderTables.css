@@ -1,0 +1,38 @@
+/* DineInOrderTables.css */
+
+.table-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.table-card {
+  border: 3px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fff;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.table-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.table-card h5 {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.table-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.table-card button {
+  width: 100%;
+  font-size: 14px;
+}

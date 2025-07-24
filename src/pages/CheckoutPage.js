@@ -55,6 +55,23 @@ function CheckoutPage() {
     }
   }, [location.state, cart]);
 
+  // Listen to 'storage' events to update storeClosed if ordersPaused changes
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === 'ordersVersion') {
+        const paused = localStorage.getItem('ordersPaused') === 'true';
+        if (paused) {
+          setStoreClosed(true);
+        } else {
+          setStoreClosed(false);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

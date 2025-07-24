@@ -139,10 +139,10 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
           <li>💳 <code>4242 4242 4242 4242</code> — Visa (always succeeds)</li>
           <li>💳 <code>4000 0566 5566 5556</code> — Visa (debit)</li>
           <li>💳 <code>5555 5555 5555 4444</code> — Mastercard</li>
-          <li>💳 <code>3782 822463 10005</code> — American Express (4-digit CVC)</li>
+          <li>💳 <code>3782 822463 10005</code> — American Express (4-digit CVV)</li>
           <li>💳 <code>6011 1111 1111 1117</code> — Discover</li>
         </ul>
-        Use any future expiry date and any 3 or 4-digit CVC as required and any 5 digit Zipcode.
+        Use any future expiry date and any 3 or 4-digit CVV as required and any 5 digit Zipcode.
       </div>
 
       <div className="d-flex justify-content-center">

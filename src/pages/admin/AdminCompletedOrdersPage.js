@@ -132,12 +132,19 @@ function AdminCompletedOrdersPage() {
                     <p><strong>Transaction ID:</strong> {selectedOrder.paymentIntentId}</p>
                   )}
                   <ul className="list-group mt-3">
-                    {selectedOrder.items.map((item, idx) => (
-                      <li key={idx} className="list-group-item d-flex justify-content-between">
-                        <span>{item.name} × {item.quantity}</span>
-                        <span className="fw-bold">${(item.price * item.quantity).toFixed(2)}</span>
-                      </li>
-                    ))}
+                    {selectedOrder.items.map((item, idx) => {
+                      const name = item.name || (item.itemId?.name) || 'Unnamed item';
+                      const quantity = parseInt(item.quantity) || 1;
+                      const price = parseFloat(item.price || item.itemId?.price || 0);
+                      const total = (price * quantity).toFixed(2);
+
+                      return (
+                        <li key={idx} className="list-group-item d-flex justify-content-between">
+                          <span>{name} × {quantity}</span>
+                          <span className="fw-bold">${total}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
                 <div className="modal-footer">
