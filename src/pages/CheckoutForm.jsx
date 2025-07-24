@@ -15,6 +15,12 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
   const elements = useElements();
   const { cart: contextCartItems } = useCart(); // Get fallback cart from context
   const cartItems = (propCartItems && propCartItems.length > 0) ? propCartItems : contextCartItems;
+  const formattedCartItems = cartItems.map(item => ({
+    _id: item._id,
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity
+  }));
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -42,7 +48,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
 
     try {
       const paymentIntentRes = await axios.post(`${BASE_URL}/api/stripe/create-payment-intent`, {
-        items: cartItems,
+        items: formattedCartItems,
         customer: {
           name: form.name,
           email: form.email,
@@ -74,7 +80,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
 
         await axios.post(`${BASE_URL}/api/stripe/save-order`, {
           form,
-          cartItems,
+          cartItems: formattedCartItems,
           paymentIntentId: result.paymentIntent.id,
           paymentStatus: result.paymentIntent.status,
           cardBrand: cardDetails?.cardBrand || 'Unknown',
