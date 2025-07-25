@@ -16,9 +16,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
   const { cart: contextCartItems } = useCart(); // Get fallback cart from context
   const cartItems = (propCartItems && propCartItems.length > 0) ? propCartItems : contextCartItems;
   const formattedCartItems = cartItems.map(item => ({
-    _id: item._id,
-    name: item.name,
-    price: item.price,
+    itemId: item._id || item.itemId,
     quantity: item.quantity
   }));
   const [loading, setLoading] = useState(false);
@@ -51,8 +49,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
         items: formattedCartItems,
         customer: {
           name: form.name,
-          email: form.email,
-          notes: form.notes
+          email: form.email
         }
       });
 
@@ -84,8 +81,7 @@ const CheckoutForm = ({ form, setForm, cartItems: propCartItems, clearCart, stor
           paymentIntentId: result.paymentIntent.id,
           paymentStatus: result.paymentIntent.status,
           cardBrand: cardDetails?.cardBrand || 'Unknown',
-          last4: cardDetails?.last4 || 'XXXX',
-          notes: form.notes
+          last4: cardDetails?.last4 || 'XXXX'
         });
 
         setPaymentSuccess(true);
