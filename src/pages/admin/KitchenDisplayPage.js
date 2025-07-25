@@ -47,7 +47,7 @@ const KitchenDisplayPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('adminToken');
       const response = await axios.get(`${BASE_URL}/api/orders`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -84,7 +84,7 @@ const KitchenDisplayPage = () => {
 
   const markItemReady = async (orderId, itemId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('adminToken');
       await axios.patch(
         `${BASE_URL}/api/orders/${orderId}/item/${itemId}/status`,
         { status: 'ready' },
@@ -130,7 +130,7 @@ const KitchenDisplayPage = () => {
 
   const startCooking = async (orderId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('adminToken');
       await axios.patch(
         `${BASE_URL}/api/orders/${orderId}/start-cooking`,
         {},
@@ -298,12 +298,12 @@ const KitchenDisplayPage = () => {
                     {sortedItems.map((item, index) => (
                       <li
                         key={item.itemId + '-' + index}
-                        className={`item
-                          ${item.status === 'removed' ? 'item-removed' : ''}
-                          ${item.status === 'new' ? 'item-new' : ''}
-                          ${item.status === 'updated' ? 'item-changed' : ''}
-                          ${item.isReady ? 'item-ready' : ''}
-                        `}
+                        className={`item ${
+                          item.status === 'removed' ? 'item-removed' :
+                          item.status === 'new' ? 'item-new' :
+                          item.status === 'updated' ? 'item-changed' :
+                          item.isReady ? 'item-ready' : ''
+                        }`}
                         onClick={() => {
                           if (!item.isReady && order.startedCookingAt && item.status !== 'removed') {
                             markItemReady(order._id, item.itemId);
@@ -315,8 +315,8 @@ const KitchenDisplayPage = () => {
                           <strong
                             className={`item-name ${
                               item.status === 'removed' ? 'text-red-700 line-through' :
-                              item.status === 'updated' ? 'text-orange-500' :
                               item.status === 'new' ? 'text-blue-700' :
+                              item.status === 'updated' ? 'text-orange-500' :
                               item.isReady ? 'text-green-700 font-semibold' :
                               'text-gray-800'
                             }`}
