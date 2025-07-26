@@ -26,8 +26,10 @@ const UserLogin = () => {
 
       if (role === 'admin' || role === 'manager') {
         navigate('/admin/home');
+      } else if (role === 'waiter') {
+        navigate('/admin/instore');
       } else {
-        setError('Access denied: Not authorized for this portal');
+        setError('Access denied: Invalid role');
       }
     } catch (err) {
       console.error('Login error:', err);

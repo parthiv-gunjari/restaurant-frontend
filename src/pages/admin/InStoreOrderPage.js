@@ -32,15 +32,16 @@ const [paymentMode, setPaymentMode] = useState('Cash');
       console.log('Menu response:', response.data);
       const items = response.data || [];
       setMenuItems(items);
-      const cats = [...new Set(items.map(i => i.category))];
-      setCategories(cats);
-      setSelectedCategory(cats[0] || '');
+      setCategories(['All', ...new Set(items.map(i => i.category))]);
+      setSelectedCategory('All');
     } catch (error) {
       console.error('Error fetching menu:', error);
     }
   };
 
-  const filteredItems = menuItems.filter(i => i.category === selectedCategory);
+  const filteredItems = selectedCategory === 'All'
+    ? menuItems
+    : menuItems.filter(i => i.category === selectedCategory);
 
   // Loading fallback
   const isLoading = menuItems.length === 0 && categories.length === 0;
@@ -132,12 +133,12 @@ const formattedPaymentMode = paymentMode.toLowerCase();
       <div className="instore-layout">
         <div className="instore-left">
           <div className="order-info">
-            <h2>Parthiv’s Kitchen</h2>
+            
             <div className="form-row">
               <div className="form-group">
                 <label>Order Type:</label>
                 <select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
-                  <option value="walkin">Walk-In</option>
+                    <option value="walkin">Walk-In</option>
                   <option value="togo">To-Go</option>
                   <option value="callin">Call-In</option>
                 </select>
@@ -164,7 +165,11 @@ const formattedPaymentMode = paymentMode.toLowerCase();
               <>
                 <div className="category-list">
                   {categories.map(cat => (
-                    <button key={cat} onClick={() => setSelectedCategory(cat)} className={cat === selectedCategory ? 'active' : ''}>
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={cat === selectedCategory ? 'active' : ''}
+                    >
                       {cat}
                     </button>
                   ))}

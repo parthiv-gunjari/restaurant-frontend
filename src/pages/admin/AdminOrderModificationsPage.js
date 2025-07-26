@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../utils/api';
 import AdminNavbar from '../../components/AdminNavbar';
+import '../../assets/css/AdminOrderModificationsPage.css';
 
 const AdminOrderModificationsPage = () => {
   const [modifications, setModifications] = useState([]);
@@ -32,16 +33,6 @@ const AdminOrderModificationsPage = () => {
     fetchModifications();
   }, []);
 
-  const getBadge = (action) => {
-    const map = {
-      add: 'success',
-      update: 'warning',
-      remove: 'danger',
-      cancel: 'secondary'
-    };
-    return map[action] || 'light';
-  };
-
   return (
     <>
       <AdminNavbar />
@@ -53,89 +44,76 @@ const AdminOrderModificationsPage = () => {
           <p>No modifications found.</p>
         ) : (
           <div className="table-responsive">
-            <table className="table table-bordered table-striped mt-3">
-              <thead className="table-light">
-                <tr>
-                  <th>Order</th>
-                  <th>Modified By</th>
-                  <th>Action</th>
-                  <th>Item</th>
-                  <th>Quantity</th>
-                  <th>Reason</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
+            <table className="table table-bordered mt-3">
               <tbody>
-                {modifications.map((mod, index) => {
-                  const beforeItems = mod.before || [];
-                  const afterItems = mod.after || [];
+  {modifications.map((mod, index) => {
+    const beforeItems = Array.isArray(mod.before) ? mod.before : [];
+    const afterItems = Array.isArray(mod.after) ? mod.after : [];
 
-                  return (
-                    <React.Fragment key={index}>
-                      <tr className="table-primary">
-                        <td colSpan="7">
-                          <strong>Order:</strong> {mod.orderCode || (mod.orderId?.slice?.(0, 6) + '...')} &nbsp;
-                          <strong>Modified By:</strong> {mod.performedBy?.name || mod.performedBy?.email || 'Unknown'} &nbsp;
-                          <strong>Reason:</strong> {mod.reason || '-'} &nbsp;
-                          <strong>Date:</strong> {new Date(mod.createdAt).toLocaleString()}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th colSpan="3" className="text-center text-success">Before</th>
-                        <th></th>
-                        <th colSpan="3" className="text-center text-danger">After</th>
-                      </tr>
-                      {(() => {
-                        const beforeMap = {};
-                        const afterMap = {};
-                        beforeItems.forEach(item => {
-                          beforeMap[item.itemId || item._id] = item;
-                        });
-                        afterItems.forEach(item => {
-                          afterMap[item.itemId || item._id] = item;
-                        });
+    const beforeMap = {};
+    const afterMap = {};
 
-                        const allIds = new Set([
-                          ...Object.keys(beforeMap),
-                          ...Object.keys(afterMap)
-                        ]);
+    beforeItems.forEach(item => {
+      beforeMap[item.itemId || item._id] = item;
+    });
 
-                        return Array.from(allIds).map(id => {
-                          const before = beforeMap[id];
-                          const after = afterMap[id];
-                          let rowStyle = {};
+    afterItems.forEach(item => {
+      afterMap[item.itemId || item._id] = item;
+    });
 
-                          let beforeStyle = {};
-                          let afterStyle = {};
+    const allIds = new Set([
+      ...Object.keys(beforeMap),
+      ...Object.keys(afterMap)
+    ]);
 
-                          if (before && !after) {
-                            // Removed
-                            beforeStyle = { textDecoration: 'line-through', color: 'red' };
-                          } else if (!before && after) {
-                            // Added
-                            afterStyle = { color: 'green' };
-                          } else if (before.quantity !== after.quantity) {
-                            // Quantity changed
-                            afterStyle = { color: 'orange' };
-                          }
+    return (
+      <React.Fragment key={mod._id || index}>
+        <tr className="table-primary">
+          <td colSpan="8">
+            <strong>Order:</strong> {mod.orderCode || '-'} &nbsp;
+            <strong>Table:</strong> {mod.tableId?.tableNumber || 'N/A'} &nbsp;
+            <strong>Modified By:</strong> {mod.performedByName || 'Unknown'} &nbsp;
+            <strong>Reason:</strong> {mod.reason || '-'} &nbsp;
+            <strong>Date:</strong> {new Date(mod.createdAt).toLocaleString()}
+          </td>
+        </tr>
+        <tr>
+          <th colSpan="4" className="text-center text-success">Before</th>
+          <th></th>
+          <th colSpan="3" className="text-center text-danger">After</th>
+        </tr>
+        {Array.from(allIds).map(id => {
+          const before = beforeMap[id];
+          const after = afterMap[id];
 
-                          return (
-                            <tr key={id}>
-                              <td style={beforeStyle}>{before?.name || '-'}</td>
-                              <td style={beforeStyle}>{before?.quantity ?? '-'}</td>
-                              <td style={beforeStyle}>{before ? `₹${(before.price * before.quantity).toFixed(2)}` : '-'}</td>
-                              <td className="text-center">➡</td>
-                              <td style={afterStyle}>{after?.name || '-'}</td>
-                              <td style={afterStyle}>{after?.quantity ?? '-'}</td>
-                              <td style={afterStyle}>{after ? `₹${(after.price * after.quantity).toFixed(2)}` : '-'}</td>
-                            </tr>
-                          );
-                        });
-                      })()}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
+          let beforeStyle = {};
+          let afterStyle = {};
+
+          if (before && !after) {
+            beforeStyle = { textDecoration: 'line-through', color: 'red' };
+          } else if (!before && after) {
+            afterStyle = { color: 'green' };
+          } else if (before.quantity !== after.quantity) {
+            afterStyle = { color: 'orange' };
+          }
+
+          return (
+            <tr key={id}>
+              <td style={beforeStyle}>{mod.orderCode || '-'}</td>
+              <td style={beforeStyle}>{mod.tableId?.tableNumber || 'N/A'}</td>
+              <td style={beforeStyle}>{mod.performedByName || 'Unknown'}</td>
+              <td style={beforeStyle}>{before?.name || '-'}</td>
+              <td style={beforeStyle}>{before?.quantity ?? '-'}</td>
+              <td className="text-center">➡</td>
+              <td style={afterStyle}>{after?.name || '-'}</td>
+              <td style={afterStyle}>{after?.quantity ?? '-'}</td>
+            </tr>
+          );
+        })}
+      </React.Fragment>
+    );
+  })}
+</tbody>
             </table>
           </div>
         )}

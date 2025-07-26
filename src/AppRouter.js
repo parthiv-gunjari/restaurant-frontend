@@ -44,16 +44,51 @@ const RoutesWrapper = () => {
         <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Admin Protected */}
-        <Route path="/admin/home" element={<ProtectedRoute><AdminHomePage /></ProtectedRoute>} />
-        <Route path="/admin/orders" element={<ProtectedRoute><AdminOrdersPage /></ProtectedRoute>} />
-        <Route path="/admin/completed" element={<ProtectedRoute><AdminCompletedOrdersPage /></ProtectedRoute>} />
-        <Route path="/admin/menu" element={<ProtectedRoute><AdminMenuPage /></ProtectedRoute>} />
-        <Route path="/admin/dinein-tables" element={<ProtectedRoute><DineInOrderTables /></ProtectedRoute>} />
-        <Route path="/admin/dinein-order/:id" element={<ProtectedRoute><DineInOrderPage /></ProtectedRoute>} />
-        <Route path="/admin/modifications" element={<ProtectedRoute><AdminOrderModificationsPage /></ProtectedRoute>} />
-        <Route path="/admin/kitchen" element={<ProtectedRoute><KitchenDisplayPage /></ProtectedRoute>} />
-      
-        <Route path="/admin/instore" element={<ProtectedRoute><InStoreOrderPage /></ProtectedRoute>} />
+        <Route path="/admin/home" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <AdminHomePage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/orders" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <AdminOrdersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/completed" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <AdminCompletedOrdersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/menu" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <AdminMenuPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/dinein-tables" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <DineInOrderTables />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/dinein-order/:id" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <DineInOrderPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/modifications" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <AdminOrderModificationsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/kitchen" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <KitchenDisplayPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/instore" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <InStoreOrderPage />
+          </ProtectedRoute>
+        } />
       </Routes>
       <Analytics />
     </>

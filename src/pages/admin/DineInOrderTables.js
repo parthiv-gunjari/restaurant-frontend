@@ -35,7 +35,12 @@ const DineInOrderTables = () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/tables`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('adminToken') || localStorage.getItem('managerToken')}`,
+          Authorization: `Bearer ${
+            localStorage.getItem('waiterToken') ||
+            localStorage.getItem('adminToken') ||
+            localStorage.getItem('managerToken') ||
+            localStorage.getItem('token')
+          }`,
         },
       });
       setTables(res.data);
@@ -78,13 +83,20 @@ const DineInOrderTables = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('managerToken') || localStorage.getItem('token');
+      // Try to get the most relevant token (waiter > manager > admin > generic)
+      const token =
+        localStorage.getItem('waiterToken') ||
+        localStorage.getItem('managerToken') ||
+        localStorage.getItem('adminToken') ||
+        localStorage.getItem('token');
+      if (!token) {
+        alert('No auth token found. Please login again.');
+        return;
+      }
       const orderPayload = {
         tableId: selectedTable._id,
         items: selectedItems.map(item => ({
           itemId: item._id || item.id,
-          name: item.name,
-          price: item.price,
           quantity: item.quantity
         })),
         notes
@@ -92,7 +104,8 @@ const DineInOrderTables = () => {
 
       await axios.post(`${BASE_URL}/api/orders/dinein`, orderPayload, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
 
@@ -103,8 +116,18 @@ const DineInOrderTables = () => {
       setActiveCategory(null);
       fetchTables();
     } catch (err) {
-      console.error('Failed to place order', err);
-      alert('Error placing order');
+      if (axios.isAxiosError(err)) {
+        console.error('Axios Error placing order:', {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers,
+          config: err.config,
+        });
+      } else {
+        console.error('Unknown error placing order:', err);
+      }
+      alert('Error placing order. Please check console for more details.');
     }
   };
 
@@ -145,7 +168,7 @@ const DineInOrderTables = () => {
                           else if (seconds > 900) color = 'orange';
                           return <p className="small" style={{ color }}>⏱️ {text}</p>;
                         })()}
-                        <p className="small">👤 {table.waiterUsername || 'N/A'}</p>
+                        <p className="small">👤 {table.waiterName || 'N/A'}</p>
                       </>
                     )}
                     <button className="btn btn-sm btn-primary mt-1 w-100">
@@ -206,7 +229,11 @@ const DineInOrderTables = () => {
                         <span className="me-2">{item.name}</span>
                         <button className="btn btn-sm btn-outline-secondary me-1" onClick={() => {
                           setSelectedItems(prev =>
-                            prev.map(i => i._id === item._id && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i)
+                            prev.flatMap(i => {
+                              if (i._id !== item._id) return [i];
+                              if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
+                              return []; // remove item if quantity was 1
+                            })
                           );
                         }}>-</button>
                         <span className="mx-1">{item.quantity}</span>
@@ -228,7 +255,13 @@ const DineInOrderTables = () => {
                     onChange={e => setNotes(e.target.value)}
                   />
                   <div>
-                    <button className="btn btn-primary me-2" onClick={handlePlaceOrder}>Confirm Dine-In Order</button>
+                    <button
+                      className="btn btn-primary me-2"
+                      disabled={selectedItems.length === 0}
+                      onClick={handlePlaceOrder}
+                    >
+                      Confirm Dine-In Order
+                    </button>
                     <button className="btn btn-secondary" onClick={() => setSelectedTable(null)}>Cancel</button>
                   </div>
                 </div>
