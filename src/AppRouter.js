@@ -16,6 +16,9 @@ import DineInOrderPage from './pages/admin/DineInOrderPage';
 import AdminOrderModificationsPage from './pages/admin/AdminOrderModificationsPage';
 import InStoreOrderPage from './pages/admin/InStoreOrderPage';
 import KitchenDisplayPage from './pages/admin/KitchenDisplayPage';
+import MenuPagePOS from './pages/admin/pos/MenuPage';
+import TableServicesPage from './pages/admin/pos/TableServicesPage';
+import POSOrdersPage from './pages/admin/pos/OrdersPage';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Analytics } from "@vercel/analytics/react";
@@ -42,6 +45,23 @@ const RoutesWrapper = () => {
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+
+        {/* POS - Now protected */}
+        <Route path="/admin/pos/menu" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <MenuPagePOS />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/pos/tables" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <TableServicesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/pos/orders" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <POSOrdersPage />
+          </ProtectedRoute>
+        } />
 
         {/* Admin Protected */}
         <Route path="/admin/home" element={

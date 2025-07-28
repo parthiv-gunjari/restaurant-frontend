@@ -1,0 +1,97 @@
+/* OrdersPage.css */
+
+.table th, .table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.table td:first-child,
+.table th:first-child {
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.4em 0.65em;
+  border-radius: 0.5rem;
+  text-transform: capitalize;
+}
+
+.btn i {
+  pointer-events: none;
+}
+
+/* Modal custom styles */
+.modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.modal-body ul.list-group {
+  margin: 0;
+  padding: 0;
+}
+
+.modal-body .list-group-item {
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Scroll container for POS Orders table */
+.orders-table-container {
+  max-height: calc(100vh - 120px); /* Adjust depending on header height */
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  position: relative;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #343a40; /* or use the same color as your .table-dark */
+  color: white;
+  z-index: 10;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+  .table thead {
+    display: none;
+  }
+
+  .table, .table tbody, .table tr, .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 1rem;
+    font-weight: bold;
+    text-align: left;
+  }
+}

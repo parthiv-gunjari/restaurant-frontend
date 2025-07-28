@@ -1,0 +1,96 @@
+.modal-menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.menu-item-card {
+  width: 160px;
+  min-height: 100px;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background-color 0.2s;
+}
+
+.menu-item-card.bg-selected {
+  background-color: #198754 !important;
+  color: white;
+}
+
+.menu-item-name {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.menu-item-price {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.menu-item-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.menu-item-actions button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1rem;
+  background-color: #eee;
+  color: #333;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.menu-item-actions button:hover {
+  background-color: #ddd;
+}
+
+.menu-item-qty {
+  font-weight: bold;
+  min-width: 16px;
+  text-align: center;
+}
+
+.modal-content {
+  margin-top: 40px;
+}
+
+.table-card {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 12px;
+  background-color: #fff;
+}
+
+.table-card.available {
+  border-color: green;
+}
+
+.table-card.occupied {
+  border-color: orange;
+}
+.update-order-btn:hover {
+  background-color: #ff8800 !important;
+  border-color: #ff8800 !important;
+}

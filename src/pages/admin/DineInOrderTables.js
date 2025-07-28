@@ -4,12 +4,12 @@ import '../../assets/css/DineInOrderTables.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../utils/api';
-import AdminNavbar from '../../components/AdminNavbar';
+
 
 const TABLE_ROWS = 5;
 const TABLE_COLS = 4;
 
-const DineInOrderTables = () => {
+const DineInOrderTables = ({ onViewOrder }) => {
   const [tables, setTables] = useState([]);
   const [now, setNow] = useState(Date.now());
   const [menu, setMenu] = useState([]);
@@ -60,13 +60,47 @@ const DineInOrderTables = () => {
     }
   };
 
-  const handleTableClick = (table) => {
+  const handleTableClick = async (table) => {
     if (table.status === 'available') {
       setSelectedTable(table);
       setSelectedItems([]);
       setNotes('');
     } else {
-      navigate('/admin/dinein-order/' + table._id, { state: { table } });
+      if (onViewOrder && table.currentOrderId) {
+        try {
+          const token =
+            localStorage.getItem('waiterToken') ||
+            localStorage.getItem('adminToken') ||
+            localStorage.getItem('managerToken') ||
+            localStorage.getItem('token');
+          const response = await axios.get(`${BASE_URL}/api/orders/${table.currentOrderId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const order = response.data?.order;
+          if (
+            order &&
+            Array.isArray(order.items) &&
+            order.items.every(item => (item.itemId || item._id) && item.quantity)
+          ) {
+            onViewOrder({
+              ...order,
+              items: order.items.map(i => ({
+                ...i,
+                itemId: i.itemId || i._id
+              }))
+            });
+          } else {
+            console.error('Invalid order format from server:', response.data);
+            alert('Invalid order format received. Some items may be missing itemId or quantity.');
+          }
+        } catch (error) {
+          console.error('Failed to fetch order:', error);
+          alert('Failed to load order for table');
+        }
+      } else {
+        navigate('/admin/dinein-order/' + table._id, { state: { table } }); // Default behavior
+      }
     }
   };
 
@@ -142,7 +176,7 @@ const DineInOrderTables = () => {
 
   return (
     <>
-      <AdminNavbar />
+      
       <div className="container mt-4">
         <h2 className="mb-3">Dine-In Tables</h2>
         <div className="table-grid">

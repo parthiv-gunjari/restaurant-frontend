@@ -1,23 +1,26 @@
 .instore-layout {
   display: flex;
-  height: calc(100vh - 60px); /* minus navbar */
-  padding: 20px;
-  gap: 20px;
+  height: calc(100vh - 60px);
+  padding: 10px;
+  gap: 10px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .instore-left {
   flex: 7;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
 .order-info {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .menu-section {
@@ -25,14 +28,34 @@
   flex-grow: 1;
   overflow: hidden;
   border-top: 0.5px solid #eee;
+  height: 100%;
 }
 
-.category-list {
+.category-container {
   flex: 2;
   display: flex;
   flex-direction: column;
   border-right: 1px solid #ccc;
+  background-color: #fff;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 140px);
+  z-index: 2;
+}
+
+.category-list {
+  flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+
+.search-bar {
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
 }
 
 .category-list button {
@@ -41,6 +64,11 @@
   background: none;
   cursor: pointer;
   text-align: left;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .category-list button.active {
@@ -55,11 +83,13 @@
   flex-wrap: wrap;
   gap: 12px;
   overflow-y: auto;
+  align-content: flex-start;
 }
 
 .menu-item {
-  display: inline-block;
-  padding: 10px 16px;
+  width: 180px;
+  height: 60px;
+  padding: 8px;
   text-align: center;
   font-weight: 500;
   font-size: 15px;
@@ -68,7 +98,9 @@
   cursor: pointer;
   transition: 0.2s ease;
   background-color: #fafafa;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .menu-item:hover {
@@ -90,29 +122,60 @@
 .instore-right {
   flex: 3;
   border-left: 1px solid #ccc;
-  padding-left: 20px;
+  padding-left: 10px;
   display: flex;
   flex-direction: column;
+  overflow-y: hidden;
+  height: 100%;
 }
 
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  padding: 5px;
-  background-color: #f9f9f9;
-  border-radius: 6px;
+.instore-right h2 {
+  text-align: center;
+  margin: 16px 0 10px;
 }
 
-.qty-controls {
+.cart-scroll {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.notes-section {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.notes-section .form-group {
+  width: 100%;
+}
+
+.notes-section textarea {
+  width: 100%;
+  height: 50px;
+  min-height: 80px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.payment-row {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-end;
+}
+
+.payment-row .form-group {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 0;
 }
 
 .place-order-btn {
-  margin-top: 20px;
+  width: 100%;
   background-color: green;
   color: white;
   border: none;
@@ -120,62 +183,50 @@
   border-radius: 5px;
   cursor: pointer;
 }
-.form-row {
+
+.cart-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 20px;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 4px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
 }
 
-.form-row .form-group {
-  flex: 1;
-  min-width: 180px;
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .form-group label {
   display: block;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 6px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-.menu-grid {
-  flex: 5;
-  padding-left: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  overflow-y: auto;
-  align-content: flex-start; /* prevents uneven gaps */
-}
 
-.menu-item {
-  width: 200px;
-  height: 70px; /* Fixes height for alignment */
-  padding: 10px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  background-color: #fafafa;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.fixed-bottom-actions {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  padding: 1rem 0;
+  border-top: 1px solid #ccc;
+  z-index: 10;
+  margin-top: auto;
 }
 
 .menu-item-name {
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -183,7 +234,45 @@
 
 .menu-item-price {
   margin-top: 2px;
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   font-weight: 500;
+}
+
+.menu-item.clicked {
+  background-color: #e0ffe0;
+  border-color: #00cc66;
+}
+
+.menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --- .form-row layout and spacing overrides --- */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-end;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 0; /* override existing spacing */
+}
+.payment-options-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.payment-options-row .form-group {
+  flex: 1;
+  min-width: 120px;
 }

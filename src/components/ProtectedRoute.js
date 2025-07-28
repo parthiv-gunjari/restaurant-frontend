@@ -3,11 +3,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  const token =
-    localStorage.getItem('waiterToken') ||
-    localStorage.getItem('managerToken') ||
-    localStorage.getItem('adminToken') ||
-    localStorage.getItem('token');
+  const token = localStorage.getItem('adminToken');
 
   // If token doesn't exist, redirect to login
   if (!token) {

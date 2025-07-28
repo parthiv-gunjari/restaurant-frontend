@@ -20,14 +20,17 @@ const UserLogin = () => {
         password
       });
 
-      const { token, role } = res.data;
+      const { token, role, fullName } = res.data;
       localStorage.setItem('adminToken', token);
       localStorage.setItem('role', role);
+      // Use fullName if available, otherwise fallback to username
+      const displayName = fullName || username;
+      localStorage.setItem('fullName', displayName);
 
-      if (role === 'admin' || role === 'manager') {
+      if (role === 'admin') {
         navigate('/admin/home');
-      } else if (role === 'waiter') {
-        navigate('/admin/instore');
+      } else if (role === 'manager' || role === 'waiter') {
+        navigate('/admin/pos/menu');
       } else {
         setError('Access denied: Invalid role');
       }
@@ -37,8 +40,11 @@ const UserLogin = () => {
     }
   };
 
+  const loggedInName = localStorage.getItem('fullName');
+
   return (
     <div className="admin-login-container">
+      {loggedInName && <p className="logged-in-user">Logged in as: {loggedInName}</p>}
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
