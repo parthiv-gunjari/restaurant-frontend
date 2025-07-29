@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../../assets/css/Pos.css'; // POS layout styles
@@ -6,8 +5,12 @@ import '../../../assets/css/Pos.css'; // POS layout styles
 const SideBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const role = localStorage.getItem('role');
 
   const isActive = (path) => location.pathname.includes(path);
+
+  const isAdmin = role === 'admin';
+  const isManagerOrWaiter = role === 'manager' || role === 'waiter';
 
   return (
     <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -37,18 +40,26 @@ const SideBar = () => {
         <li className={isActive('orders') ? 'active' : ''} onClick={() => navigate('/admin/pos/orders')}>
           Orders
         </li>
-        <li className={isActive('kitchen') ? 'active' : ''} onClick={() => navigate('/admin/pos/kitchen')}>
-          Kitchen Display
-        </li>
-        <li className={isActive('update-menu') ? 'active' : ''} onClick={() => navigate('/admin/pos/update-menu')}>
-          Update Menu
-        </li>
-        <li className={isActive('accounts') ? 'active' : ''} onClick={() => navigate('/admin/pos/accounts')}>
-          Accounts
-        </li>
-        <li className={isActive('audit-logs') ? 'active' : ''} onClick={() => navigate('/admin/pos/audit-logs')}>
-          Audit Logs
-        </li>
+
+        {(isAdmin || isManagerOrWaiter) && (
+          <li className={isActive('update-menu') ? 'active' : ''} onClick={() => navigate('/admin/pos/update-menu')}>
+            Update Menu
+          </li>
+        )}
+
+        {isAdmin && (
+          <>
+            <li className={isActive('kitchen') ? 'active' : ''} onClick={() => navigate('/admin/pos/kitchen')}>
+              Kitchen Display
+            </li>
+            <li className={isActive('accounts') ? 'active' : ''} onClick={() => navigate('/admin/pos/accounts')}>
+              Accounts
+            </li>
+            <li className={isActive('audit-logs') ? 'active' : ''} onClick={() => navigate('/admin/pos/audit-logs')}>
+              Audit Logs
+            </li>
+          </>
+        )}
       </ul>
 
       <div style={{ marginTop: 'auto' }}>
@@ -57,15 +68,9 @@ const SideBar = () => {
           {(() => {
             const fullName =
               localStorage.getItem('fullName') || localStorage.getItem('username') || 'Unknown';
-            const role =
-              localStorage.getItem('role') ||
-              (localStorage.getItem('adminToken') && 'Admin') ||
-              (localStorage.getItem('managerToken') && 'Manager') ||
-              (localStorage.getItem('waiterToken') && 'Waiter') ||
-              'Role Unknown';
             return (
               <>
-                Logged in as: {fullName} ({role})
+                Logged in as: {fullName} ({role || 'Role Unknown'})
               </>
             );
           })()}
@@ -87,5 +92,4 @@ const SideBar = () => {
     </aside>
   );
 };
-
 export default SideBar;

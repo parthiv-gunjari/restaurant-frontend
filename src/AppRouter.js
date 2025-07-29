@@ -83,7 +83,7 @@ const RoutesWrapper = () => {
           </ProtectedRoute>
         } />
       <Route path="/admin/pos/update-menu" element={
-        <ProtectedRoute allowedRoles={['admin', 'manager']}>
+        <ProtectedRoute allowedRoles={['admin', 'manager','waiter']}>
           <POSUpdateMenu />
         </ProtectedRoute>
       } />

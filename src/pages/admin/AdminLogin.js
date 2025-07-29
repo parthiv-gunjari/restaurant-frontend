@@ -27,9 +27,7 @@ const UserLogin = () => {
       const displayName = fullName || username;
       localStorage.setItem('fullName', displayName);
 
-      if (role === 'admin') {
-        navigate('/admin/home');
-      } else if (role === 'manager' || role === 'waiter') {
+      if (role === 'admin' || role === 'manager' || role === 'waiter') {
         navigate('/admin/pos/menu');
       } else {
         setError('Access denied: Invalid role');
