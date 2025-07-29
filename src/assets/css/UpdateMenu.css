@@ -1,0 +1,103 @@
+/* UpdateMenu.css */
+
+/* Container adjustments */
+.update-menu-container {
+
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* Form collapsible section */
+.update-form details {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+.update-form summary {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #0563bb;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+.update-form summary::marker {
+  color: #0563bb;
+}
+
+/* Category section */
+.category-section {
+  margin-bottom: 2rem;
+}
+.category-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+  margin-bottom: 1rem;
+}
+
+/* Menu grid layout */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+/* Grid item for menu card */
+.menu-grid-item {
+  height: 100%;
+}
+
+/* Menu item card */
+.menu-item-card {
+  transition: transform 0.2s ease;
+  border: 1px solid #eee;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem;
+  min-height: 160px;
+  min-width: 260px;
+}
+.menu-item-card:hover {
+  transform: scale(1.02);
+}
+.menu-item-card .card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.menu-item-card img {
+  height: 100px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+/* Veg/Non-Veg badge */
+.veg-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.veg {
+  background-color: green;
+}
+.non-veg {
+  background-color: red;
+}
+
+/* Buttons */
+.menu-item-card .btn {
+  margin-right: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}

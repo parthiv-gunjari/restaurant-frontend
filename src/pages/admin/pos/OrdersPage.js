@@ -4,6 +4,7 @@ import { BASE_URL } from '../../../utils/api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import '../../../assets/css/OrdersPage.css';
+import SideBar from './SideBar';
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -136,84 +137,7 @@ function OrdersPage() {
 
   return (
     <div className="d-flex">
-      <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-        <div
-  style={{
-    padding: '1rem 0.6rem 0.2rem 0.1rem',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: '1.4rem',
-    color: '#0563bb',
-    whiteSpace: 'nowrap'  // ✅ Prevent line break
-  }}
->
-  Parthiv's Kitchen
-</div>
-        <ul>
-          <li
-            className={isActive('reservations') ? 'active' : ''}
-            onClick={() => navigate('/admin/pos/reservations')}
-          >
-            Reservations
-          </li>
-          <li
-            className={isActive('tables') ? 'active' : ''}
-            onClick={() => navigate('/admin/pos/tables')}
-          >
-            Table Services
-          </li>
-          <li
-            className={isActive('menu') ? 'active' : ''}
-            onClick={() => navigate('/admin/pos/menu')}
-          >
-            Menu
-          </li>
-          <li
-            className={isActive('orders') ? 'active' : ''}
-            onClick={() => navigate('/admin/pos/orders')}
-          >
-            Orders
-          </li>
-          <li
-            className={isActive('accounts') ? 'active' : ''}
-            onClick={() => navigate('/admin/pos/accounts')}
-          >
-            Accounts
-          </li>
-        </ul>
-        <div style={{ marginTop: 'auto' }}>
-          <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', color: '#333', fontWeight: 'bold' }}>
-            <i className="fas fa-user" style={{ marginRight: '8px' }}></i>
-            {(() => {
-              const fullName =
-                localStorage.getItem('fullName') || localStorage.getItem('username') || 'Unknown';
-              const role =
-                localStorage.getItem('role') ||
-                (localStorage.getItem('adminToken') && 'Admin') ||
-                (localStorage.getItem('managerToken') && 'Manager') ||
-                (localStorage.getItem('waiterToken') && 'Waiter') ||
-                'Role Unknown';
-              return (
-                <>
-                  Logged in as: {fullName} ({role})
-                </>
-              );
-            })()}
-          </div>
-          <div style={{ padding: '1rem' }}>
-            <button
-              className="btn btn-danger logout-button"
-              onClick={() => {
-                localStorage.clear();
-                navigate('/admin/login');
-              }}
-              style={{ width: '100%' }}
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </aside>
+      <SideBar />
       <div className="container mt-4">
         <h3 className="mb-4"> All Orders</h3>
         <div className="mb-3 d-flex align-items-center gap-3 flex-wrap">

@@ -19,8 +19,13 @@ import KitchenDisplayPage from './pages/admin/KitchenDisplayPage';
 import MenuPagePOS from './pages/admin/pos/MenuPage';
 import TableServicesPage from './pages/admin/pos/TableServicesPage';
 import POSOrdersPage from './pages/admin/pos/OrdersPage';
+import ReservationsPage from './pages/admin/pos/ReservationsPage';
+import POSKitchenDisplay from './pages/admin/pos/KitchenDisplay';
+import POSAuditLogs from './pages/admin/pos/AuditLogs';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import AccountsPage from './pages/admin/pos/AccountsPage';
+import POSUpdateMenu from './pages/admin/pos/UpdateMenu';
 import { Analytics } from "@vercel/analytics/react";
 
 const RoutesWrapper = () => {
@@ -60,6 +65,31 @@ const RoutesWrapper = () => {
         <Route path="/admin/pos/orders" element={
           <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
             <POSOrdersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/pos/reservations" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <ReservationsPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/pos/kitchen" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+            <POSKitchenDisplay />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/pos/audit-logs" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <POSAuditLogs />
+          </ProtectedRoute>
+        } />
+      <Route path="/admin/pos/update-menu" element={
+        <ProtectedRoute allowedRoles={['admin', 'manager']}>
+          <POSUpdateMenu />
+        </ProtectedRoute>
+      } />
+        <Route path="/admin/pos/accounts" element={
+          <ProtectedRoute allowedRoles={['admin', 'manager']}>
+            <AccountsPage />
           </ProtectedRoute>
         } />
 
