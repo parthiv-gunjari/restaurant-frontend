@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/api';
@@ -17,6 +17,9 @@ const POSKitchenDisplay = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = (path) => location.pathname.includes(path);
+
+  // Track printed KOTs (in-memory for session)
+  const printedKOTRef = useRef(new Set());
 
   useEffect(() => {
     fetchOrders();
@@ -65,6 +68,7 @@ const POSKitchenDisplay = () => {
           return { ...order, items: updatedItems };
         }).sort((a, b) => new Date(b.timestamp || b.startedCookingAt) - new Date(a.timestamp || a.startedCookingAt));
       });
+      // (Removed auto KOT printing for new/unprinted orders)
     } catch (err) {
       console.error('Fetch Orders Error:', err);
     }
@@ -110,6 +114,53 @@ const POSKitchenDisplay = () => {
       fetchOrders();
     } catch (err) {
       console.error('Start cooking error:', err);
+    }
+  };
+
+  // Print KOT layout for a given order
+  const printKOT = (order) => {
+    const timestamp = new Date(order.timestamp).toLocaleString();
+    const kotHtml = `
+      <html>
+      <head>
+        <title>KOT - ${order.orderCode}</title>
+        <style>
+          body { font-family: monospace; font-size: 14px; padding: 16px; color: #000; }
+          .kot-box { border: 2px dashed #000; padding: 16px; width: 280px; margin: 0 auto; }
+          .center { text-align: center; font-weight: bold; }
+          .info { margin: 8px 0; }
+          table { width: 100%; margin-top: 10px; }
+          th, td { text-align: left; padding: 4px; }
+          th:nth-child(1), td:nth-child(1) { width: 30px; text-align: right; }
+          .footer { text-align: center; margin-top: 12px; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="kot-box">
+          <div class="center">👨‍🍳 Kitchen Order Ticket</div>
+          <div class="info">Order ID: ${order.orderCode || order._id}</div>
+          <div class="info">Type: ${order.orderType || '—'}</div>
+          ${order.tableId ? `<div class="info">Table: ${order.tableId.name}</div>` : ''}
+          <div class="info">Time: ${timestamp}</div>
+          ${order.notes ? `<div class="info">Notes: ${order.notes}</div>` : ''}
+          <table>
+            <thead><tr><th>Qty</th><th>Item</th></tr></thead>
+            <tbody>
+              ${order.items.map(item => `
+                <tr><td>${item.quantity}</td><td>${item.name}</td></tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="footer">Printed by POS</div>
+        </div>
+        <script>window.print();</script>
+      </body>
+      </html>
+    `;
+    const win = window.open('', '_blank', 'width=400,height=600');
+    if (win) {
+      win.document.write(kotHtml);
+      win.document.close();
     }
   };
 
@@ -267,6 +318,9 @@ const POSKitchenDisplay = () => {
                     ))}
                   </ul>
 
+                  <div style={{ textAlign: 'center', marginTop: '6px' }}>
+                    <button className="print-btn" onClick={() => printKOT(order)}>🖨️ Print KOT</button>
+                  </div>
                   {!order.startedCookingAt ? (
                     <div style={{ textAlign: 'center', marginTop: '12px' }}>
                       <button className="start-btn" onClick={() => startCooking(order._id)}>Start Cooking</button>

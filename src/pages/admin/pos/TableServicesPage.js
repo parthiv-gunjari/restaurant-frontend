@@ -22,6 +22,16 @@ const TableServicesPage = () => {
   const [selectedTable, setSelectedTable] = useState(null);
   // Modal state for Add More Items
   const [showAddItemsModal, setShowAddItemsModal] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [itemPendingDelete, setItemPendingDelete] = useState(null);
+  // Track reason for modification
+  const [modificationReason, setModificationReason] = useState('');
+  // PIN modal state
+  const [pin, setPin] = useState('');
+  const [reason, setReason] = useState('');
+  const [pinError, setPinError] = useState('');
+  // Track if there is a modification to the order
+  const [hasModification, setHasModification] = useState(false);
 
   useEffect(() => {
     fetchTables();
@@ -69,6 +79,7 @@ const TableServicesPage = () => {
       setSelectedItems([]);
       setNotes('');
       setShowAddItemsModal(true); // open modal for new order
+      setHasModification(false);
     } else {
       if (table.currentOrderId) {
         try {
@@ -94,6 +105,7 @@ const TableServicesPage = () => {
               itemId: i.itemId || i._id,
               cartKey: `${i.itemId || i._id}-initial`
             })));
+            setHasModification(false);
           } else {
             console.error('Invalid order format from server:', response.data);
             alert('Invalid order format received. Some items may be missing itemId or quantity.');
@@ -234,20 +246,39 @@ const getStatusColor = (status) => {
               <span className="fw-semibold">{item.name}</span>
               <div className="btn-group ms-2" role="group" aria-label="Quantity controls">
                 <button className="btn btn-sm btn-outline-secondary" onClick={() => {
-                  setSelectedItems(prev => prev.flatMap(i => {
-                    if (i.cartKey !== item.cartKey) return [i];
-                    if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
-                    return [];
-                  }))
+                  if (item.cartKey.endsWith('-initial')) {
+                    setItemPendingDelete(item);
+                    setShowPinModal(true);
+                  } else {
+                    setSelectedItems(prev => prev.flatMap(i => {
+                      if (i.cartKey !== item.cartKey) return [i];
+                      if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
+                      return [];
+                    }));
+                    if (item.cartKey.endsWith('-initial')) {
+                      setHasModification(true);
+                    }
+                  }
                 }}>-</button>
                 <span className="mx-2">{item.quantity}</span>
                 <button className="btn btn-sm btn-outline-secondary" onClick={() => {
                   setSelectedItems(prev => prev.map(i => i.cartKey === item.cartKey ? { ...i, quantity: i.quantity + 1 } : i))
+                  if (item.cartKey.endsWith('-initial')) {
+                    setHasModification(true);
+                  }
                 }}>+</button>
               </div>
             </div>
             <button className="btn btn-sm btn-outline-danger" onClick={() => {
-              setSelectedItems(prev => prev.filter(i => i.cartKey !== item.cartKey))
+              if (item.cartKey.endsWith('-initial')) {
+                setItemPendingDelete(item);
+                setShowPinModal(true);
+              } else {
+                setSelectedItems(prev => prev.filter(i => i.cartKey !== item.cartKey));
+                if (item.cartKey.endsWith('-initial')) {
+                  setHasModification(true);
+                }
+              }
             }}>🗑️</button>
           </li>
         ))}
@@ -266,25 +297,46 @@ const getStatusColor = (status) => {
             {selectedTable?.status === 'occupied' ? (
               <button
                 className="btn btn-primary w-100 mb-2 update-order-btn"
-                disabled={selectedItems.length === 0}
+                disabled={!hasModification || !selectedTable}
                 onClick={async () => {
                   try {
                     const token = localStorage.getItem('waiterToken') || localStorage.getItem('managerToken') || localStorage.getItem('adminToken') || localStorage.getItem('token');
                     if (!token) return alert('No auth token');
+
+                    // Prepare modified items and detect modifications
+                    const updatedItems = selectedItems.map(item => ({
+                      itemId: item.itemId || item._id,
+                      quantity: item.quantity
+                    }));
+
+                    const initialItems = selectedItems.filter(i => i.cartKey.endsWith('-initial'));
+                    const modifiedReasons = [];
+
+                    for (const item of initialItems) {
+                      const original = item.initialQuantity ?? item.quantity;
+                      if (item.quantity !== original) {
+                        modifiedReasons.push({
+                          itemId: item.itemId,
+                          action: item.quantity === 0 ? 'remove' : 'update',
+                          quantity: item.quantity,
+                          reason: modificationReason || 'Modified via POS Table View',
+                        });
+                      }
+                    }
+
                     await axios.patch(`${BASE_URL}/api/orders/${selectedTable.currentOrderId}/modify`, {
-                      updatedItems: selectedItems.map(item => ({
-                        itemId: item.itemId || item._id,
-                        quantity: item.quantity
-                      })),
-                      reason: 'Updated via POS Table View',
+                      updatedItems,
+                      reason: modificationReason || 'Modified via POS Table View',
                     }, {
                       headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json'
                       }
                     });
+
                     alert('Order updated successfully!');
                     fetchTables();
+                    setHasModification(false);
                   } catch (err) {
                     console.error('Failed to update order:', err);
                     alert('Failed to update order');
@@ -373,20 +425,28 @@ const getStatusColor = (status) => {
                             <>
                               <button
                                 className="btn btn-sm btn-light"
-                                onClick={() =>
+                                onClick={() => {
                                   setSelectedItems(prev => prev.flatMap(i => {
                                     if (i.cartKey !== `${item._id}-new` && i.cartKey !== `${item._id}-initial`) return [i];
                                     if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
                                     return [];
-                                  }))
-                                }
+                                  }));
+                                  const found = selectedItems.find(i => i.cartKey === `${item._id}-initial`);
+                                  if (found) {
+                                    setHasModification(true);
+                                  }
+                                }}
                               >-</button>
                               <span className="mx-2 fw-bold">{selectedItems.find(i => i.cartKey === `${item._id}-new` || i.cartKey === `${item._id}-initial`)?.quantity}</span>
                               <button
                                 className="btn btn-sm btn-light"
-                                onClick={() =>
-                                  setSelectedItems(prev => prev.map(i => (i.cartKey === `${item._id}-new` || i.cartKey === `${item._id}-initial`) ? { ...i, quantity: i.quantity + 1 } : i))
-                                }
+                                onClick={() => {
+                                  setSelectedItems(prev => prev.map(i => (i.cartKey === `${item._id}-new` || i.cartKey === `${item._id}-initial`) ? { ...i, quantity: i.quantity + 1 } : i));
+                                  const found = selectedItems.find(i => i.cartKey === `${item._id}-initial`);
+                                  if (found) {
+                                    setHasModification(true);
+                                  }
+                                }}
                               >+</button>
                             </>
                           ) : (
@@ -449,6 +509,84 @@ const getStatusColor = (status) => {
           </div>
         )}
       </aside>
+    {showPinModal && (
+      <div className="modal-backdrop d-flex justify-content-center align-items-center">
+        <div className="modal-content bg-white p-4 rounded shadow" style={{ maxWidth: 400, width: '100%' }}>
+          <h5 className="mb-3 text-center">🔒 Enter PIN & Reason</h5>
+
+          <div className="mb-3">
+            <label className="form-label">PIN</label>
+            <input
+              type="password"
+              className="form-control"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="Enter 4-digit PIN"
+              maxLength={4}
+              autoFocus
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Reason</label>
+            <select
+              className="form-select"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            >
+              <option value="">Select a reason</option>
+              <option value="Out of stock">Out of stock</option>
+              <option value="Replaced with another item">Replaced with another item</option>
+              <option value="Customer changed mind">Customer changed mind</option>
+              <option value="Wrong order placed">Wrong order placed</option>
+            </select>
+          </div>
+
+          {pinError && <div className="text-danger mb-3">{pinError}</div>}
+
+          <div className="d-flex justify-content-between">
+            <button className="btn btn-secondary w-45" onClick={() => {
+              setShowPinModal(false);
+              setItemPendingDelete(null);
+              setPin('');
+              setReason('');
+              setPinError('');
+            }}>Cancel</button>
+            <button className="btn btn-primary w-45" onClick={() => {
+              if (pin.trim() !== '1234') {
+                setPinError('❌ Invalid PIN');
+                return;
+              }
+              if (!reason) {
+                setPinError('⚠️ Please select a reason');
+                return;
+              }
+              if (itemPendingDelete) {
+                let updatedItems;
+                const isSameItem = (i) => i.cartKey === itemPendingDelete.cartKey;
+
+                if (itemPendingDelete.quantity === 1) {
+                  updatedItems = selectedItems.filter(i => !isSameItem(i));
+                } else {
+                  updatedItems = selectedItems.map(i =>
+                    isSameItem(i) ? { ...i, quantity: i.quantity - 1 } : i
+                  );
+                }
+
+                setSelectedItems(updatedItems);
+                setHasModification(true);
+                setModificationReason(reason);
+                setShowPinModal(false);
+                setItemPendingDelete(null);
+                setPin('');
+                setReason('');
+                setPinError('');
+              }
+            }}>Confirm</button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

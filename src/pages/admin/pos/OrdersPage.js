@@ -70,14 +70,71 @@ function OrdersPage() {
   };
 
   const handlePrint = (order) => {
+    const totalAmount = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
     const ticketHtml = `
-      <html><head><title>Order - ${order.orderCode}</title></head>
-      <body><pre>${JSON.stringify(order, null, 2)}</pre>
-      <script>window.print();</script></body></html>
+      <html>
+      <head>
+        <title>Order Receipt - ${order.orderCode || order._id}</title>
+        <style>
+          body { font-family: monospace; padding: 20px; font-size: 14px; color: #000; }
+          .ticket { width: 300px; margin: 0 auto; border: 2px dashed #333; padding: 16px; }
+          .center { text-align: center; }
+          .bold { font-weight: bold; }
+          .header { font-size: 18px; margin-bottom: 5px; }
+          .sub-header { font-size: 12px; color: #555; }
+          hr { border: none; border-top: 1px dashed #888; margin: 10px 0; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th, td { padding: 4px 0; text-align: left; }
+          th:nth-child(2), td:nth-child(2) { text-align: center; }
+          th:nth-child(3), td:nth-child(3) { text-align: right; }
+          .total-row td { border-top: 1px dashed #000; font-weight: bold; }
+          .footer { margin-top: 12px; text-align: center; font-size: 12px; color: #888; }
+        </style>
+      </head>
+      <body>
+        <div class="ticket">
+          <div class="center header bold">🍽️ Parthiv's Kitchen</div>
+          <div class="center sub-header">1216 Avenue A ,Denton</div>
+          <div class="center sub-header">Phone: (940) 843-5294</div>
+          <hr />
+          <div><span class="bold">Order ID:</span> ${order.orderCode || order._id}</div>
+          <div><span class="bold">Customer:</span> ${order.name || order.tableId?.name || '—'}</div>
+          <div><span class="bold">Time:</span> ${new Date(order.timestamp).toLocaleString()}</div>
+          <hr />
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.items.map(item => `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>${item.quantity}</td>
+                  <td>$${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td colspan="2">TOTAL</td>
+                <td>$${totalAmount}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <div class="footer">Thank you for dining with us!</div>
+        </div>
+        <script>window.print();</script>
+      </body>
+      </html>
     `;
-    const win = window.open('', '_blank');
-    win.document.write(ticketHtml);
-    win.document.close();
+    const printWindow = window.open('', '_blank', 'width=500,height=700');
+    if (printWindow) {
+      printWindow.document.write(ticketHtml);
+      printWindow.document.close();
+    }
   };
 
   const markAsCompleted = async (orderId) => {
