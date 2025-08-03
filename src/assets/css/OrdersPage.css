@@ -47,12 +47,18 @@
   justify-content: space-between;
 }
 
-/* Scroll container for POS Orders table */
+/* Scroll container for OrdersPage table */
 .orders-table-container {
-  max-height: calc(100vh - 120px); /* Adjust depending on header height */
-  overflow-y: auto;
-  padding-right: 0.5rem;
-  position: relative;
+  max-height: unset;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.orders-table-container table {
+  min-width: 1000px; /* or any width that ensures content fits */
 }
 
 .table thead th {
@@ -62,36 +68,172 @@
   color: white;
   z-index: 10;
 }
+.btn-pay-now {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.4rem;
+  white-space: nowrap;
+  min-width: 72px;
+  width: auto;
+}
 
 /* Responsive fixes */
 @media (max-width: 768px) {
-  .table thead {
-    display: none;
+  .table td:nth-child(2),
+  .table th:nth-child(2) {
+    min-width: 240px;
+    max-width: 300px;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .orders-table-container {
+    padding: 0 0.5rem;
+    overflow-x: auto;
+    overflow-y: visible;
   }
 
-  .table, .table tbody, .table tr, .table td {
-    display: block;
+  .orders-table-container table {
+    min-width: 850px;
+  }
+
+  .orders-table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .orders-table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+}
+/* Set narrow width for Payment Status, Payment Mode, and Status columns */
+.table td:nth-child(4),
+.table td:nth-child(5),
+.table td:nth-child(6) {
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.25rem;
+}
+
+/* Compact Pay Now button */
+.btn-pay-now {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.4rem;
+  white-space: nowrap;
+  min-width: 72px;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .orders-table-container {
+    padding: 0 0.5rem;
+  }
+
+  .orders-table-container table {
     width: 100%;
+    min-width: 850px;
   }
 
-  .table tr {
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #ddd;
+  .orders-table-container::-webkit-scrollbar {
+    height: 6px;
   }
 
-  .table td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
+  .orders-table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+}
+@media (max-width: 768px) {
+  .filter-group-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    padding: 0 0.5rem;
   }
 
-  .table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 1rem;
-    font-weight: bold;
-    text-align: left;
+  .filter-group {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
+
+  .filter-group label {
+    font-size: 0.75rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .filter-group select {
+    font-size: 0.75rem;
+    padding: 0.3rem;
+  }
+}
+
+/* Global styles for filter groups to align in one row on larger screens */
+.filter-group-wrapper {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 150px;
+}
+.timestamp-cell div {
+  display: block;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .timestamp-cell {
+    font-size: 0.85rem;
+    white-space: normal;
+    padding: 0.3rem 0.4rem;
+  }
+
+  .timestamp-cell div {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Force Actions and Pending Payments columns to have enough width */
+  .table td:nth-child(8),
+  .table th:nth-child(8) {
+    min-width: 120px;
+    max-width: 140px;
+  }
+
+  .table td:nth-child(9),
+  .table th:nth-child(9) {
+    min-width: 100px;
+    max-width: 120px;
+  }
+
+  /* Stack action buttons vertically on mobile */
+  .table td:nth-child(8) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  /* Place Pay Now inside only the 9th column */
+  .table td:nth-child(9) .btn-pay-now {
+    display: inline-block;
+    width: 100%;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.4rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.table td {
+  word-wrap: break-word;
+  white-space: normal;
 }

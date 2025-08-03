@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/api';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../../../assets/css/OrdersPage.css';
 import SideBar from './SideBar';
+import MobileNavBar from './MobileNavBar';
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -13,6 +14,9 @@ function OrdersPage() {
   const [orderTypeFilter, setOrderTypeFilter] = useState('All');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('All');
   const navigate = useNavigate();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Sidebar active page helper
   const isActive = (page) => window.location.pathname.includes(page);
@@ -99,7 +103,10 @@ function OrdersPage() {
           <hr />
           <div><span class="bold">Order ID:</span> ${order.orderCode || order._id}</div>
           <div><span class="bold">Customer:</span> ${order.name || order.tableId?.name || '—'}</div>
-          <div><span class="bold">Time:</span> ${new Date(order.timestamp).toLocaleString()}</div>
+         <td className="timestamp-cell">
+  <div>{new Date(order.timestamp).toLocaleDateString()}</div>
+  <div>{new Date(order.timestamp).toLocaleTimeString([], <br>{ hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+</td>
           <hr />
           <table>
             <thead>
@@ -192,141 +199,182 @@ function OrdersPage() {
     fetchOrders();
   }, [statusFilter, orderTypeFilter, paymentStatusFilter]);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div className="d-flex">
-      <SideBar />
-      <div className="container mt-4">
-        <h3 className="mb-4"> All Orders</h3>
-        <div className="mb-3 d-flex align-items-center gap-3 flex-wrap">
-          <div className="d-flex align-items-center gap-2">
-            <label htmlFor="statusFilter" className="form-label mb-0">Status:</label>
-            <select
-              id="statusFilter"
-              className="form-select w-auto"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="Pending">Pending</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
+    <>
+      {isMobile && (
+        <>
+          {/* Hamburger button for mobile sidebar */}
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="btn btn-sm btn-light"
+            style={{
+              position: 'fixed',
+              top: 10,
+              left: 10,
+              zIndex: 2000,
+              background: '#0563bb',
+              color: 'white'
+            }}
+          >
+            ☰
+          </button>
+          <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        </>
+      )}
+      <div className="d-flex">
+        {/* Sidebar Navigation - only show on desktop */}
+        {!isMobile && <SideBar />}
+        <div className="container mt-4" style={{ marginTop: isMobile ? '56px' : '0' }}>
+          <h3 className="mb-4"> All Orders</h3>
+          <div className={`mb-3 ${isMobile ? '' : 'd-flex align-items-center gap-3 flex-wrap'}`}>
+            <div className="filter-group mb-2">
+              <label htmlFor="statusFilter" className="form-label">Status:</label>
+              <select
+                id="statusFilter"
+                className="form-select"
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
 
-          <div className="d-flex align-items-center gap-2">
-            <label htmlFor="orderTypeFilter" className="form-label mb-0">Order Type:</label>
-            <select
-              id="orderTypeFilter"
-              className="form-select w-auto"
-              value={orderTypeFilter}
-              onChange={e => setOrderTypeFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="online">Online</option>
-              <option value="dine-in">Dine-In</option>
-              <option value="walk-in">Walk-In</option>
-            </select>
-          </div>
+            <div className="filter-group mb-2">
+              <label htmlFor="orderTypeFilter" className="form-label">Order Type:</label>
+              <select
+                id="orderTypeFilter"
+                className="form-select"
+                value={orderTypeFilter}
+                onChange={e => setOrderTypeFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="online">Online</option>
+                <option value="dine-in">Dine-In</option>
+                <option value="walk-in">Walk-In</option>
+              </select>
+            </div>
 
-          <div className="d-flex align-items-center gap-2">
-            <label htmlFor="paymentStatusFilter" className="form-label mb-0">Payment Status:</label>
-            <select
-              id="paymentStatusFilter"
-              className="form-select w-auto"
-              value={paymentStatusFilter}
-              onChange={e => setPaymentStatusFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="paid">Paid</option>
-              <option value="unpaid">Unpaid</option>
-              <option value="pending">Pending</option>
-            </select>
+            <div className="filter-group mb-2">
+              <label htmlFor="paymentStatusFilter" className="form-label">Payment Status:</label>
+              <select
+                id="paymentStatusFilter"
+                className="form-select"
+                value={paymentStatusFilter}
+                onChange={e => setPaymentStatusFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="paid">Paid</option>
+                <option value="unpaid">Unpaid</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div className="orders-table-container table-responsive" style={{ maxHeight: 'calc(100vh - 180px)', overflowY: 'auto' }}>
-          <table className="table table-striped table-bordered align-middle">
-            <thead className="table-dark">
-              <tr>
-                <th>Order ID</th>
-                <th>Name</th>
-                <th>Order Type</th>
-                <th>Payment Status</th>
-                <th>Payment Mode</th>
-                <th>Status</th>
-                <th>Timestamp</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map(order => (
-                <tr key={order._id}>
-                  <td>{shortId(order.orderCode || order._id)}</td>
-                  <td>{order.name || order.tableId?.name || '—'}</td>
-                  <td className="text-capitalize">{order.orderType}</td>
-                  <td>
-                    <span className={`badge bg-${badgeColor(order.paymentStatus, 'paymentStatus')}`}>
-                      {order.paymentStatus || 'unpaid'}
-                    </span>
-                  </td>
-                  <td className="text-capitalize">{order.paymentMode || '—'}</td>
-                  <td>
-                    <span className={`badge bg-${badgeColor(order.status, 'status')}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td>{new Date(order.timestamp).toLocaleString()}</td>
-                  <td className="d-flex gap-2">
-                    <button className="btn btn-sm btn-warning" title="Preview" onClick={() => setPreviewOrder(order)}>
-                      <i className="fas fa-eye"></i>
-                    </button>
-                    <button className="btn btn-sm btn-secondary" title="Print" onClick={() => handlePrint(order)}>
-                      <i className="fas fa-print"></i>
-                    </button>
-                    {order.status !== 'Completed' ? (
-                      <button
-                        className="btn btn-sm btn-success"
-                        onClick={() => markAsCompleted(order._id)}
-                      >
-                        ✅
-                      </button>
-                    ) : null}
-                  </td>
+          <div className="orders-table-container table-responsive" style={{ maxHeight: 'calc(100vh - 180px)', overflowY: 'auto' }}>
+            <table className="table table-striped table-bordered align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>Order ID</th>
+                  <th>Name</th>
+                  <th>Order Type</th>
+                  <th>Payment Status</th>
+                  <th>Payment Mode</th>
+                  <th>Status</th>
+                  <th style={{ width: '160px' }}>Timestamp</th>
+                  <th>Actions</th>
+                  <th>Pending Payments</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {orders.length === 0 && (
-            <p className="text-muted text-center my-4">No orders found.</p>
-          )}
-        </div>
+              </thead>
+              <tbody>
+                {orders.map(order => (
+                  <tr key={order._id}>
+                    <td>{shortId(order.orderCode || order._id)}</td>
+                    <td>{[order.name, order.tableId?.name].filter(Boolean).join(' ') || '—'}</td>
+                    <td className="text-capitalize">{order.orderType}</td>
+                    <td>
+                      <span className={`badge bg-${badgeColor(order.paymentStatus, 'paymentStatus')}`}>
+                        {order.paymentStatus || 'unpaid'}
+                      </span>
+                    </td>
+                    <td className="text-capitalize">{order.paymentMode || '—'}</td>
+                    <td>
+                      <span className={`badge bg-${badgeColor(order.status, 'status')}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td>{new Date(order.timestamp).toLocaleString()}</td>
+                    <td className="d-flex gap-2">
+                      <button className="btn btn-sm btn-warning" title="Preview" onClick={() => setPreviewOrder(order)}>
+                        <i className="fas fa-eye"></i>
+                      </button>
+                      <button className="btn btn-sm btn-secondary" title="Print" onClick={() => handlePrint(order)}>
+                        <i className="fas fa-print"></i>
+                      </button>
+                      {order.status !== 'Completed' ? (
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() => markAsCompleted(order._id)}
+                        >
+                          ✅
+                        </button>
+                      ) : null}
+                    </td>
+                    <td>
+                      {(order.paymentStatus === 'unpaid' || order.paymentStatus === 'pending') && (
+                        <button
+                          className="btn btn-sm btn-primary btn-pay-now"
+                          title="Pay Now"
+                          onClick={() => navigate(`/admin/pos/payment?orderId=${order._id}`)}
+                        >
+                          💳 Pay Now
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {orders.length === 0 && (
+              <p className="text-muted text-center my-4">No orders found.</p>
+            )}
+          </div>
 
-        {/* 🔍 Preview Modal */}
-        {previewOrder && (
-          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-            <div className="modal-dialog">
-              <div className="modal-content border-0 shadow">
-                <div className="modal-header bg-primary text-white">
-                  <h5 className="modal-title">Order Preview - {previewOrder.orderCode || previewOrder._id}</h5>
-                  <button className="btn-close" onClick={() => setPreviewOrder(null)}></button>
-                </div>
-                <div className="modal-body">
-                  <ul className="list-group">
-                    {previewOrder.items.map((item, index) => (
-                      <li key={index} className="list-group-item d-flex justify-content-between">
-                        <span>{item.name}</span>
-                        <span>x {item.quantity}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setPreviewOrder(null)}>Close</button>
+          {/* 🔍 Preview Modal */}
+          {previewOrder && (
+            <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+              <div className="modal-dialog">
+                <div className="modal-content border-0 shadow">
+                  <div className="modal-header bg-primary text-white">
+                    <h5 className="modal-title">Order Preview - {previewOrder.orderCode || previewOrder._id}</h5>
+                    <button className="btn-close" onClick={() => setPreviewOrder(null)}></button>
+                  </div>
+                  <div className="modal-body">
+                    <ul className="list-group">
+                      {previewOrder.items.map((item, index) => (
+                        <li key={index} className="list-group-item d-flex justify-content-between">
+                          <span>{item.name}</span>
+                          <span>x {item.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="modal-footer">
+                    <button className="btn btn-secondary" onClick={() => setPreviewOrder(null)}>Close</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

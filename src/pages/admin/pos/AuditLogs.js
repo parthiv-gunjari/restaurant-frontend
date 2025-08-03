@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/api';
-
+import '../../../assets/css/Pos.css';
 import SideBar from './SideBar';
+import MobileNavBar from './MobileNavBar';
 import '../../../assets/css/AdminOrderModificationsPage.css';
+
 
 const AuditLogs = () => {
   const [modifications, setModifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchModifications = async () => {
@@ -40,8 +50,45 @@ const AuditLogs = () => {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <SideBar />
-        <div style={{ flex: 1 }}>
+        {!isMobile && <SideBar />}
+        {isMobile && (
+          <>
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '56px',
+            
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 1rem',
+                zIndex: 1400,
+              }}
+            >
+              <button
+                style={{
+                  fontSize: '1.5rem',
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setShowDrawer(true)}
+              >
+                ☰
+              </button>
+              <h2 style={{ fontSize: '1.2rem', margin: 0 }}>Parthiv's Kitchen</h2>
+              <div style={{ width: '1.5rem' }} />
+            </div>
+
+            <MobileNavBar open={showDrawer} onClose={() => setShowDrawer(false)} activePath="audit-logs" />
+          </>
+        )}
+        <div style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
          
           <div className="container mt-4">
             <h3>Audit Logs – Order Modification History</h3>
@@ -52,6 +99,13 @@ const AuditLogs = () => {
             ) : (
               <div className="table-responsive">
                 <table className="table table-bordered mt-3">
+                  <thead>
+                    <tr>
+                      <th className="text-center text-white" colSpan="4">Before</th>
+                      <th></th>
+                      <th className="text-center text-white" colSpan="3">After</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     {modifications.map((mod, index) => {
                       const beforeItems = Array.isArray(mod.before) ? mod.before : [];
@@ -101,15 +155,7 @@ const AuditLogs = () => {
                               </div>
                             </td>
                           </tr>
-                          <tr>
-                            <th className="text-center text-black" colSpan="4">
-                              Before
-                            </th>
-                            <th></th>
-                            <th className="text-center  text-black" colSpan="3">
-                              After
-                            </th>
-                          </tr>
+
                           {Array.from(allIds).map((id) => {
                             const before = beforeMap[id];
                             const after = afterMap[id];

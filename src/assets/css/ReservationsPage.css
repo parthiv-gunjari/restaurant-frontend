@@ -235,3 +235,38 @@
   font-weight: bold;
   border: 1px solid #0563bb;
 }
+
+/* === Mobile Responsiveness Fixes === */
+@media (max-width: 768px) {
+  .reservation-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reservation-list table {
+    min-width: 850px;
+  }
+
+  .reservation-list th,
+  .reservation-list td {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .new-reservation-form input,
+  .new-reservation-form select,
+  .new-reservation-form textarea {
+    font-size: 0.85rem;
+    padding: 6px;
+  }
+
+  .new-reservation-form button {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}

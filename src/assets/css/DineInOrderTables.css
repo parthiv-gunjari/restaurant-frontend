@@ -2,11 +2,20 @@
 
 .table-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 20px;
-  padding: 10px 0;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
-
+@media (max-width: 768px) {
+  .table-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 8px;
+    gap: 16px;
+    box-sizing: border-box;
+  }
+}
 .table-card {
   border: 3px solid #ccc;
   border-radius: 10px;
@@ -15,16 +24,18 @@
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  min-height: 140px;
 }
 
 .table-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .table-card h5 {
   margin-bottom: 10px;
   font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .table-card p {
@@ -35,4 +46,6 @@
 .table-card button {
   width: 100%;
   font-size: 14px;
+  padding: 8px;
+  border-radius: 6px;
 }

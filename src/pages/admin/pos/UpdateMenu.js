@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BASE_URL } from '../../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import SideBar from './SideBar';
+import MobileNavBar from './MobileNavBar';
 
 const UpdateMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -22,8 +23,17 @@ const UpdateMenu = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   useEffect(() => {
     fetchMenuItems();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const getToken = () =>
@@ -155,14 +165,37 @@ const UpdateMenu = () => {
 
   return (
     <div className="update-menu-container" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <SideBar />
-      <div className="pos-update-panel mt-4" style={{ flex: 1, overflowY: 'auto', paddingRight: '1rem' }}>
-        <h2>Update Menu</h2>
-
-        <div ref={formRef} className="mb-4">
-          <button onClick={toggleForm} className="btn btn-outline-primary mb-3">
+      {/* Mobile NavBar for mobile screens */}
+      {isMobile && (
+        <>
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="btn btn-sm btn-light"
+            style={{
+              position: 'fixed',
+              top: 10,
+              left: 10,
+              zIndex: 2000,
+              background: '#0563bb',
+              color: 'white'
+            }}
+          >
+            ☰
+          </button>
+          <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        </>
+      )}
+      {/* Sidebar Navigation - only show on desktop */}
+      {!isMobile && <SideBar />}
+      <div className="pos-update-panel mt-4" style={{ flex: 1, overflowY: 'auto', paddingRight: '1rem', marginTop: isMobile ? '56px' : 0 }}>
+        <div className="update-menu-header">
+          <h2>Update Menu</h2>
+          <button onClick={toggleForm} className="btn btn-outline-primary btn-toggle-form">
             {isFormOpen ? 'Close Form' : editingId ? 'Edit Item' : 'Add New Item'}
           </button>
+        </div>
+
+        <div ref={formRef} className="mb-4">
           {isFormOpen && (
             <form
               onSubmit={handleSubmit}

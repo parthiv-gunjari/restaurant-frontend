@@ -1,3 +1,4 @@
+
 .menu-heading {
   font-weight: 700;
   text-align: center;
@@ -50,4 +51,10 @@
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+.cart-items-wrapper {
+  overflow-y: auto;
+  flex: 1;
+  margin-bottom: 1rem;
 }

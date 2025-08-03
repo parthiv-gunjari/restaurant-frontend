@@ -7,6 +7,8 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Lege
 import '../../../assets/css/AccountsPage.css';
 import { FaClipboardList, FaClock, FaCheckCircle, FaDollarSign, FaCrown } from 'react-icons/fa';
 import SideBar from './SideBar';
+import MobileNavBar from './MobileNavBar';
+import '../../../assets/css/Pos.css';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -24,6 +26,15 @@ const AccountsPage = () => {
   const [revenueData, setRevenueData] = useState([]);
   const [selectedRange, setSelectedRange] = useState('today');
   const navigate = useNavigate();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchStats = useCallback(async (range = selectedRange) => {
     try {
@@ -66,20 +77,58 @@ const AccountsPage = () => {
 
   return (
     <div style={{ display: 'flex' }}>
-      <SideBar />
-      <div className="accounts-page" style={{ flex: 1 }}>
-        <h2 className="dashboard-title">📊 Accounts Dashboard</h2>
+      {!isMobile && <SideBar />}
+      {isMobile && (
+        <>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '56px',
+              background: '#0563bb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0 1rem',
+              zIndex: 1100,
+              color: 'white',
+            }}
+          >
+            <button
+              style={{
+                fontSize: '1.5rem',
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+              onClick={() => setShowDrawer(true)}
+            >
+              ☰
+            </button>
+            <strong>Parthiv’s Kitchen</strong>
+            <div style={{ width: '1.5rem' }} />
+          </div>
+          {showDrawer && <MobileNavBar open={showDrawer} onClose={() => setShowDrawer(false)} />}
+        </>
+      )}
+      <div className="accounts-page" style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
+        <div>
+          <h2 className="dashboard-title">📊 Accounts Dashboard</h2>
 
-        <div className="filter-section">
-          <label>
-            From:
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-          </label>
-          <label>
-            To:
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-          </label>
-          <button onClick={fetchStats}>🔁 Filter</button>
+          <div className="filter-section">
+            <label>
+              From:
+              <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            </label>
+            <label>
+              To:
+              <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+            </label>
+            <button onClick={fetchStats}>🔁 Filter</button>
+          </div>
         </div>
 
         <div className="stat-card-grid">

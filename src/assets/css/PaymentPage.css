@@ -1,0 +1,122 @@
+
+
+.payment-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.order-summary {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+}
+
+.order-summary li {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.order-summary li:last-child {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.payment-card {
+  flex: 1;
+  padding: 1.2rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.payment-card.selected {
+  border-color: #198754;
+  background-color: #e6f4ea;
+  color: #198754;
+  box-shadow: 0 0 8px rgba(25, 135, 84, 0.3);
+}
+
+.payment-card i {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.payment-inputs {
+  margin-bottom: 2rem;
+}
+
+.payment-inputs label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.payment-inputs input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.change-return {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #198754;
+  margin-top: 0.5rem;
+}
+
+.card-element-wrapper {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.make-payment-btn {
+  display: block;
+  margin: 2rem auto 0;
+  padding: 0.75rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background-color: #198754;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.make-payment-btn:hover {
+  background-color: #157347;
+}
+
+.alert-info {
+  margin-top: 1rem;
+}
+
+.payment-page-wrapper {
+  height: 100vh;
+  overflow-y: auto;
+}

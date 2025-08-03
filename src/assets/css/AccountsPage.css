@@ -2,7 +2,7 @@
   padding: 24px;
   background-color: #eef1f5;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -192,4 +192,11 @@
   background-color: #fff;
   color: #333;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .accounts-page {
+    height: auto;
+    padding-bottom: 80px;
+  }
 }

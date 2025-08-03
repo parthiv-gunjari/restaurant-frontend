@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../../utils/api';
 import axios from 'axios';
 import '../../../assets/css/ReservationsPage.css';
+import '../../../assets/css/Pos.css';
 import SideBar from './SideBar';
+import MobileNavBar from './MobileNavBar';
 
 const ReservationsPage = () => {
   const navigate = useNavigate();
@@ -21,15 +23,24 @@ const ReservationsPage = () => {
   });
   const [tables, setTables] = useState([]);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isActive = (page) => window.location.pathname.includes(page);
 
-useEffect(() => {
-  fetchReservations();
-}, [filter]);
+  useEffect(() => {
+    fetchReservations();
+  }, [filter]);
 
-useEffect(() => {
-  fetchTables();
-}, [formData.guestCount]);
+  useEffect(() => {
+    fetchTables();
+  }, [formData.guestCount]);
 
   const fetchReservations = async () => {
     try {
@@ -126,10 +137,46 @@ useEffect(() => {
   };
 
   return (
-    <div className="pos-container light-mode">
-      <SideBar />
+    <div style={{ display: 'flex' }}>
+      {!isMobile && <SideBar />}
+      {isMobile && (
+        <>
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '56px',
+              background: '#0563bb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0 1rem',
+              zIndex: 1100,
+              color: 'white',
+            }}
+          >
+            <button
+              style={{
+                fontSize: '1.5rem',
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+              onClick={() => setIsNavOpen(true)}
+            >
+              ☰
+            </button>
+            <strong>Parthiv’s Kitchen</strong>
+            <div style={{ width: '1.5rem' }} />
+          </div>
+          {isNavOpen && <MobileNavBar open={isNavOpen} onClose={() => setIsNavOpen(false)} />}
+        </>
+      )}
 
-      <main className="reservations-main">
+      <main className="reservations-main" style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
         <h2>Reservations ({filter})</h2>
           <div className="filters">
             <button

@@ -1,0 +1,62 @@
+/* ========== MobileNavBar Styles ========== */
+
+.mobile-sidebar-drawer {
+  background-color: #ffffff;
+  border-right: 1px solid #e0e6ed;
+  padding-top: 1rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-sidebar-drawer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-sidebar-drawer ul li {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background 0.3s ease;
+  color: #2e3a59;
+  font-size: 1rem;
+}
+
+.mobile-sidebar-drawer ul li:hover,
+.mobile-sidebar-drawer ul li.active {
+  background-color: #e3f2fd;
+  font-weight: bold;
+  color: #1e88e5;
+}
+
+.mobile-sidebar-drawer .user-info {
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.mobile-sidebar-drawer .user-info i {
+  margin-right: 8px;
+}
+
+.mobile-sidebar-drawer .logout-button {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  background-color: #e53935;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.mobile-sidebar-drawer .logout-button:hover {
+  background-color: #c62828;
+}

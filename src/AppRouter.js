@@ -17,10 +17,14 @@ import AdminOrderModificationsPage from './pages/admin/AdminOrderModificationsPa
 import InStoreOrderPage from './pages/admin/InStoreOrderPage';
 import KitchenDisplayPage from './pages/admin/KitchenDisplayPage';
 import MenuPagePOS from './pages/admin/pos/MenuPage';
+import PaymentPage from './pages/admin/pos/PaymentPage';
+import PaymentPageWithStripe from './pages/admin/pos/PaymentPageWithStripe';
 import TableServicesPage from './pages/admin/pos/TableServicesPage';
 import POSOrdersPage from './pages/admin/pos/OrdersPage';
 import ReservationsPage from './pages/admin/pos/ReservationsPage';
 import POSKitchenDisplay from './pages/admin/pos/KitchenDisplay';
+import MobileTableServicesPage from './pages/admin/pos/MobileTableServicesPage';
+
 import POSAuditLogs from './pages/admin/pos/AuditLogs';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -50,6 +54,7 @@ const RoutesWrapper = () => {
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/pos/payment" element={<PaymentPageWithStripe />} />
 
         {/* POS - Now protected */}
         <Route path="/admin/pos/menu" element={
@@ -76,12 +81,25 @@ const RoutesWrapper = () => {
           <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
             <POSKitchenDisplay />
           </ProtectedRoute>
+          
         } />
+        <Route path="/admin/pos/mobile-table-services" element={
+  <ProtectedRoute allowedRoles={["admin", "manager", "waiter"]}>
+    <MobileTableServicesPage />
+  </ProtectedRoute>
+} />
+
         <Route path="/admin/pos/audit-logs" element={
           <ProtectedRoute allowedRoles={['admin', 'manager']}>
             <POSAuditLogs />
           </ProtectedRoute>
         } />
+      <Route path="/admin/pos/payment" element={
+        <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
+          <PaymentPage />
+        </ProtectedRoute>
+      } />
+      
       <Route path="/admin/pos/update-menu" element={
         <ProtectedRoute allowedRoles={['admin', 'manager','waiter']}>
           <POSUpdateMenu />
