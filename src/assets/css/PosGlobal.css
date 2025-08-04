@@ -153,21 +153,11 @@ body,
 
 
   /* Fix for content hidden behind mobile navbar (56px) */
-.order-customer-row,
 
-  .pos-update-panel,
-
-  .kitchen-container,
-  .table-responsive,
-
-
-  .mobile-table-menu {
-    padding-top: 56px !important;
-  }
 .accounts-page,
 .reservations-main,
 .main-panel,
 .mobile-sidebar-drawer{
-    padding-bottom: 4rem;
+    padding-bottom: 3rem;
 }
 }
