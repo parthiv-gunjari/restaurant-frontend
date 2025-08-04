@@ -103,10 +103,8 @@ function OrdersPage() {
           <hr />
           <div><span class="bold">Order ID:</span> ${order.orderCode || order._id}</div>
           <div><span class="bold">Customer:</span> ${order.name || order.tableId?.name || '—'}</div>
-         <td className="timestamp-cell">
-  <div>{new Date(order.timestamp).toLocaleDateString()}</div>
-  <div>{new Date(order.timestamp).toLocaleTimeString([], <br>{ hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
-</td>
+<div><span class="bold">Date:</span> ${new Date(order.timestamp).toLocaleDateString()}</div>
+<div><span class="bold">Time:</span> ${new Date(order.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
           <hr />
           <table>
             <thead>

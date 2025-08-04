@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/api';
 import '../../../assets/css/Pos.css';
+import '../../../assets/css/AdminOrderModificationsPage.css';
 import SideBar from './SideBar';
 import MobileNavBar from './MobileNavBar';
-import '../../../assets/css/AdminOrderModificationsPage.css';
-
 
 const AuditLogs = () => {
   const [modifications, setModifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -48,90 +47,89 @@ const AuditLogs = () => {
   }, []);
 
   return (
-    <>
-      <div style={{ display: 'flex' }}>
-        {!isMobile && <SideBar />}
-        {isMobile && (
-          <>
-            <div
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '56px',
-            
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 1rem',
-                zIndex: 1400,
-              }}
-            >
-              <button
+    <div style={{ display: 'flex' }}>
+      {/* Sidebar for Desktop */}
+      {!isMobile && <SideBar />}
+
+      {/* Mobile Navbar */}
+      {isMobile && (
+        <>
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="btn btn-sm btn-light"
+            style={{
+              position: 'fixed',
+              top: 10,
+              left: 10,
+              zIndex: 2000,
+              background: '#0563bb',
+              color: 'white',
+            }}
+          >
+            ☰
+          </button>
+          <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        </>
+      )}
+
+      {/* Main Panel */}
+      <div style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
+        <div
+          className="px-2 mt-4"
+          style={{
+            overflowX: 'auto',
+            width: '100%',
+            maxWidth: '100vw',
+          }}
+        >
+          <h3>Audit Logs – Order Modification History</h3>
+          {loading ? (
+            <p>Loading...</p>
+          ) : modifications.length === 0 ? (
+            <p>No modifications found.</p>
+          ) : (
+            <div className="table-responsive">
+              <table
+                className="table table-bordered mt-3"
                 style={{
-                  fontSize: '1.5rem',
-                  background: 'none',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
+                  minWidth: '760px',
+                  whiteSpace: 'nowrap',
                 }}
-                onClick={() => setShowDrawer(true)}
               >
-                ☰
-              </button>
-              <h2 style={{ fontSize: '1.2rem', margin: 0 }}>Parthiv's Kitchen</h2>
-              <div style={{ width: '1.5rem' }} />
-            </div>
+                <thead>
+                  <tr>
+                    <th className="text-center text-white" colSpan="4">Before</th>
+                    <th></th>
+                    <th className="text-center text-white" colSpan="3">After</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modifications.map((mod, index) => {
+                    const beforeItems = Array.isArray(mod.before) ? mod.before : [];
+                    const afterItems = Array.isArray(mod.after) ? mod.after : [];
 
-            <MobileNavBar open={showDrawer} onClose={() => setShowDrawer(false)} activePath="audit-logs" />
-          </>
-        )}
-        <div style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
-         
-          <div className="container mt-4">
-            <h3>Audit Logs – Order Modification History</h3>
-            {loading ? (
-              <p>Loading...</p>
-            ) : modifications.length === 0 ? (
-              <p>No modifications found.</p>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-bordered mt-3">
-                  <thead>
-                    <tr>
-                      <th className="text-center text-white" colSpan="4">Before</th>
-                      <th></th>
-                      <th className="text-center text-white" colSpan="3">After</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {modifications.map((mod, index) => {
-                      const beforeItems = Array.isArray(mod.before) ? mod.before : [];
-                      const afterItems = Array.isArray(mod.after) ? mod.after : [];
+                    const beforeMap = {};
+                    const afterMap = {};
 
-                      const beforeMap = {};
-                      const afterMap = {};
+                    beforeItems.forEach((item) => {
+                      beforeMap[item.itemId || item._id] = item;
+                    });
 
-                      beforeItems.forEach((item) => {
-                        beforeMap[item.itemId || item._id] = item;
-                      });
+                    afterItems.forEach((item) => {
+                      afterMap[item.itemId || item._id] = item;
+                    });
 
-                      afterItems.forEach((item) => {
-                        afterMap[item.itemId || item._id] = item;
-                      });
+                    const allIds = new Set([
+                      ...Object.keys(beforeMap),
+                      ...Object.keys(afterMap),
+                    ]);
 
-                      const allIds = new Set([
-                        ...Object.keys(beforeMap),
-                        ...Object.keys(afterMap),
-                      ]);
-
-                      return (
-                        <React.Fragment key={mod._id || index}>
-                          <tr className="table-primary">
-                            <td colSpan="8">
-                              <div style={{
+                    return (
+                      <React.Fragment key={mod._id || index}>
+                        <tr className="table-primary">
+                          <td colSpan="8">
+                            <div
+                              style={{
                                 background: '#e8f4fd',
                                 borderRadius: '8px',
                                 padding: '12px 20px',
@@ -140,89 +138,89 @@ const AuditLogs = () => {
                                 gap: '14px',
                                 fontSize: '15px',
                                 fontWeight: 500,
-                                color: '#333'
-                              }}>
-                                <span role="img" aria-label="table">🪑</span> Table: <strong>{mod.tableId?.tableNumber || 'N/A'}</strong>
-                                <span>|</span>
-                                <span role="img" aria-label="modified-by">👤</span> Modified By: <strong>{mod.performedByName || 'Unknown'}</strong>
-                                <span>|</span>
-                                <span role="img" aria-label="reason">✍️</span> Reason: <em>{mod.reason || '-'}</em>
-                                <span>|</span>
-                                <span role="img" aria-label="clock">🕒</span> {new Date(mod.createdAt).toLocaleString()}
-                                <span style={{ marginLeft: 'auto', fontWeight: 'bold', color: '#007bff' }}>
-                                  🧾 Order: <span style={{ textDecoration: 'underline' }}>{mod.orderCode || '-'}</span>
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
+                                color: '#333',
+                              }}
+                            >
+                              <span role="img" aria-label="table">🪑</span> Table: <strong>{mod.tableId?.tableNumber || 'N/A'}</strong>
+                              <span>|</span>
+                              <span role="img" aria-label="modified-by">👤</span> Modified By: <strong>{mod.performedByName || 'Unknown'}</strong>
+                              <span>|</span>
+                              <span role="img" aria-label="reason">✍️</span> Reason: <em>{mod.reason || '-'}</em>
+                              <span>|</span>
+                              <span role="img" aria-label="clock">🕒</span> {new Date(mod.createdAt).toLocaleString()}
+                              <span style={{ marginLeft: 'auto', fontWeight: 'bold', color: '#007bff' }}>
+                                🧾 Order: <span style={{ textDecoration: 'underline' }}>{mod.orderCode || '-'}</span>
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
 
-                          {Array.from(allIds).map((id) => {
-                            const before = beforeMap[id];
-                            const after = afterMap[id];
+                        {Array.from(allIds).map((id) => {
+                          const before = beforeMap[id];
+                          const after = afterMap[id];
 
-                            let beforeStyle = {};
-                            let afterStyle = {};
+                          let beforeStyle = {};
+                          let afterStyle = {};
 
-                            const isRemoved = before && !after;
-                            const isNew = !before && after;
-                            const isQtyChanged = before && after && before.quantity !== after.quantity;
+                          const isRemoved = before && !after;
+                          const isNew = !before && after;
+                          const isQtyChanged = before && after && before.quantity !== after.quantity;
 
-                            if (isRemoved) {
-                              beforeStyle = {
-                                textDecoration: 'line-through',
-                                color: '#721c24',
-                                backgroundColor: '#f8d7da', // Light red
-                                fontStyle: 'italic',
-                                fontWeight: 'bold',
-                              };
-                            }
+                          if (isRemoved) {
+                            beforeStyle = {
+                              textDecoration: 'line-through',
+                              color: '#721c24',
+                              backgroundColor: '#f8d7da',
+                              fontStyle: 'italic',
+                              fontWeight: 'bold',
+                            };
+                          }
 
-                            if (isNew) {
-                              afterStyle = {
-                                color: '#155724',
-                                backgroundColor: '#d4edda', // Light green
-                                fontWeight: 'bold',
-                              };
-                            }
+                          if (isNew) {
+                            afterStyle = {
+                              color: '#155724',
+                              backgroundColor: '#d4edda',
+                              fontWeight: 'bold',
+                            };
+                          }
 
-                            if (isQtyChanged) {
-                              afterStyle = {
-                                color: '#856404',
-                                backgroundColor: '#fff3cd',
-                                fontWeight: 'bold',
-                                fontStyle: 'italic',
-                              };
-                              beforeStyle = {
-                                backgroundColor: '#fff3cd',
-                                fontWeight: 'bold',
-                                fontStyle: 'italic',
-                              };
-                            }
+                          if (isQtyChanged) {
+                            afterStyle = {
+                              color: '#856404',
+                              backgroundColor: '#fff3cd',
+                              fontWeight: 'bold',
+                              fontStyle: 'italic',
+                            };
+                            beforeStyle = {
+                              backgroundColor: '#fff3cd',
+                              fontWeight: 'bold',
+                              fontStyle: 'italic',
+                            };
+                          }
 
-                            return (
-                              <tr key={id}>
-                                <td>{mod.orderCode || '-'}</td>
-                                <td>{mod.tableId?.tableNumber || 'N/A'}</td>
-                                <td>{mod.performedByName || 'Unknown'}</td>
-                                <td style={beforeStyle}>{before?.name || '-'}</td>
-                                <td style={beforeStyle}>{before?.quantity ?? '-'}</td>
-                                <td className="text-center">➡</td>
-                                <td style={afterStyle}>{after?.name || '-'}</td>
-                                <td style={afterStyle}>{after?.quantity ?? '-'}</td>
-                              </tr>
-                            );
-                          })}
-                        </React.Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                          return (
+                            <tr key={id}>
+                              <td>{mod.orderCode || '-'}</td>
+                              <td>{mod.tableId?.tableNumber || 'N/A'}</td>
+                              <td>{mod.performedByName || 'Unknown'}</td>
+                              <td style={beforeStyle}>{before?.name || '-'}</td>
+                              <td style={beforeStyle}>{before?.quantity ?? '-'}</td>
+                              <td className="text-center">➡</td>
+                              <td style={afterStyle}>{after?.name || '-'}</td>
+                              <td style={afterStyle}>{after?.quantity ?? '-'}</td>
+                            </tr>
+                          );
+                        })}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

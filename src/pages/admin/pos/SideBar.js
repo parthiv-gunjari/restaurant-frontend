@@ -7,7 +7,7 @@ const SideBar = () => {
   const location = useLocation();
   const role = localStorage.getItem('role');
 
-  const isActive = (path) => location.pathname.includes(path);
+const isActive = (path) => location.pathname === `/admin/pos/${path}`;
 
   const isAdmin = role === 'admin';
   const isManagerOrWaiter = role === 'manager' || role === 'waiter';

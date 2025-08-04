@@ -1,0 +1,59 @@
+/* === Global Reset and Base Styles === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  color: #2e3a59;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === Scroll Fix for Small Desktops (width > 768px but small height) === */
+@media screen and (min-width: 769px) and (max-height: 750px) {
+  html, body {
+    overflow-y: auto !important;
+  }
+
+  .pos-container,
+  .main-panel {
+    min-height: auto !important;
+    height: auto !important;
+  }
+}
+
+/* === Scrollbar Styling (Optional) === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+/* === Standardized Button Colors === */
+button, .btn {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* === Utility Classes === */
+.text-primary {
+  color: #0563bb;
+}
+.bg-primary {
+  background-color: #0563bb;
+  color: white;
+}
+.bg-light {
+  background-color: #f4f7fb;
+}

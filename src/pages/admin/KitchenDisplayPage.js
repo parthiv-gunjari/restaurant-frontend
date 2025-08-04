@@ -352,25 +352,28 @@ const KitchenDisplayPage = () => {
               );
             })}
         </div>
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
-            disabled={currentPage === 0}
-            style={{ marginRight: '10px' }}
-          >
-            ⬅️ Previous
-          </button>
-          <button
-            onClick={() =>
-              setCurrentPage(prev =>
-                (prev + 1) * ITEMS_PER_PAGE < orders.length ? prev + 1 : prev
-              )
-            }
-            disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}
-          >
-            Next ➡️
-          </button>
-        </div>
+       <div className="d-flex justify-content-center my-4">
+  <div className="btn-group" role="group" aria-label="Pagination Controls">
+    <button
+      className="btn btn-outline-secondary"
+      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+      disabled={currentPage === 0}
+    >
+      ⬅️ Previous
+    </button>
+    <button
+      className="btn btn-outline-primary"
+      onClick={() =>
+        setCurrentPage(prev =>
+          (prev + 1) * ITEMS_PER_PAGE < orders.length ? prev + 1 : prev
+        )
+      }
+      disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}
+    >
+      Next ➡️
+    </button>
+  </div>
+</div>
       </div>
     </div>
   );

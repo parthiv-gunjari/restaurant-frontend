@@ -251,42 +251,26 @@ const POSPage = () => {
     <>
     <div className="pos-container light-mode" style={{ position: 'relative' }}>
       {/* Top Navbar */}
-      {isMobile ? (
+     {isMobile && (
         <>
-          <div
+          {/* Hamburger button for mobile sidebar */}
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="btn btn-sm btn-light"
             style={{
               position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '56px',
-
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 1rem',
-              zIndex: 1400,
+              top: 10,
+              left: 10,
+              zIndex: 2000,
+              background: '#0563bb',
+              color: 'white'
             }}
           >
-            <button
-              style={{
-                fontSize: '1.5rem',
-                background: 'none',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-              }}
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              ☰
-            </button>
-            <h2 style={{ fontSize: '1.2rem', margin: 0 }}>Parthiv's Kitchen</h2>
-            <div style={{ width: '1.5rem' }} /> {/* placeholder for spacing */}
-          </div>
+            ☰
+          </button>
           <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         </>
-      ) : null}
+      )}
 
       {/* Sidebar for desktop */}
       {!isMobile && <SideBar />}
@@ -322,13 +306,7 @@ const POSPage = () => {
                 style={{ flex: '2 1 160px', minWidth: '140px' }}
               />
 
-              <input
-                type="text"
-                placeholder="Phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{ flex: '1 1 120px', minWidth: '120px' }}
-              />
+              
 
               <input
                 type="text"
@@ -359,190 +337,207 @@ const POSPage = () => {
             })}
           </div>
 
-          <div className="items-grid">
-            {filteredItems.map(item => {
-              const inCart = cart.find(ci => ci._id === item._id);
-              return (
-                <div
-                  key={item._id}
-                  className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
-                >
-                  <div className="item-name">{item.name}</div>
-                  <div className="item-price">${item.price.toFixed(2)}</div>
+          <div className="items-grid-wrapper">
+  <div className="items-grid">
+    {filteredItems.map(item => {
+      const inCart = cart.find(ci => ci._id === item._id);
+      return (
+        <div
+          key={item._id}
+          className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
+        >
+          <div className="item-name">{item.name}</div>
+          <div className="item-price">${item.price.toFixed(2)}</div>
 
-                  {item.outOfStock ? (
-                    <div className="item-status">Out of Stock</div>
-                  ) : (
-                    <div className="qty-controls">
-                      <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
-                      <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
-                      <button onClick={() => addToCart(item)}>+</button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          {item.outOfStock ? (
+            <div className="item-status">Out of Stock</div>
+          ) : (
+            <div className="qty-controls">
+              <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
+              <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
+              <button onClick={() => addToCart(item)}>+</button>
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</div>
         </>
       </main>
+{!isMobile && (
+  <aside className="order-summary container-fluid d-flex flex-column">
+  <h4 className="mb-2">
+    🛒 <strong>Cart Summary</strong>
+  </h4>
+  <p className="fw-medium">{cart.length} items</p>
 
-      <aside className="order-summary">
-        <h2>🛒 Cart Summary</h2>
-        <p style={{ fontWeight: '500', marginBottom: '0.5rem' }}>
-          {cart.length} items 
-        </p>
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes..." />
+  <textarea
+    className="form-control mb-3"
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
+    placeholder="Notes..."
+  />
+<div className="cart-items-wrapper flex-grow-1 overflow-auto mb-3">
+  {cart.length > 0 && (
+    <button onClick={clearCart} className="btn btn-danger mb-3 w-100">
+      Clear Cart 🗑️
+    </button>
+  )}
 
-        <div className="cart-items-wrapper" style={{ flex: 1, overflowY: 'auto', marginBottom: '1rem' }}>
-          {cart.length > 0 && (
-            <button onClick={clearCart} className="btn btn-danger" style={{ marginBottom: '0.5rem' }}>
-              Clear Cart 🗑️
-            </button>
-          )}
-          {cart.map(item => (
-            <div key={item._id} className="cart-item">
-              <p>{item.name}</p>
-              <div className="qty-controls">
-                <button onClick={() => updateQuantity(item._id, -1)}>-</button>
-                <span className="quantity-badge">{item.quantity}</span>
-                <button onClick={() => updateQuantity(item._id, 1)}>+</button>
-              </div>
-              <button onClick={() => removeItem(item._id)} className="delete-btn trash-icon">
-                <i className="fas fa-trash-alt"></i>
-              </button>
+  {cart.length === 0 ? (
+    <p>No items added yet.</p>
+  ) : (
+    <div className="cart-items-list">
+      {cart.map((item) => (
+        <div key={item._id} className="cart-item">
+          <div className="cart-item-info">
+            {item.name}
+            <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+              ₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className="payment-section">
-          
-<input
-  type="number"
-  placeholder="Enter discount"
-  value={discount}
-  onChange={(e) => setDiscount(Number(e.target.value))}
-/>
+          <div className="cart-item-controls">
+            <div className="btn-group" role="group" aria-label="Quantity controls">
+              <button onClick={() => updateQuantity(item._id, -1)}>−</button>
+              <span>{item.quantity}</span>
+              <button onClick={() => updateQuantity(item._id, 1)}>+</button>
+            </div>
+            <button onClick={() => removeItem(item._id)}>🗑️</button>
+          </div>
         </div>
+      ))}
+    </div>
+  )}
+</div>
 
-        <h3>Total: ${calculateTotal()}</h3>
-        <button onClick={placeOrder}> Place Order</button>
-        {paymentStatus === 'pending' && !loadedOrder && (
-          <button className="btn btn-outline-primary mt-2" onClick={handlePayNow}>
-            Pay Now 💳
-          </button>
-        )}
-      </aside>
+  <div className="payment-section mb-3">
+    <input
+      type="number"
+      className="form-control"
+      placeholder="Enter discount"
+      value={discount}
+      onChange={(e) => setDiscount(Number(e.target.value))}
+    />
+  </div>
+
+  <h5 className="fw-bold mb-3">Total: ${calculateTotal()}</h5>
+
+  <button onClick={placeOrder} className="btn btn-primary mb-2">
+    Place Order
+  </button>
+
+  {paymentStatus === 'pending' && !loadedOrder && (
+    <button className="btn btn-success" onClick={handlePayNow}>
+      Pay Now 💳
+    </button>
+  )}
+</aside>
+)}
+
       {/* Fixed Bottom Bar for Mobile */}
       {isMobile && cart.length > 0 && (
-        <div
-          className="mobile-cart-bar"
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            width: '100%',
-            background: '#0f172a',
-            color: 'white',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '0.75rem 1rem',
-            zIndex: 1500,
-          }}
-          onClick={() => setShowCartModal(true)}
-        >
-          <span>🛒 {cart.length} items</span>
-          <button
-            style={{
-              background: 'white',
-              color: '#0f172a',
-              padding: '0.5rem 1rem',
-              borderRadius: '4px',
-              border: 'none',
-              fontWeight: 'bold',
-            }}
-          >
-            Pay Now ➡
-          </button>
-        </div>
+       <div
+  className="d-flex justify-content-between align-items-center fixed-bottom bg-primary text-white px-3 py-2 shadow-lg"
+  style={{ zIndex: 1500 }}
+  onClick={() => setShowCartModal(true)}
+>
+  <span className="fw-semibold tesxt-black">
+    🛒 {cart.length} {cart.length === 1 ? 'item' : 'items'}
+  </span>
+
+  <button
+    className="btn btn-success btn-sm fw-bold d-flex align-items-center gap-2"
+    onClick={(e) => {
+      e.stopPropagation(); // prevent modal opening if clicked on button only
+      setShowCartModal(true);
+    }}
+  >
+    Pay Now <span className="ms-1">➡</span>
+  </button>
+</div>
       )}
     </div>
-    {/* Cart Modal for Mobile */}
-    {showCartModal && (
+   {showCartModal && (
+  <div
+    className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center"
+    style={{ zIndex: 1600 }}
+    onClick={() => setShowCartModal(false)}
+  >
+    <div
+      className="bg-white w-100 mx-3 rounded-3 p-3 d-flex flex-column"
+      style={{
+        maxWidth: '500px',
+        height: '400px',           // Fixed modal height
+        overflow: 'hidden',        // Prevent modal itself from overflowing
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Notes */}
+      <textarea
+        className="form-control mb-3"
+        placeholder="Add special instructions..."
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        rows={2}
+      />
+
+      {/* Cart Items - Scrollable section */}
       <div
+        className="mb-3"
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(41, 85, 207, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-end',
-          zIndex: 1600,
+          flexGrow: 1,
+          overflowY: 'auto',
         }}
-        onClick={() => setShowCartModal(false)}
       >
-        <div
-          style={{
-            background: '#fff',
-            width: '100%',
-            maxHeight: '90vh',
-            borderTopLeftRadius: '12px',
-            borderTopRightRadius: '12px',
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Notes..."
-            style={{ marginBottom: '0.75rem', minHeight: '60px' }}
-          />
-          <div style={{ overflowY: 'auto', flex: 1, marginBottom: '0.75rem' }}>
-            {cart.map((item) => (
-              <div
-                key={item._id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                <span>{item.name}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <button onClick={() => updateQuantity(item._id, -1)}>-</button>
-                  <span>{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item._id, 1)}>+</button>
-                  <button onClick={() => removeItem(item._id)}>🗑️</button>
-                </div>
+        {cart.length > 0 ? (
+          cart.map((item) => (
+            <div
+              key={item._id}
+              className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2"
+            >
+              <span className="fw-semibold">{item.name}</span>
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => updateQuantity(item._id, -1)}
+                >
+                  −
+                </button>
+                <span>{item.quantity}</span>
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={() => updateQuantity(item._id, 1)}
+                >
+                  +
+                </button>
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => removeItem(item._id)}
+                >
+                  🗑
+                </button>
               </div>
-            ))}
-          </div>
-          <div
-            style={{
-              position: 'sticky',
-              bottom: 0,
-              background: '#fff',
-              borderTop: '1px solid #ccc',
-              paddingTop: '0.75rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: '1rem',
-            }}
-          >
-            <button onClick={() => setShowCartModal(false)}>Close</button>
-            <button onClick={handlePayNow}>Place Order</button>
-          </div>
-        </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-muted">Your cart is empty</div>
+        )}
       </div>
-    )}
+
+      {/* Footer */}
+      <div className="d-flex justify-content-between gap-2 pt-3 border-top">
+        <button className="btn btn-danger w-50" onClick={() => setShowCartModal(false)}>
+          Close
+        </button>
+        <button className="btn btn-success w-50 fw-semibold" onClick={handlePayNow}>
+          Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 };

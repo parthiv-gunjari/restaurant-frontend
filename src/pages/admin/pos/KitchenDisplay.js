@@ -215,42 +215,46 @@ const POSKitchenDisplay = () => {
       )}
       <div style={{ display: 'flex' }}>
         <div className="kitchen-container" style={{ flex: 1 }}>
-          <div className="filter-bar">
-            <button className="back-btn" onClick={() => navigate(-1)}>⬅️ Back</button>
-            <select value={filterType} onChange={e => setFilterType(e.target.value)}>
-              <option value="all">All Types</option>
-              <option value="dine-in">Dine-In</option>
-              <option value="online">Online</option>
-            </select>
-            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-              <option value="all">All Status</option>
-              <option value="not-started">Not Started</option>
-              <option value="cooking">Cooking</option>
-              <option value="ready">Ready</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Search Table Name"
-              value={filterTable}
-              onChange={(e) => setFilterTable(e.target.value)}
-            />
-          </div>
-          <div className="common-items-bar">
-            <strong>🍽️ Common Items:</strong>
-            {getCommonItemsSummary().map((item, i) => {
-              const colors = ['#f94144', '#f3722c', '#f9c74f', '#90be6d', '#43aa8b', '#577590', '#277da1'];
-              return (
-                <span
-                  key={item.name}
-                  className="common-badge"
-                  style={{ backgroundColor: colors[i % colors.length] }}
-                >
-                  {item.name} x{item.count}
-                </span>
-              );
-            })}
-          </div>
-          <div className="order-grid">
+         <div className="filter-bar">
+  <button className="back-btn" onClick={() => navigate(-1)}>⬅️ Back</button>
+  <select value={filterType} onChange={e => setFilterType(e.target.value)}>
+    <option value="all">All Types</option>
+    <option value="dine-in">Dine-In</option>
+    <option value="online">Online</option>
+  </select>
+  <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+    <option value="all">All Status</option>
+    <option value="not-started">Not Started</option>
+    <option value="cooking">Cooking</option>
+    <option value="ready">Ready</option>
+  </select>
+  <input
+    type="text"
+    placeholder="Search Table Name"
+    value={filterTable}
+    onChange={(e) => setFilterTable(e.target.value)}
+  />
+</div>
+
+<div className="common-items-bar">
+  <strong>🍽️ Common Items:</strong>
+  {getCommonItemsSummary().map((item, i) => {
+    const colors = ['#f94144', '#f3722c', '#f9c74f', '#90be6d', '#43aa8b', '#577590', '#277da1'];
+    return (
+      <span
+        key={item.name}
+        className="common-badge"
+        style={{ backgroundColor: colors[i % colors.length] }}
+      >
+        {item.name} x{item.count}
+      </span>
+    );
+  })}
+</div>
+
+<div className="kitchen-container" style={{ flex: 1 }}>
+  <div className="order-grid">
+    
             {orders
               .filter(order => {
                 const status = !order.startedCookingAt ? 'not-started' :
@@ -286,58 +290,88 @@ const POSKitchenDisplay = () => {
                     key={order._id}
                     className={`order-card ${timeClass} ${isReady ? 'order-ready' : ''} ${elapsed > 1800 ? 'order-sla-alert' : ''}`}
                   >
-                    <div className="order-header-bar">
-                      <div>{timeElapsedMap[order._id]?.formatted || '0m 0s'}</div>
-                      <div>
-                        {{
-                          'dine-in': `Dine-in (Table ${order.name.split('-')[1]})`,
-                          'in-store': 'In-Store',
-                          'togo': 'To-Go',
-                          'callin': 'Call-In',
-                          'walkin': 'Walk-In',
-                          'online': 'Online'
-                        }[order.orderType?.toLowerCase()] || 'Other'}
-                        {isModified && <span className="modified-badge">Modified</span>}
+                   <div className="order-header-bar d-flex justify-content-between align-items-center flex-wrap gap-2 p-2 rounded-top bg-danger text-white">
+                        <div className="fw-bold">
+                          🕒 {timeElapsedMap[order._id]?.formatted || '0m 0s'}
+                        </div>
+
+                        <div className="text-white">
+                          {{
+                            'dine-in': `🍽️ Dine-In - Table ${order.name.split('-')[1]}`,
+                            'in-store': `🛍️ In-Store - ${order.name}`,
+                            'togo': `📦 To-Go - ${order.name}`,
+                            'callin': `📞 Call-In - ${order.name}`,
+                            'walkin': `👣 Walk-In - ${order.name}`,
+                            'online': `🌐 Online - ${order.name}`
+                          }[order.orderType?.toLowerCase()] || `❓ ${order.name}`}
+                        </div>
+
+                        {isModified && (
+                          <div>
+                            <span className="badge bg-light text-dark">✏️ Modified</span>
+                          </div>
+                        )}
                       </div>
-                      <div>{order.name}</div>
-                    </div>
-                    <div className="item-progress"><strong>{ready}/{total} Items Ready</strong></div>
-                    <ul className="item-list">
-                      {items.map((item, index) => (
-                        <li
-                          key={item.itemId + '-' + index}
-                          className={`item ${
-                            item.status === 'removed' ? 'item-removed' :
-                            item.status === 'new' ? 'item-new' :
-                            item.status === 'updated' ? 'item-changed' :
-                            item.isReady ? 'item-ready' : ''
-                          }`}
-                          onClick={() => {
-                            if (!item.isReady && order.startedCookingAt && item.status !== 'removed') {
-                              markItemReady(order._id, item.itemId);
-                            }
-                          }}
-                        >
-                          <span>
-                            {item.isReady && <span className="check-icon">✓ </span>}
-                            <strong className={`item-name ${
-                              item.status === 'removed' ? 'text-red-700 line-through' :
-                              item.status === 'new' ? 'text-blue-700' :
-                              item.status === 'updated' ? 'text-orange-500' :
-                              item.isReady ? 'text-green-700 font-semibold' : 'text-gray-800'
-                            }`}>
-                              {item.name}
-                            </strong>{' '}
-                            {item.status === 'removed' && <span>x 0</span>}
-                            {item.status === 'new' && <span>x {item.quantity}</span>}
-                            {item.status === 'updated' && (
-                              <span>x {item.quantity} <span className="was-text">(was {item.originalQuantity})</span></span>
-                            )}
-                            {item.status === 'unchanged' && <span>x {item.quantity}</span>}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
+                                          <div className="item-progress"><strong>{ready}/{total} Items Ready</strong></div>
+                  <ul className="item-list list-unstyled mt-2">
+  {items.map((item, index) => {
+    const isRemoved = item.status === 'removed';
+    const isNew = item.status === 'new';
+    const isUpdated = item.status === 'updated';
+    const isReady = item.isReady;
+    const isQtyIncreased = item.quantity > item.originalQuantity;
+    const isQtyDecreased = item.quantity < item.originalQuantity;
+
+    return (
+      <li
+        key={`${item.itemId}-${index}`}
+        className="d-flex align-items-start mb-2 item-line"
+        onClick={() => {
+          if (!isReady && order.startedCookingAt && !isRemoved) {
+            markItemReady(order._id, item.itemId);
+          }
+        }}
+      >
+        {/* Icons Section */}
+        <div className="me-2 icon-stack text-center mt-1" style={{ width: '24px' }}>
+          {isRemoved && <span className="text-danger">❌</span>}
+          {isUpdated && (
+            <span className="text-warning">
+              {isQtyIncreased ? '🔺' : '🔻'}
+            </span>
+          )}
+          {isNew && <span className="badge bg-primary small-badge">NEW</span>}
+          {isReady && <span className="text-success">✅</span>}
+        </div>
+
+        {/* Content Section */}
+        <div className="d-flex align-items-baseline flex-wrap gap-1">
+          <span className={`fw-semibold quantity-text ${
+            isRemoved ? 'text-danger text-decoration-line-through' :
+            isUpdated ? 'text-warning' :
+            isNew ? 'text-primary' :
+            isReady ? 'text-success' : 'text-dark'
+          }`}>
+            {item.quantity}x
+          </span>
+
+          <span className={`fw-semibold item-name-text ${
+            isRemoved ? 'text-danger text-decoration-line-through' :
+            isUpdated ? 'text-warning' :
+            isNew ? 'text-primary' :
+            isReady ? 'text-success' : 'text-dark'
+          }`}>
+            {item.name}
+          </span>
+
+          {isUpdated && (
+            <small className="text-muted ms-1">(was {item.originalQuantity})</small>
+          )}
+        </div>
+      </li>
+    );
+  })}
+</ul>
                     <div style={{ textAlign: 'center', marginTop: '6px' }}>
                       <button className="print-btn" onClick={() => printKOT(order)}>🖨️ Print KOT</button>
                     </div>
@@ -355,11 +389,32 @@ const POSKitchenDisplay = () => {
                   </div>
                 );
               })}
+       
+  </div>
+ 
+</div>
+  <div className="fixed-pagination">
+            <button
+              className="btn btn-outline-secondary"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+              disabled={currentPage === 0}
+            >
+              ⬅️ Previous
+            </button>
+            <button
+              className="btn btn-outline-primary"
+              onClick={() =>
+                setCurrentPage(prev =>
+                  (prev + 1) * ITEMS_PER_PAGE < orders.length ? prev + 1 : prev
+                )
+              }
+              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}
+            >
+              Next ➡️
+            </button>
           </div>
-          <div className="pagination">
-            <button onClick={() => setCurrentPage(p => Math.max(p - 1, 0))} disabled={currentPage === 0}>⬅️ Prev</button>
-            <button onClick={() => setCurrentPage(p => (p + 1) * ITEMS_PER_PAGE < orders.length ? p + 1 : p)} disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}>Next ➡️</button>
-          </div>
+          
+        
         </div>
       </div>
     </>

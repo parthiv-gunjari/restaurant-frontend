@@ -24,8 +24,7 @@ const ReservationsPage = () => {
   const [tables, setTables] = useState([]);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [isNavOpen, setIsNavOpen] = useState(false);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
@@ -137,47 +136,40 @@ const ReservationsPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
-      {!isMobile && <SideBar />}
-      {isMobile && (
-        <>
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '56px',
-              background: '#0563bb',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 1rem',
-              zIndex: 1100,
-              color: 'white',
-            }}
-          >
-            <button
-              style={{
-                fontSize: '1.5rem',
-                background: 'none',
-                border: 'none',
-                color: 'white',
-                cursor: 'pointer',
-              }}
-              onClick={() => setIsNavOpen(true)}
-            >
-              ☰
-            </button>
-            <strong>Parthiv’s Kitchen</strong>
-            <div style={{ width: '1.5rem' }} />
-          </div>
-          {isNavOpen && <MobileNavBar open={isNavOpen} onClose={() => setIsNavOpen(false)} />}
-        </>
-      )}
+  <div className="pos-container">
+    {isMobile ? (
+      <>
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="btn btn-sm btn-light"
+          style={{
+            position: 'fixed',
+            top: 10,
+            left: 10,
+            zIndex: 2000,
+            background: '#0563bb',
+            color: 'white'
+          }}
+        >
+          ☰
+        </button>
+        <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      </>
+    ) : (
+      <SideBar />
+    )}
 
-      <main className="reservations-main" style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
-        <h2>Reservations ({filter})</h2>
+    <main
+      className="reservations-main"
+      style={{
+        flex: 1,
+        marginTop: isMobile ? '56px' : 0,
+        padding: '16px',
+        overflowY: isMobile ? 'auto' : 'visible',
+        maxHeight: isMobile ? 'calc(100vh - 56px)' : 'none'
+      }}
+    >
+     <h2>Reservations ({filter})</h2>
           <div className="filters">
             <button
               className={filter === 'today' ? 'active-filter' : ''}
@@ -260,9 +252,9 @@ const ReservationsPage = () => {
             <button type="submit">Add Reservation</button>
           </form>
         </div>
-      </main>
-    </div>
-  );
+    </main>
+  </div>
+);
 };
 
 export default ReservationsPage;

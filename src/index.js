@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/css/Global.css';
+import './assets/css/Global.css';
+import './assets/css/PosGlobal.css';
 
 const container = document.getElementById('root');
 const root = createRoot(container);

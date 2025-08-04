@@ -8,15 +8,13 @@ const MobileNavBar = ({ open, onClose }) => {
   const location = useLocation();
   const role = localStorage.getItem('role');
 
-  const isActive = (path) => location.pathname.includes(path);
-
+  const isActive = (path) => location.pathname === `/admin/pos/${path}`;
   const isAdmin = role === 'admin';
   const isManagerOrWaiter = role === 'manager' || role === 'waiter';
 
-  // don't return null — we now always render the header
-
   return (
     <>
+      {/* Top Blue Header */}
       <div
         className="mobile-nav-header"
         style={{
@@ -26,18 +24,42 @@ const MobileNavBar = ({ open, onClose }) => {
           right: 0,
           height: '56px',
           background: '#0563bb',
-          borderBottom: '1px solid #ccc',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 1rem',
-          zIndex: 1100
+          zIndex: 1100,
         }}
       >
-        <strong style={{ color: '#0563bb' }}>Parthiv's Kitchen</strong>
-        
+        {/* Hamburger Button */}
+        <button
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#fff',
+            fontSize: '1.4rem',
+            cursor: 'pointer',
+          }}
+          onClick={onClose}
+        >
+          ☰
+        </button>
+
+        {/* Centered Title */}
+        <strong
+          style={{
+            flexGrow: 1,
+            textAlign: 'center',
+            color: 'white',
+            fontSize: '1.2rem',
+            marginRight: '1.4rem', // prevents title from overlapping logout
+          }}
+        >
+          Parthiv's Kitchen
+        </strong>
       </div>
 
+      {/* Sidebar Drawer */}
       {open && (
         <div
           className="mobile-sidebar-overlay"

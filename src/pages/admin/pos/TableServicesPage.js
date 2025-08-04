@@ -215,6 +215,7 @@ const TableServicesPage = () => {
     const text = hours > 0 ? `${hours}h ${minutes}m ${seconds}s` : `${minutes}m ${seconds}s`;
     return { text, seconds: diff };
   };
+  const hasNewItems = selectedItems.some(item => item.cartKey.endsWith('-new'));
 
   return (
     <>
@@ -243,39 +244,42 @@ const TableServicesPage = () => {
         {!isMobile && <SideBar />}
 
         {/* Center panel */}
-        <main className="main-panel">
-          <div className="container mt-4">
-            <h2 className="mb-3 text-center">Dine-In Tables</h2>
-           <div className="table-grid">
-  {tables.map((table) => (
-    <div
-      key={table._id}
-      className={`table-card border border-2 border-${getStatusColor(table.status)}`}
-    >
-      <h6>Table {table.tableNumber}</h6>
-      <p className="small">Status: <strong>{table.status}</strong></p>
-      {table.status === 'occupied' && (() => {
-        const { text, seconds } = formatTimer(table.startedAt, now);
-        let color = 'green';
-        if (seconds > 1800) color = 'red';
-        else if (seconds > 900) color = 'orange';
-        return <p className="small" style={{ color }}>⏱️ {text}</p>;
-      })()}
-      {table.status === 'occupied' && (
-        <p className="small">👤 {table.waiterName || 'N/A'}</p>
-      )}
-      <button
-        type="button"
-        className="btn btn-sm btn-primary mt-1 w-100"
-        onClick={() => handleTableClick(table)}
-      >
-        {table.status === 'available' ? 'Take' : 'View'}
-      </button>
-    </div>
-  ))}
-</div>
+       <main className="main-panel">
+  <div className="container mt-4">
+    <h2 className="mb-3 text-center">Dine-In Tables</h2>
+
+    <div className="table-grid-wrapper">
+      <div className="table-grid">
+        {tables.map((table) => (
+          <div
+            key={table._id}
+            className={`table-card border border-2 border-${getStatusColor(table.status)}`}
+          >
+            <h6>Table {table.tableNumber}</h6>
+            <p className="small">Status: <strong>{table.status}</strong></p>
+            {table.status === 'occupied' && (() => {
+              const { text, seconds } = formatTimer(table.startedAt, now);
+              let color = 'green';
+              if (seconds > 1800) color = 'red';
+              else if (seconds > 900) color = 'orange';
+              return <p className="small" style={{ color }}>⏱️ {text}</p>;
+            })()}
+            {table.status === 'occupied' && (
+              <p className="small">👤 {table.waiterName || 'N/A'}</p>
+            )}
+            <button
+              type="button"
+              className="btn btn-sm btn-primary mt-1 w-100"
+              onClick={() => handleTableClick(table)}
+            >
+              {table.status === 'available' ? 'Take' : 'View'}
+            </button>
           </div>
-        </main>
+        ))}
+      </div>
+    </div>
+  </div>
+</main>
 
         {/* Right Cart Panel */}
         <aside className="order-summary p-3 border-start" style={{ minWidth: '300px' }}>
@@ -283,53 +287,71 @@ const TableServicesPage = () => {
             <>
               <h5 className="mb-3">🪑 Table {selectedTable.tableNumber}</h5>
               {selectedItems.length === 0 ? (
-                <p>No items added yet.</p>
-              ) : (
-                <ul className="list-unstyled">
-                  {selectedItems.map((item) => (
-                    <li key={item.cartKey} className="mb-2 d-flex align-items-center justify-content-between">
-                      <div>
-                        <span className="fw-semibold">{item.name}</span>
-                        <div className="btn-group ms-2" role="group" aria-label="Quantity controls">
-                          <button className="btn btn-sm btn-outline-secondary" onClick={() => {
-                            if (item.cartKey.endsWith('-initial')) {
-                              setItemPendingDelete(item);
-                              setShowPinModal(true);
-                            } else {
-                              setSelectedItems(prev => prev.flatMap(i => {
-                                if (i.cartKey !== item.cartKey) return [i];
-                                if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
-                                return [];
-                              }));
-                              if (item.cartKey.endsWith('-initial')) {
-                                setHasModification(true);
-                              }
-                            }
-                          }}>-</button>
-                          <span className="mx-2">{item.quantity}</span>
-                          <button className="btn btn-sm btn-outline-secondary" onClick={() => {
-                            setSelectedItems(prev => prev.map(i => i.cartKey === item.cartKey ? { ...i, quantity: i.quantity + 1 } : i));
-                            if (item.cartKey.endsWith('-initial')) {
-                              setHasModification(true);
-                            }
-                          }}>+</button>
-                        </div>
-                      </div>
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => {
-                        if (item.cartKey.endsWith('-initial')) {
-                          setItemPendingDelete(item);
-                          setShowPinModal(true);
-                        } else {
-                          setSelectedItems(prev => prev.filter(i => i.cartKey !== item.cartKey));
-                          if (item.cartKey.endsWith('-initial')) {
-                            setHasModification(true);
-                          }
-                        }
-                      }}>🗑️</button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+  <p>No items added yet.</p>
+) : (
+  <div className="cart-items-list">
+    {selectedItems.map((item) => (
+      <div key={item.cartKey} className="cart-item">
+        <div className="cart-item-info">{item.name}</div>
+        <div className="cart-item-controls">
+          <div className="btn-group" role="group" aria-label="Quantity controls">
+            <button
+              onClick={() => {
+                if (item.cartKey.endsWith('-initial')) {
+                  setItemPendingDelete(item);
+                  setShowPinModal(true);
+                } else {
+                  setSelectedItems((prev) =>
+                    prev.flatMap((i) => {
+                      if (i.cartKey !== item.cartKey) return [i];
+                      if (i.quantity > 1) return [{ ...i, quantity: i.quantity - 1 }];
+                      return [];
+                    })
+                  );
+                  if (item.cartKey.endsWith('-initial')) {
+                    setHasModification(true);
+                  }
+                }
+              }}
+            >
+              −
+            </button>
+            <span>{item.quantity}</span>
+            <button
+              onClick={() => {
+                setSelectedItems((prev) =>
+                  prev.map((i) =>
+                    i.cartKey === item.cartKey ? { ...i, quantity: i.quantity + 1 } : i
+                  )
+                );
+                if (item.cartKey.endsWith('-initial')) {
+                  setHasModification(true);
+                }
+              }}
+            >
+              +
+            </button>
+          </div>
+          <button
+            onClick={() => {
+              if (item.cartKey.endsWith('-initial')) {
+                setItemPendingDelete(item);
+                setShowPinModal(true);
+              } else {
+                setSelectedItems((prev) => prev.filter((i) => i.cartKey !== item.cartKey));
+                if (item.cartKey.endsWith('-initial')) {
+                  setHasModification(true);
+                }
+              }
+            }}
+          >
+            🗑️
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
               {/* Add More Items button */}
               <button className="btn btn-warning w-100 mb-2" onClick={() => setShowAddItemsModal(true)}>
                 ➕ Add More Items
@@ -341,34 +363,18 @@ const TableServicesPage = () => {
                 onChange={e => setNotes(e.target.value)}
               />
               {selectedTable?.status === 'occupied' ? (
-                <button
+               <button
                   className="btn btn-primary w-100 mb-2 update-order-btn"
-                  disabled={!hasModification || !selectedTable}
+                  disabled={!(hasModification || hasNewItems) || !selectedTable}
                   onClick={async () => {
                     try {
                       const token = localStorage.getItem('waiterToken') || localStorage.getItem('managerToken') || localStorage.getItem('adminToken') || localStorage.getItem('token');
                       if (!token) return alert('No auth token');
 
-                      // Prepare modified items and detect modifications
                       const updatedItems = selectedItems.map(item => ({
                         itemId: item.itemId || item._id,
                         quantity: item.quantity
                       }));
-
-                      const initialItems = selectedItems.filter(i => i.cartKey.endsWith('-initial'));
-                      const modifiedReasons = [];
-
-                      for (const item of initialItems) {
-                        const original = item.initialQuantity ?? item.quantity;
-                        if (item.quantity !== original) {
-                          modifiedReasons.push({
-                            itemId: item.itemId,
-                            action: item.quantity === 0 ? 'remove' : 'update',
-                            quantity: item.quantity,
-                            reason: modificationReason || 'Modified via POS Table View',
-                          });
-                        }
-                      }
 
                       await axios.patch(`${BASE_URL}/api/orders/${selectedTable.currentOrderId}/modify`, {
                         updatedItems,
@@ -436,13 +442,13 @@ const TableServicesPage = () => {
                         <div
                           key={item._id}
                           className={`menu-item-card border ${
-                            selectedItems.find(i =>
-                              (i.cartKey === `${item._id}-new` || i.cartKey === `${item._id}-initial`) &&
-                              i.quantity > 0
-                            )
-                              ? 'bg-success text-white'
-                              : ''
-                          }`}
+  selectedItems.find(i =>
+    (i.cartKey === `${item._id}-new` || i.cartKey === `${item._id}-initial`) &&
+    i.quantity > 0
+  )
+    ? 'selected-item'
+    : ''
+}`}
                         >
                           <div className="menu-item-info">
                             <div className="fw-semibold">

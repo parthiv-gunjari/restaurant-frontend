@@ -1,14 +1,15 @@
-/* ========== MobileNavBar Styles ========== */
-
+/* Common Drawer Styles */
 .mobile-sidebar-drawer {
   background-color: #ffffff;
   border-right: 1px solid #e0e6ed;
-  padding-top: 1rem;
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  padding-top: 1rem;
 }
 
+/* Sidebar nav links */
 .mobile-sidebar-drawer ul {
   list-style: none;
   padding: 0;
@@ -31,19 +32,21 @@
   color: #1e88e5;
 }
 
+/* User Info */
 .mobile-sidebar-drawer .user-info {
   display: flex;
   align-items: center;
   color: #333;
   font-weight: bold;
-  margin-bottom: 1rem;
   font-size: 0.95rem;
+  margin-bottom: 1rem;
 }
 
 .mobile-sidebar-drawer .user-info i {
   margin-right: 8px;
 }
 
+/* Logout Button */
 .mobile-sidebar-drawer .logout-button {
   width: 100%;
   padding: 0.75rem;
@@ -59,4 +62,64 @@
 
 .mobile-sidebar-drawer .logout-button:hover {
   background-color: #c62828;
+}
+
+/* Overlay backdrop for sidebar */
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1200;
+}
+
+/* Mobile top navbar */
+.mobile-nav-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: #0563bb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 1100;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  color: white;
+  font-weight: bold;
+}
+
+/* ===== Responsive Tweaks ===== */
+@media (min-width: 769px) {
+  .mobile-nav-header {
+    display: none;
+  }
+
+  .mobile-sidebar-drawer {
+    display: none;
+  }
+
+  .mobile-sidebar-overlay {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-sidebar-drawer {
+    width: 70vw;
+    max-width: 320px;
+  }
+
+  .mobile-sidebar-drawer ul li {
+    font-size: 0.95rem;
+  }
+
+  .mobile-sidebar-drawer .logout-button {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
 }

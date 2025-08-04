@@ -196,7 +196,9 @@
 
 @media (max-width: 768px) {
   .accounts-page {
-    height: auto;
-    padding-bottom: 80px;
+    overflow-y: auto;
+    max-height: calc(100vh - 56px); /* minus navbar height */
+    padding: 12px;
+    -webkit-overflow-scrolling: touch;
   }
 }
