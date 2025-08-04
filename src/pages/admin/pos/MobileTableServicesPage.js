@@ -394,7 +394,7 @@ useEffect(() => {
     opacity: cart.length > 0 ? 1 : 0,
     pointerEvents: cart.length > 0 ? 'auto' : 'none',
     position: 'fixed',
-    bottom: 0,
+    bottom: '1rem',
     left: 0,
     right: 0,
     zIndex: 1050,
@@ -423,7 +423,7 @@ useEffect(() => {
     <div
       className="cart-modal-content bg-white rounded-3 p-3 shadow"
       onClick={(e) => e.stopPropagation()}
-      style={{ maxHeight: '80vh', overflowY: 'auto' }}
+      style={{ maxHeight: '60vh', overflowY: 'auto' }}
     >
       <div className="mb-3">
         <textarea

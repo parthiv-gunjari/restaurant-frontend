@@ -8,7 +8,7 @@
   --danger-color: #e74c3c;
 }
 
-/* Base Styling */
+/* === Base Styling === */
 body {
   font-family: var(--font-base);
   margin: 0;
@@ -24,7 +24,7 @@ body,
   overflow: hidden;
 }
 
-/* Flexible Scroll for Desktop */
+/* === Desktop Layout === */
 .pos-container {
   display: flex;
   min-height: 100vh;
@@ -33,7 +33,7 @@ body,
   background-color: var(--bg-light);
 }
 
-/* Scrollable main content area */
+/* Main content area */
 .main-panel {
   flex: 1;
   display: flex;
@@ -44,7 +44,7 @@ body,
   box-sizing: border-box;
 }
 
-/* Fixed sticky search bar */
+/* Sticky search bar */
 .search-bar-row {
   position: sticky;
   top: 0;
@@ -54,7 +54,7 @@ body,
   border-bottom: 1px solid #ddd;
 }
 
-/* Fixed sticky category buttons */
+/* Sticky category buttons */
 .category-carousel {
   position: sticky;
   top: 68px;
@@ -67,7 +67,7 @@ body,
   gap: 0.75rem;
 }
 
-/* Scrollable items grid wrapper */
+/* Scrollable items section */
 .items-grid-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -81,25 +81,7 @@ body,
   gap: 2rem;
 }
 
-/* Mobile layout: 2 items per row */
-@media (max-width: 768px) {
-  .items-grid {
-    grid-template-columns: repeat(2, 1fr);
-     
-  }
-
-  .item-card {
-    aspect-ratio: 1 / 1;
-    height: auto;
-    overflow-x: hidden;
-  }
-  .search-bar-row{
-    padding-top: 3.5rem;
-    padding-bottom: 1rem;
-}
-}
-
-/* Item Card Styles */
+/* === Item Card === */
 .item-card {
   background-color: whitesmoke;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
@@ -114,7 +96,6 @@ body,
   height: 170px;
   position: relative;
   overflow-x: hidden;
-
 }
 
 .item-card .item-name {
@@ -155,4 +136,38 @@ body,
 
 .item-card.clicked {
   background-color: #cdeeff;
+}
+
+/* === Mobile Layout === */
+@media (max-width: 768px) {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .item-card {
+    aspect-ratio: 1 / 1;
+    height: auto;
+    overflow-x: hidden;
+  }
+
+
+
+  /* Fix for content hidden behind mobile navbar (56px) */
+.order-customer-row,
+
+  .pos-update-panel,
+
+  .kitchen-container,
+  .table-responsive,
+
+
+  .mobile-table-menu {
+    padding-top: 56px !important;
+  }
+.accounts-page,
+.reservations-main,
+.main-panel,
+.mobile-sidebar-drawer{
+    padding-bottom: 4rem;
+}
 }

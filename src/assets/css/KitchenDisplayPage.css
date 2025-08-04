@@ -1,24 +1,24 @@
 .kitchen-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 56px); /* 56px = height of filter bar only */
+  height: calc(100vh - 56px); 
   overflow: hidden;
-  padding: 0 16px; /* remove bottom padding */
+  padding: 0 16px; 
 }
 @media (max-width: 768px) {
   .kitchen-container {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* 60px filter + 52px common */
+    height: 100vh; 
     overflow: hidden;
-    padding: 0 8px; /* consistent horizontal spacing */
+    padding: 0 8px;
   }
 
   .order-grid {
     flex: 1;
     overflow-y: auto;
     display: grid;
-    grid-template-columns: 1fr; /* single column on mobile */
+    grid-template-columns: 1fr;
     gap: 16px;
    
     scrollbar-width: thin;
@@ -293,7 +293,7 @@ button.ready-btn {
 /* Common Items bar styles */
 .common-items-bar {
   position: sticky;
-  top: 60px; /* height of .filter-bar */
+  top: 60px; 
   z-index: 900;
   background-color: #e0f7fa;
   padding: 10px 16px;
@@ -334,12 +334,12 @@ button.ready-btn {
     gap: 8px;
   }
  .common-items-bar {
-    font-size: 11px; /* ↓ from 14px */
-    padding: 2px 6px; /* ↓ tighter padding */
+    font-size: 11px;
+    padding: 2px 6px; 
   }
 
   .common-items-bar li {
-    font-size: 11px; /* ↓ font shrink */
+    font-size: 11px; 
     padding: 3px 6px;
     border-radius: 5px;
   }
@@ -357,7 +357,7 @@ body {
 }
 
   .kitchen-container {
-    padding-bottom: 2rem; /* Prevent overlap by fixed elements */
+    padding-bottom: 2rem; 
   }
 
   .filter-bar {
