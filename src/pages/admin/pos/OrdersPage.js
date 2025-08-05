@@ -228,8 +228,8 @@ function OrdersPage() {
       <div className="d-flex">
         {/* Sidebar Navigation - only show on desktop */}
         {!isMobile && <SideBar />}
-        <div className="container mt-4" style={{ marginTop: isMobile ? '56px' : '0' }}>
-          <h3 className="mb-4"> All Orders</h3>
+        <div className="container mt-4 ">
+          <h3 className="mb-4 allOrders"> All Orders</h3>
           <div className={`mb-3 ${isMobile ? '' : 'd-flex align-items-center gap-3 flex-wrap'}`}>
             <div className="filter-group mb-2">
               <label htmlFor="statusFilter" className="form-label">Status:</label>

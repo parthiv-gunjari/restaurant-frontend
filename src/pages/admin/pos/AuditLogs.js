@@ -73,7 +73,7 @@ const AuditLogs = () => {
       )}
 
       {/* Main Panel */}
-      <div style={{ flex: 1, marginTop: isMobile ? '56px' : 0 }}>
+      <div >
         <div
           className="px-2 mt-4"
           style={{
@@ -82,7 +82,7 @@ const AuditLogs = () => {
             maxWidth: '100vw',
           }}
         >
-          <h3>Audit Logs – Order Modification History</h3>
+          <h3 className='AuditLogs'>Audit Logs – Order Modification History</h3>
           {loading ? (
             <p>Loading...</p>
           ) : modifications.length === 0 ? (

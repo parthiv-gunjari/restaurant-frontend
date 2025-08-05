@@ -70,24 +70,16 @@ const handlePayment = async () => {
     setLoading(true);
 
     if (paymentMode === 'card') {
-      // existing card logic...
-    } else {
-      // 🛑 Validation to prevent underpayment in cash
-      if (Number(amountGiven) < total) {
-        setMessage(`❌ Amount given ($${Number(amountGiven).toFixed(2)}) is less than total ($${total.toFixed(2)}).`);
-        setLoading(false);
-        return;
-      }
-
+   
       await axios.patch(`${BASE_URL}/api/orders/${order._id}/pay`, {
-        paymentMode,
-        amountPaid: Number(amountGiven || total),
-        changeReturned: changeToReturn,
+        paymentMode: 'card',
+        amountPaid: total,
+        changeReturned: 0,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // ✅ Free up the table if dine-in
+      // Free the table if it's a dine-in order
       if (order.orderType === 'dinein' && order.tableId) {
         try {
           await axios.patch(`${BASE_URL}/api/tables/${order.tableId}/status`, {
@@ -100,7 +92,38 @@ const handlePayment = async () => {
         }
       }
 
-      setMessage('✅ Payment recorded successfully.');
+      setMessage('✅ Card payment recorded successfully.');
+      setTimeout(() => navigate('/admin/pos/orders'), 1000);
+
+    } else {
+      // Cash logic
+      if (Number(amountGiven) < total) {
+        setMessage(`❌ Amount given ($${Number(amountGiven).toFixed(2)}) is less than total ($${total.toFixed(2)}).`);
+        setLoading(false);
+        return;
+      }
+
+      await axios.patch(`${BASE_URL}/api/orders/${order._id}/pay`, {
+        paymentMode: 'cash',
+        amountPaid: Number(amountGiven || total),
+        changeReturned: changeToReturn,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (order.orderType === 'dinein' && order.tableId) {
+        try {
+          await axios.patch(`${BASE_URL}/api/tables/${order.tableId}/status`, {
+            status: 'available'
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        } catch (err) {
+          console.error('⚠️ Failed to update table status:', err);
+        }
+      }
+
+      setMessage('✅ Cash payment recorded successfully.');
       setTimeout(() => navigate('/admin/pos/orders'), 1000);
     }
   } catch (err) {
@@ -144,8 +167,8 @@ const handlePayment = async () => {
       )}
       {/* Sidebar Navigation - only show on desktop */}
       {!isMobile && <SideBar />}
-      <div className="container p-4" style={{ marginTop: isMobile ? '56px' : 0 }}>
-        <h3 className="mb-3">🧾 Payment for Order #{order.orderCode}</h3>
+      <div className="container p-4">
+        <h3 className="mb-3 paymentHeader">🧾 Payment for Order #{order.orderCode}</h3>
 
         <ul className="list-group mb-3">
           {order.items.map((item, i) => (

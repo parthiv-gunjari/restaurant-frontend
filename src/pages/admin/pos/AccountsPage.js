@@ -100,13 +100,8 @@ const AccountsPage = () => {
         </>
       )}
       <div
-  className="accounts-page"
-  style={{
-    flex: 1,
-    marginTop: isMobile ? '56px' : 0,
-    minHeight: '100vh',
-  }}
->
+        className="accounts-page"
+      >
         <div>
           <h2 className="dashboard-title">📊 Accounts Dashboard</h2>
 

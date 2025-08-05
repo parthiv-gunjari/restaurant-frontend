@@ -161,19 +161,12 @@ const ReservationsPage = () => {
 
     <main
       className="reservations-main"
-      style={{
-        flex: 1,
-        marginTop: isMobile ? '56px' : 0,
-        padding: '16px',
-        overflowY: isMobile ? 'auto' : 'visible',
-        maxHeight: isMobile ? 'calc(100vh - 56px)' : 'none'
-      }}
     >
-     <h2>Reservations ({filter})</h2>
-          <div className="filters">
-            <button
-              className={filter === 'today' ? 'active-filter' : ''}
-              onClick={() => setFilter('today')}
+      <h2 className='reservations-header'>Reservations ({filter})</h2>
+      <div className="filters">
+        <button
+          className={filter === 'today' ? 'active-filter' : ''}
+          onClick={() => setFilter('today')}
             >
               Today
             </button>

@@ -187,9 +187,9 @@ const UpdateMenu = () => {
       )}
       {/* Sidebar Navigation - only show on desktop */}
       {!isMobile && <SideBar />}
-      <div className="pos-update-panel mt-4" style={{ flex: 1, overflowY: 'auto', paddingRight: '1rem', marginTop: isMobile ? '56px' : 0 }}>
+      <div className="pos-update-panel mt-4" style={{ flex: 1, overflowY: 'auto', paddingRight: '1rem'}}>
         <div className="update-menu-header">
-          <h2>Update Menu</h2>
+          <h2 >Update Menu</h2>
           <button onClick={toggleForm} className="btn btn-outline-primary btn-toggle-form">
             {isFormOpen ? 'Close Form' : editingId ? 'Edit Item' : 'Add New Item'}
           </button>

@@ -334,12 +334,6 @@ useEffect(() => {
 
      <div
   className="mobile-table-wrapper"
-  style={{
-    marginTop: isMobile ? '0px' : 0,
-    paddingBottom: '60px', // To prevent overlap by cart bar
-    overflowY: 'auto',
-    maxHeight: 'calc(100vh - 56px)', // subtract navbar height
-  }}
 >
       <div className="mobile-table-menu">
        <div className="category-scroll">

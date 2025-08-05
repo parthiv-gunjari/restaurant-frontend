@@ -258,7 +258,8 @@
   }
 
   .reservation-list table {
-    min-width: 950px; /* keeps layout consistent */
+     width: 100%;
+  table-layout: auto;
   }
 
   .reservation-list th,
@@ -289,5 +290,25 @@
   .new-reservation-form button {
     font-size: 0.85rem;
     padding: 6px 12px;
+  }
+}
+@media (max-width: 768px) {
+  .reservation-list {
+    overflow-x: hidden !important;
+  }
+
+  .reservation-table-wrapper {
+    overflow-x: hidden !important;
+  }
+
+  .reservation-list table {
+    width: 100%;
+    table-layout: auto;
+  }
+
+  .reservation-list th,
+  .reservation-list td {
+    white-space: normal; /* allow wrapping */
+    word-break: break-word;
   }
 }
