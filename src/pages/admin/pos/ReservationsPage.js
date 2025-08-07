@@ -136,7 +136,7 @@ const ReservationsPage = () => {
   };
 
   return (
-  <div className="pos-container">
+  <div className="pos-layout-container">
     {isMobile ? (
       <>
         <button
@@ -183,44 +183,46 @@ const ReservationsPage = () => {
               Past
             </button>
           </div>
-        <div className="reservation-list" style={{ overflowX: 'auto' }}>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Time</th>
-                <th>Table</th>
-                <th>Guests</th>
-                <th>Status</th>
-                <th>Source</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map((r) => (
-                <tr key={r._id}>
-                  <td>{r.name}</td>
-                  <td>{r.phone}</td>
-                  <td>{new Date(r.date).toLocaleString()}</td>
-                  <td>{r.tableId?.tableNumber || 'N/A'}</td>
-                  <td>{r.guestCount}</td>
-                  <td>
-                    <span className={`reservation-status status-${r.status}`}>{r.status}</span>
-                  </td>
-                  <td>{r.source}</td>
-                  <td>
-                    {r.status === 'reserved' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <button onClick={() => updateStatus(r._id, 'completed')} className="action-btn complete-btn">Complete</button>
-                        <button onClick={() => updateStatus(r._id, 'cancelled')} className="action-btn cancel-btn">Cancel</button>
-                      </div>
-                    )}
-                  </td>
+        <div className="reservation-list">
+          <div className="reservation-table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Time</th>
+                  <th>Table</th>
+                  <th>Guests</th>
+                  <th>Status</th>
+                  <th>Source</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {reservations.map((r) => (
+                  <tr key={r._id}>
+                    <td>{r.name}</td>
+                    <td>{r.phone}</td>
+                    <td>{new Date(r.date).toLocaleString()}</td>
+                    <td>{r.tableId?.tableNumber || 'N/A'}</td>
+                    <td>{r.guestCount}</td>
+                    <td>
+                      <span className={`reservation-status status-${r.status}`}>{r.status}</span>
+                    </td>
+                    <td>{r.source}</td>
+                    <td>
+                      {r.status === 'reserved' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <button onClick={() => updateStatus(r._id, 'completed')} className="action-btn complete-btn">Complete</button>
+                          <button onClick={() => updateStatus(r._id, 'cancelled')} className="action-btn cancel-btn">Cancel</button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="new-reservation-form">

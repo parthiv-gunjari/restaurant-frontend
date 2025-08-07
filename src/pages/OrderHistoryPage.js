@@ -27,7 +27,8 @@ function OrderHistoryPage() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="pos-layout-container">
+      <div className="container mt-4">
       <h2>📜 Order History</h2>
 
       <div className="mb-3 d-flex flex-column align-items-center">
@@ -80,6 +81,7 @@ function OrderHistoryPage() {
           <p className="text-center text-muted">No orders found.</p>
         )}
       </div>
+    </div>
     </div>
   );
 }

@@ -164,7 +164,7 @@ const UpdateMenu = () => {
   };
 
   return (
-    <div className="update-menu-container" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div className="pos-layout-container update-menu-container" style={{ overflowX: 'hidden' }}>
       {/* Mobile NavBar for mobile screens */}
       {isMobile && (
         <>
@@ -187,9 +187,9 @@ const UpdateMenu = () => {
       )}
       {/* Sidebar Navigation - only show on desktop */}
       {!isMobile && <SideBar />}
-      <div className="pos-update-panel mt-4" style={{ flex: 1, overflowY: 'auto', paddingRight: '1rem'}}>
+      <div className="pos-update-panel mt-4" style={{ width: '100%', maxWidth: '100%' }}>
         <div className="update-menu-header">
-          <h2 >Update Menu</h2>
+          <h2 style={{ marginTop: '0.5rem' }}>Update Menu</h2>
           <button onClick={toggleForm} className="btn btn-outline-primary btn-toggle-form">
             {isFormOpen ? 'Close Form' : editingId ? 'Edit Item' : 'Add New Item'}
           </button>
@@ -306,8 +306,8 @@ const UpdateMenu = () => {
             }, {})
           ).map(([category, items]) => (
             <div key={category} className="mb-5 category-section">
-              <h4 className="mb-3 category-title">{category}</h4>
-              <div className="menu-grid">
+              <h4 className="mb-3 ps-3 category-title">{category}</h4>
+              <div className="menu-grid" style={{ width: '100%', maxWidth: '100%' ,paddingLeft:0}}>
                 {items.map((item) => (
                   <div key={item._id} className="menu-item-card">
                     <div className="menu-item-image-wrapper">

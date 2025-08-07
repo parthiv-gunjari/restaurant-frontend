@@ -239,7 +239,7 @@ const TableServicesPage = () => {
           <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         </>
       )}
-      <div className="pos-container light-mode" style={{ marginTop: isMobile ? '56px' : 0 }}>
+      <div className="pos-layout-container light-mode" style={{ marginTop: isMobile ? '56px' : 0 }}>
         {/* Sidebar Navigation - only show on desktop */}
         {!isMobile && <SideBar />}
 

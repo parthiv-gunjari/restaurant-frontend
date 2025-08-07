@@ -77,7 +77,7 @@ const AccountsPage = () => {
   }, [fetchStats]);
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="pos-layout-container">
       {!isMobile && <SideBar />}
       {isMobile && (
         <>
@@ -99,7 +99,7 @@ const AccountsPage = () => {
           <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
         </>
       )}
-      <div
+      <main
         className="accounts-page"
       >
         <div>
@@ -179,7 +179,7 @@ const AccountsPage = () => {
             />
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };

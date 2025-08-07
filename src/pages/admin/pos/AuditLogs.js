@@ -8,6 +8,7 @@ import MobileNavBar from './MobileNavBar';
 
 const AuditLogs = () => {
   const [modifications, setModifications] = useState([]);
+  const [filteredMods, setFilteredMods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -35,6 +36,7 @@ const AuditLogs = () => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
         setModifications(sorted);
+        setFilteredMods(sorted);
       } catch (err) {
         console.error('Error fetching modifications', err);
         alert('Failed to load modifications history.');
@@ -46,8 +48,41 @@ const AuditLogs = () => {
     fetchModifications();
   }, []);
 
+  const filterByDate = (range) => {
+    const now = new Date();
+    let filtered = [];
+
+    if (range === 'today') {
+      filtered = modifications.filter((mod) => {
+        const modDate = new Date(mod.createdAt);
+        return (
+          modDate.getDate() === now.getDate() &&
+          modDate.getMonth() === now.getMonth() &&
+          modDate.getFullYear() === now.getFullYear()
+        );
+      });
+    } else if (range === 'yesterday') {
+      const yesterday = new Date();
+      yesterday.setDate(now.getDate() - 1);
+      filtered = modifications.filter((mod) => {
+        const modDate = new Date(mod.createdAt);
+        return (
+          modDate.getDate() === yesterday.getDate() &&
+          modDate.getMonth() === yesterday.getMonth() &&
+          modDate.getFullYear() === yesterday.getFullYear()
+        );
+      });
+    } else if (range === 'last7') {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      filtered = modifications.filter((mod) => new Date(mod.createdAt) >= sevenDaysAgo);
+    }
+
+    setFilteredMods(filtered);
+  };
+
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="pos-layout-container">
       {/* Sidebar for Desktop */}
       {!isMobile && <SideBar />}
 
@@ -73,7 +108,7 @@ const AuditLogs = () => {
       )}
 
       {/* Main Panel */}
-      <div >
+      <main className="audit-logs-page" style={{ paddingLeft: 0, paddingRight: 0 }}>
         <div
           className="px-2 mt-4"
           style={{
@@ -82,10 +117,16 @@ const AuditLogs = () => {
             maxWidth: '100vw',
           }}
         >
-          <h3 className='AuditLogs'>Audit Logs – Order Modification History</h3>
+          <h3 className='AuditLogs AuditLogsHeading'>Audit Logs – Order Modification History</h3>
+          <div className="mb-3 d-flex gap-2 flex-wrap">
+            <button className="btn btn-outline-primary btn-sm" onClick={() => filterByDate('today')}>Today</button>
+            <button className="btn btn-outline-primary btn-sm" onClick={() => filterByDate('yesterday')}>Yesterday</button>
+            <button className="btn btn-outline-primary btn-sm" onClick={() => filterByDate('last7')}>Last 7 Days</button>
+            <button className="btn btn-outline-secondary btn-sm" onClick={() => setFilteredMods(modifications)}>Clear</button>
+          </div>
           {loading ? (
             <p>Loading...</p>
-          ) : modifications.length === 0 ? (
+          ) : filteredMods.length === 0 ? (
             <p>No modifications found.</p>
           ) : (
             <div className="table-responsive">
@@ -104,7 +145,7 @@ const AuditLogs = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {modifications.map((mod, index) => {
+                  {filteredMods.map((mod, index) => {
                     const beforeItems = Array.isArray(mod.before) ? mod.before : [];
                     const afterItems = Array.isArray(mod.after) ? mod.after : [];
 
@@ -219,7 +260,7 @@ const AuditLogs = () => {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

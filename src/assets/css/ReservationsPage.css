@@ -1,4 +1,4 @@
-.pos-container {
+.pos-layout-container {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -9,7 +9,7 @@
 }
 
 @media (max-width: 768px) {
-  .pos-container {
+  .pos-layout-container {
     flex-direction: column;
     overflow-y: auto; /* Enable scroll on mobile */
   }
@@ -205,7 +205,6 @@
   background-color: #dc3545;
   color: #fff;
 }
-
 /* Unified status pill styles */
 .reservation-status {
   display: inline-block;
@@ -292,23 +291,50 @@
     padding: 6px 12px;
   }
 }
+
 @media (max-width: 768px) {
   .reservation-list {
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
   }
 
   .reservation-table-wrapper {
-    overflow-x: hidden !important;
-  }
-
-  .reservation-list table {
+    overflow-x: auto !important;
     width: 100%;
-    table-layout: auto;
   }
 
-  .reservation-list th,
-  .reservation-list td {
-    white-space: normal; /* allow wrapping */
+  .reservation-table-wrapper table {
+    min-width: 750px;
+    width: max-content;
+  }
+
+  .reservation-table-wrapper th,
+  .reservation-table-wrapper td {
+    white-space: nowrap;
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .reservation-table-wrapper td:first-child {
+    white-space: normal;
     word-break: break-word;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .new-reservation-form input,
+  .new-reservation-form select,
+  .new-reservation-form textarea {
+    font-size: 0.85rem;
+    padding: 6px;
+  }
+
+  .new-reservation-form button {
+    font-size: 0.85rem;
+    padding: 6px 12px;
   }
 }

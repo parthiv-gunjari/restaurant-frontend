@@ -240,8 +240,55 @@ const POSPage = () => {
         console.error('Razorpay error:', err);
         alert('Failed to initiate Razorpay payment');
       }
+    } else if (paymentMode === 'Card') {
+      try {
+        const token =
+          localStorage.getItem('waiterToken') ||
+          localStorage.getItem('managerToken') ||
+          localStorage.getItem('adminToken') ||
+          localStorage.getItem('token');
+
+        // Step 1: Create Payment Intent
+        const createIntentRes = await axios.post(
+          `${BASE_URL}/api/stripe/create-payment-intent`,
+          { orderId, customer: { name: customerName, email, notes } },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const clientSecret = createIntentRes.data.clientSecret;
+        if (!clientSecret) throw new Error('Failed to get client secret');
+
+        // Step 2: Use Stripe Elements for confirmation (navigate to payment page with clientSecret and orderId)
+        navigate(`/admin/pos/payment?orderId=${orderId}&clientSecret=${clientSecret}`);
+      } catch (err) {
+        console.error('Stripe payment error:', err);
+        alert('Failed to initiate Stripe card payment');
+      }
     } else {
-      navigate(`/admin/pos/payment?orderId=${orderId}`);
+      // For fallback/alternate flows, include clientSecret in the URL if available (fixes "clientSecret: null" issue).
+      // Try to create a payment intent to get clientSecret, similar to Card flow.
+      try {
+        const token =
+          localStorage.getItem('waiterToken') ||
+          localStorage.getItem('managerToken') ||
+          localStorage.getItem('adminToken') ||
+          localStorage.getItem('token');
+
+        const createIntentRes = await axios.post(
+          `${BASE_URL}/api/stripe/create-payment-intent`,
+          { orderId, customer: { name: customerName, email, notes } },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const clientSecret = createIntentRes.data.clientSecret;
+        if (clientSecret) {
+          navigate(`/admin/pos/payment?orderId=${orderId}&clientSecret=${clientSecret}`);
+        } else {
+          navigate(`/admin/pos/payment?orderId=${orderId}`);
+        }
+      } catch (err) {
+        // If Stripe intent fails, fallback to original navigation.
+        navigate(`/admin/pos/payment?orderId=${orderId}`);
+      }
     }
   };
 
@@ -249,295 +296,289 @@ const POSPage = () => {
 
   return (
     <>
-    <div className="pos-container light-mode" style={{ position: 'relative' }}>
-      {/* Top Navbar */}
-     {isMobile && (
-        <>
-          {/* Hamburger button for mobile sidebar */}
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="btn btn-sm btn-light"
-            style={{
-              position: 'fixed',
-              top: 10,
-              left: 10,
-              zIndex: 2000,
-              background: '#0563bb',
-              color: 'white'
-            }}
-          >
-            ☰
-          </button>
-          <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        </>
-      )}
-
-      {/* Sidebar for desktop */}
-      {!isMobile && <SideBar />}
-
-      <main className="main-panel">
-        <>
-          <div className="search-bar-row">
-            <div
-              className="order-customer-row"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.5rem',
-                alignItems: 'center',
-                margin: '1rem 0',
-              }}
-            >
-              <select
-                value={orderType}
-                onChange={(e) => setOrderType(e.target.value)}
-                style={{ flex: '1 1 120px', minWidth: '120px' }}
+      <div className="pos-layout-container">
+        <div className="pos-container light-mode" style={{ position: 'relative' }}>
+          {/* Top Navbar */}
+          {isMobile && (
+            <>
+              {/* Hamburger button for mobile sidebar */}
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="btn btn-sm btn-light"
+                style={{
+                  position: 'fixed',
+                  top: 10,
+                  left: 10,
+                  zIndex: 2000,
+                  background: '#0563bb',
+                  color: 'white'
+                }}
               >
-                <option value="walkin">Walk-In</option>
-                <option value="togo">To-Go</option>
-                <option value="callin">Call-In</option>
-              </select>
+                ☰
+              </button>
+              <MobileNavBar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            </>
+          )}
 
-              <input
-                type="text"
-                placeholder="Customer name *"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                style={{ flex: '2 1 160px', minWidth: '140px' }}
-              />
+          {/* Sidebar for desktop */}
+          {!isMobile && <SideBar />}
 
-              
-
-              <input
-                type="text"
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ flex: '2 1 180px', minWidth: '150px' }}
-              />
-            </div>
-          </div>
-
-          <div className="category-carousel">
-            {categories.map((cat, index) => {
-              const count = cat === 'All'
-                ? menuItems.length
-                : menuItems.filter(i => i.category === cat).length;
-              return (
-                <button
-                  key={cat}
-                  className={cat === selectedCategory ? 'active' : ''}
-                  style={{ '--i': index, '--total': categories.length }}
-                  onClick={() => setSelectedCategory(cat)}
+          <main
+            className="main-panel main-content"
+            style={{ overflowY: 'auto', paddingBottom: isMobile ? '80px' : '0px' }}
+          >
+            <>
+              <div className="search-bar-row">
+                <div
+                  className="order-customer-row"
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                    alignItems: 'center',
+                    margin: '1rem 0',
+                  }}
                 >
-                  <span>{cat}</span>
-                  <span className="count">{count} items</span>
+                  <select
+                    value={orderType}
+                    onChange={(e) => setOrderType(e.target.value)}
+                    style={{ flex: '1 1 120px', minWidth: '120px' }}
+                  >
+                    <option value="walkin">Walk-In</option>
+                    <option value="togo">To-Go</option>
+                    <option value="callin">Call-In</option>
+                  </select>
+
+                  <input
+                    type="text"
+                    placeholder="Customer name *"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    style={{ flex: '2 1 160px', minWidth: '140px' }}
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Search items..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ flex: '2 1 180px', minWidth: '150px' }}
+                  />
+                </div>
+              </div>
+
+              <div className="category-carousel">
+                {categories.map((cat, index) => {
+                  const count = cat === 'All'
+                    ? menuItems.length
+                    : menuItems.filter(i => i.category === cat).length;
+                  return (
+                    <button
+                      key={cat}
+                      className={cat === selectedCategory ? 'active' : ''}
+                      style={{ '--i': index, '--total': categories.length }}
+                      onClick={() => setSelectedCategory(cat)}
+                    >
+                      <span>{cat}</span>
+                      <span className="count">{count} items</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="items-grid-wrapper">
+                <div className="items-grid">
+                  {filteredItems.map(item => {
+                    const inCart = cart.find(ci => ci._id === item._id);
+                    return (
+                      <div
+                        key={item._id}
+                        className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
+                      >
+                        <div className="item-name">{item.name}</div>
+                        <div className="item-price">${item.price.toFixed(2)}</div>
+
+                        {item.outOfStock ? (
+                          <div className="item-status">Out of Stock</div>
+                        ) : (
+                          <div className="qty-controls">
+                            <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
+                            <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
+                            <button onClick={() => addToCart(item)}>+</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          </main>
+          {!isMobile && (
+            <aside className="order-summary container-fluid d-flex flex-column">
+              <h4 className="mb-2">
+                🛒 <strong>Cart Summary</strong>
+              </h4>
+              <p className="fw-medium">{cart.length} items</p>
+              <textarea
+                className="form-control mb-3"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Notes..."
+              />
+              <div className="cart-items-wrapper flex-grow-1 overflow-auto mb-3">
+                {cart.length > 0 && (
+                  <button onClick={clearCart} className="btn btn-danger mb-3 w-100">
+                    Clear Cart 🗑️
+                  </button>
+                )}
+                {cart.length === 0 ? (
+                  <p>No items added yet.</p>
+                ) : (
+                  <div className="cart-items-list">
+                    {cart.map((item) => (
+                      <div key={item._id} className="cart-item">
+                        <div className="cart-item-info">
+                          {item.name}
+                          <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                            ₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}
+                          </div>
+                        </div>
+                        <div className="cart-item-controls">
+                          <div className="btn-group" role="group" aria-label="Quantity controls">
+                            <button onClick={() => updateQuantity(item._id, -1)}>−</button>
+                            <span>{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item._id, 1)}>+</button>
+                          </div>
+                          <button onClick={() => removeItem(item._id)}>🗑️</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="payment-section mb-3">
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Enter discount"
+                  value={discount}
+                  onChange={(e) => setDiscount(Number(e.target.value))}
+                />
+              </div>
+              <h5 className="fw-bold mb-3">Total: ${calculateTotal()}</h5>
+              <button onClick={placeOrder} className="btn btn-primary mb-2">
+                Place Order
+              </button>
+              {paymentStatus === 'pending' && !loadedOrder && (
+                <button className="btn btn-success" onClick={handlePayNow}>
+                  Pay Now 💳
                 </button>
-              );
-            })}
-          </div>
-
-          <div className="items-grid-wrapper">
-  <div className="items-grid">
-    {filteredItems.map(item => {
-      const inCart = cart.find(ci => ci._id === item._id);
-      return (
-        <div
-          key={item._id}
-          className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
-        >
-          <div className="item-name">{item.name}</div>
-          <div className="item-price">${item.price.toFixed(2)}</div>
-
-          {item.outOfStock ? (
-            <div className="item-status">Out of Stock</div>
-          ) : (
-            <div className="qty-controls">
-              <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
-              <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
-              <button onClick={() => addToCart(item)}>+</button>
-            </div>
+              )}
+            </aside>
           )}
         </div>
-      );
-    })}
-  </div>
-</div>
-        </>
-      </main>
-{!isMobile && (
-  <aside className="order-summary container-fluid d-flex flex-column">
-  <h4 className="mb-2">
-    🛒 <strong>Cart Summary</strong>
-  </h4>
-  <p className="fw-medium">{cart.length} items</p>
-
-  <textarea
-    className="form-control mb-3"
-    value={notes}
-    onChange={(e) => setNotes(e.target.value)}
-    placeholder="Notes..."
-  />
-<div className="cart-items-wrapper flex-grow-1 overflow-auto mb-3">
-  {cart.length > 0 && (
-    <button onClick={clearCart} className="btn btn-danger mb-3 w-100">
-      Clear Cart 🗑️
-    </button>
-  )}
-
-  {cart.length === 0 ? (
-    <p>No items added yet.</p>
-  ) : (
-    <div className="cart-items-list">
-      {cart.map((item) => (
-        <div key={item._id} className="cart-item">
-          <div className="cart-item-info">
-            {item.name}
-            <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-              ₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}
-            </div>
-          </div>
-
-          <div className="cart-item-controls">
-            <div className="btn-group" role="group" aria-label="Quantity controls">
-              <button onClick={() => updateQuantity(item._id, -1)}>−</button>
-              <span>{item.quantity}</span>
-              <button onClick={() => updateQuantity(item._id, 1)}>+</button>
-            </div>
-            <button onClick={() => removeItem(item._id)}>🗑️</button>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-  <div className="payment-section mb-3">
-    <input
-      type="number"
-      className="form-control"
-      placeholder="Enter discount"
-      value={discount}
-      onChange={(e) => setDiscount(Number(e.target.value))}
-    />
-  </div>
-
-  <h5 className="fw-bold mb-3">Total: ${calculateTotal()}</h5>
-
-  <button onClick={placeOrder} className="btn btn-primary mb-2">
-    Place Order
-  </button>
-
-  {paymentStatus === 'pending' && !loadedOrder && (
-    <button className="btn btn-success" onClick={handlePayNow}>
-      Pay Now 💳
-    </button>
-  )}
-</aside>
-)}
-
-      {/* Fixed Bottom Bar for Mobile */}
-      {isMobile && cart.length > 0 && (
-       <div
-  className="d-flex justify-content-between align-items-center fixed-bottom bg-primary text-white px-3 py-2 shadow-lg"
-  style={{ zIndex: 1500 }}
-  onClick={() => setShowCartModal(true)}
->
-  <span className="fw-semibold tesxt-black">
-    🛒 {cart.length} {cart.length === 1 ? 'item' : 'items'}
-  </span>
-
-  <button
-    className="btn btn-success btn-sm fw-bold d-flex align-items-center gap-2"
-    onClick={(e) => {
-      e.stopPropagation(); // prevent modal opening if clicked on button only
-      setShowCartModal(true);
-    }}
-  >
-    Pay Now <span className="ms-1">➡</span>
-  </button>
-</div>
-      )}
-    </div>
-   {showCartModal && (
-  <div
-    className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center"
-    style={{ zIndex: 1600 }}
-    onClick={() => setShowCartModal(false)}
-  >
-    <div
-      className="bg-white w-100 mx-3 rounded-3 p-3 d-flex flex-column"
-      style={{
-        maxWidth: '500px',
-        height: '400px',           // Fixed modal height
-        overflow: 'hidden',        // Prevent modal itself from overflowing
-      }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Notes */}
-      <textarea
-        className="form-control mb-3"
-        placeholder="Add special instructions..."
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        rows={2}
-      />
-
-      {/* Cart Items - Scrollable section */}
-      <div
-        className="mb-3"
-        style={{
-          flexGrow: 1,
-          overflowY: 'auto',
-        }}
-      >
-        {cart.length > 0 ? (
-          cart.map((item) => (
-            <div
-              key={item._id}
-              className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2"
+        {/* Fixed Bottom Bar for Mobile */}
+        {isMobile && (
+          <div
+            className="d-flex justify-content-between align-items-center fixed-bottom bg-primary text-white px-3 py-2 shadow-lg"
+            style={{ zIndex: 1500 }}
+            onClick={() => setShowCartModal(true)}
+          >
+            <span className="fw-semibold text-black">
+              🛒 {cart.length > 0 ? `${cart.length} item${cart.length > 1 ? 's' : ''}` : 'No items'}
+            </span>
+            <button
+              className="btn btn-success btn-sm fw-bold d-flex align-items-center gap-2"
+              disabled={cart.length === 0}
+              onClick={(e) => {
+                e.stopPropagation(); // prevent modal opening if clicked on button only
+                setShowCartModal(true);
+              }}
             >
-              <span className="fw-semibold">{item.name}</span>
-              <div className="d-flex align-items-center gap-2">
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={() => updateQuantity(item._id, -1)}
-                >
-                  −
+              Pay Now <span className="ms-1">➡</span>
+            </button>
+          </div>
+        )}
+        {/* Modal Overlay for Mobile Cart */}
+        {showCartModal && (
+          <div
+            className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center"
+            style={{ zIndex: 1600 }}
+            onClick={() => setShowCartModal(false)}
+          >
+            <div
+              className="bg-white w-100 mx-3 rounded-3 p-3 d-flex flex-column"
+              style={{
+                maxWidth: '500px',
+                height: '400px',           // Fixed modal height
+                overflow: 'hidden',        // Prevent modal itself from overflowing
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Notes */}
+              <textarea
+                className="form-control mb-3"
+                placeholder="Add special instructions..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={2}
+              />
+              {/* Cart Items - Scrollable section */}
+              <div
+                className="mb-3"
+                style={{
+                  flexGrow: 1,
+                  overflowY: 'auto',
+                }}
+              >
+                {cart.length > 0 ? (
+                  cart.map((item) => (
+                    <div
+                      key={item._id}
+                      className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2"
+                    >
+                      <span className="fw-semibold">{item.name}</span>
+                      <div className="d-flex align-items-center gap-2">
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => updateQuantity(item._id, -1)}
+                        >
+                          −
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => updateQuantity(item._id, 1)}
+                        >
+                          +
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => removeItem(item._id)}
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-muted">Your cart is empty</div>
+                )}
+              </div>
+              {/* Footer */}
+              <div className="d-flex justify-content-between gap-2 pt-3 border-top">
+                <button className="btn btn-danger w-50" onClick={() => setShowCartModal(false)}>
+                  Close
                 </button>
-                <span>{item.quantity}</span>
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={() => updateQuantity(item._id, 1)}
-                >
-                  +
-                </button>
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => removeItem(item._id)}
-                >
-                  🗑
+                <button className="btn btn-success w-50 fw-semibold" onClick={handlePayNow}>
+                  Place Order
                 </button>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-muted">Your cart is empty</div>
+          </div>
         )}
       </div>
-
-      {/* Footer */}
-      <div className="d-flex justify-content-between gap-2 pt-3 border-top">
-        <button className="btn btn-danger w-50" onClick={() => setShowCartModal(false)}>
-          Close
-        </button>
-        <button className="btn btn-success w-50 fw-semibold" onClick={handlePayNow}>
-          Place Order
-        </button>
-      </div>
-    </div>
-  </div>
-)}
     </>
   );
 };

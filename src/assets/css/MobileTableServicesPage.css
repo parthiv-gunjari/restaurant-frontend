@@ -1,15 +1,17 @@
 .mobile-table-menu {
-  margin-top: 56px; /* space below fixed nav */
+  margin-top: 0; /* Remove extra gap */
+ 
   position: relative;
-  z-index: 1; /* below the nav bar */
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
   .mobile-table-menu {
-    height: calc(100vh - 56px); /* subtract top nav height */
+    height: calc(100vh - 56px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
+
 }
 .mobile-table-wrapper {
   display: flex;
@@ -78,7 +80,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    padding: 12px;
+    
   }
 }
 
@@ -189,4 +191,25 @@
 
 .cart-footer button:hover {
   background-color: #1e293b;
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    .table-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px;
+    padding: 8px;
+  }
+}
+
+.table-card {
+  width: 100%;
+  box-sizing: border-box;
 }

@@ -1,0 +1,31 @@
+/* 1. Lock page scroll and set height */
+html, body, #root {
+  height: 100vh;
+  overflow: hidden; /* page scroll disabled */
+}
+
+/* 2. Layout wrapper takes full screen and becomes scrollable */
+.checkout-layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  padding: 24px 16px 120px; /* top + bottom padding */
+}
+
+/* 3. Form content can grow naturally */
+.checkout-scrollable-content {
+  flex: 1;
+  padding-bottom: 60px; /* extra padding for footer space */
+}
+
+/* 4. Sticky footer inside scrollable area */
+.checkout-sticky-footer {
+  padding: 16px;
+  background: #f9f9f9;
+  border-top: 1px solid #ddd;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}

@@ -48,10 +48,6 @@ function MenuPage() {
   useEffect(() => {
     let items = [...menuItems];
 
-    if (selectedCategory !== 'All') {
-      items = items.filter(item => item.category === selectedCategory);
-    }
-
     if (searchTerm) {
       items = items.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -59,19 +55,22 @@ function MenuPage() {
     }
 
     setFilteredItems(items);
-  }, [selectedCategory, searchTerm, menuItems]);
+  }, [searchTerm, menuItems]);
 
   return (
-    <div className="container mt-0 pt-0">
+    <div className="pos-layout-container">
       <div className="sticky-top bg-white py-2 d-lg-none" style={{ zIndex: 1050 }}>
-        <div className="d-flex justify-content-between align-items-center px-3">
-          <h2 className="mb-0">Menu</h2>
-          <button
-            className="btn btn-outline-dark btn-sm"
-            onClick={() => setShowFilters(prev => !prev)}
-          >
-            <i className="bi bi-funnel"></i> Filters
-          </button>
+      <div className="sticky-top bg-white py-2 d-lg-none border-bottom shadow-sm" style={{ zIndex: 1050 }}>
+          <div className="menu-header-row d-flex justify-content-between align-items-center px-3">
+            <h2 className="mb-0 fw-bold text-black">Menu</h2>
+            <button
+              className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 px-2 py-1"
+              onClick={() => setShowFilters(prev => !prev)}
+            >
+              <i className="bi bi-funnel"></i>
+              <span className="fw-medium">Filters</span>
+            </button>
+          </div>
         </div>
         {showFilters && (
           <div className="p-3 border-top">
@@ -103,7 +102,7 @@ function MenuPage() {
       </div>
 
       <div className="d-none d-lg-block">
-        <h2 className="text-center mb-4">Menu</h2>
+     
 
         <button
           className="btn btn-outline-dark position-fixed"
@@ -143,18 +142,19 @@ function MenuPage() {
       </div>
 
       {/* Items by Category */}
-      {categories
-        .filter(cat => selectedCategory === 'All' || cat === selectedCategory)
-        .map(cat => {
-          const items = filteredItems.filter(item => item.category === cat);
+      <div className="category-list">
+        {categories.map(cat => {
+          const items = filteredItems.filter(item =>
+            selectedCategory === 'All' ? item.category === cat : item.category === selectedCategory
+          );
           if (items.length === 0) return null;
 
           return (
-            <div key={cat} className="mb-5">
-              <h4 className="mb-3">{cat} <span className="text-muted">({items.length})</span></h4>
-              <div className="row gx-3 gy-4">
+            <div key={cat} className="category-section">
+              <h4 className="category-heading">{cat} <span className="text-muted">({items.length})</span></h4>
+              <div className="menu-grid" style={{ paddingLeft: 0 }}>
                 {items.map(item => (
-                  <div className="col-6 col-md-3 mb-4" key={item._id}>
+                  <div className="menu-card" key={item._id}>
                     <div className={`card h-100 shadow-sm ${!item.inStock ? 'bg-light text-muted' : ''}`}>
                       <img
                         loading="lazy"
@@ -213,6 +213,7 @@ function MenuPage() {
             </div>
           );
         })}
+      </div>
       <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );

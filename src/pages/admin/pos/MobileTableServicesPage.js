@@ -290,230 +290,239 @@ useEffect(() => {
   // --- Custom top navbar ---
   // --- End custom top navbar ---
   return (
-    <>
-     {isMobile && (
-  <>
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '56px',
-        background: '#0563bb',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 1rem',
-        zIndex: 1200,
-        color: 'white',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-       
-        <button
-          onClick={() => setMenuOpen(true)}
-          style={{ background: 'none', border: 'none', fontSize: '1.5rem', color: 'white' }}
-        >
-          ☰
-        </button>
-         <button
-          onClick={() => navigate('/admin/pos/tables')}
-          style={{ background: 'none', border: 'none', fontSize: '1.5rem', color: 'white' }}
-        >
-          ←
-        </button>
-      </div>
-      <strong>Parthiv’s Kitchen</strong>
-      <div style={{ width: '1.5rem' }} />
-    </div>
-          
-          <MobileNavBar open={menuOpen} onClose={() => setMenuOpen(false)} />
-        </>
-      )}
-
-     <div
-  className="mobile-table-wrapper"
->
-      <div className="mobile-table-menu">
-       <div className="category-scroll">
-  {categories.map((cat, index) => (
-    <button
-      key={cat}
-      className={cat === selectedCategory ? 'active' : ''}
-      onClick={() => setSelectedCategory(cat)}
-      style={{
-        '--i': index,
-        '--total': categories.length,
-        flex: '0 0 auto',
-        marginRight: '8px',
-      }}
-    >
-      {cat}
-    </button>
-  ))}
-</div>
-
-        <div className="items-grid">
-  {menuItems
-    .filter(i => selectedCategory === 'All' || i.category === selectedCategory)
-    .map(item => {
-      const inCart = cart.find(ci => ci._id === item._id);
-      return (
-        <div
-          key={item._id}
-          className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
-        >
-          <div className="item-name">{item.name}</div>
-          <div className="item-price">${item.price.toFixed(2)}</div>
-
-          {item.outOfStock ? (
-            <div className="item-status">Out of Stock</div>
-          ) : (
-            <div className="qty-controls">
-              <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
-              <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
-              <button onClick={() => addToCart(item)}>+</button>
-            </div>
-          )}
-        </div>
-      );
-    })}
-</div>
-
-   <div
-  className="mobile-cart-bar d-flex justify-content-between align-items-center px-3 py-2 bg-primary text-white shadow"
-  style={{
-    visibility: cart.length > 0 ? 'visible' : 'hidden',
-    opacity: cart.length > 0 ? 1 : 0,
-    pointerEvents: cart.length > 0 ? 'auto' : 'none',
-    position: 'fixed',
-    bottom: '1rem',
-    left: 0,
-    right: 0,
-    zIndex: 1050,
-    height: '48px',
-  }}
->
-  <div
-    className="d-flex align-items-center gap-2"
-    onClick={() => setShowCartModal(true)}
-    style={{ cursor: 'pointer' }}
-  >
-    <i className="bi bi-cart-fill fs-5"></i>
-    <strong>{cart.reduce((sum, item) => sum + item.quantity, 0)} items</strong>
-  </div>
-  <button
-    className="btn btn-success fw-bold"
-    style={{ padding: '0.4rem 1rem' }}
-    onClick={handlePayNow}
-  >
-    Pay Now <i className="bi bi-arrow-right-circle-fill ms-1"></i>
-  </button>
-</div>
-
-{showCartModal && (
-  <div className="cart-modal" style={{ zIndex: 1000 }} onClick={() => setShowCartModal(false)}>
-    <div
-      className="cart-modal-content bg-white rounded-3 p-3 shadow"
-      onClick={(e) => e.stopPropagation()}
-      style={{ maxHeight: '60vh', overflowY: 'auto' }}
-    >
-      <div className="mb-3">
-        <textarea
-          className="form-control"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Special notes..."
-          rows={2}
-        />
-      </div>
-
-      {[...cart]
-        .sort((a, b) => {
-          const aStatus = getItemStatus(a);
-          const bStatus = getItemStatus(b);
-          if (aStatus === 'deleted' && bStatus !== 'deleted') return 1;
-          if (aStatus !== 'deleted' && bStatus === 'deleted') return -1;
-          return 0;
-        })
-        .map((item) => {
-          const status = getItemStatus(item);
-          const statusStyles = {
-            new: 'text-primary',
-            increased: 'text-warning',
-            decreased: 'text-warning',
-            deleted: 'text-danger text-decoration-line-through',
-          };
-          const statusSymbols = {
-            new: '🔹',
-            increased: '🔺',
-            decreased: '🔻',
-            deleted: '❌',
-          };
-          const styleClass = statusStyles[status] || '';
-          const symbol = statusSymbols[status] || '';
-
-          return (
+    <div className="pos-layout-container">
+      <div className="pos-wrapper">
+        {/* Custom top navbar (fixed) */}
+        {isMobile && (
+          <>
             <div
-              key={item._id}
-              className={`d-flex justify-content-between align-items-center mb-2 p-2 border rounded ${styleClass}`}
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '56px',
+                background: '#0563bb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 1rem',
+                zIndex: 1200,
+                color: 'white',
+              }}
             >
-              <strong className={styleClass}>
-                {item.name} {symbol}
-              </strong>
-              <div className="d-flex align-items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <button
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={() => updateQuantity(item._id, -1, 'decrement')}
-                  disabled={status === 'deleted'}
+                  onClick={() => setMenuOpen(true)}
+                  style={{ background: 'none', border: 'none', fontSize: '1.5rem', color: 'white' }}
                 >
-                  -
-                </button>
-                <span className={styleClass}>{item.quantity}</span>
-                <button
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={() => updateQuantity(item._id, 1)}
-                  disabled={status === 'deleted'}
-                >
-                  +
+                  ☰
                 </button>
                 <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={() => removeItem(item._id, 'delete')}
-                  disabled={status === 'deleted'}
+                  onClick={() => navigate('/admin/pos/tables')}
+                  style={{ background: 'none', border: 'none', fontSize: '1.5rem', color: 'white' }}
                 >
-                  <i className="bi bi-trash" />
+                  ←
                 </button>
               </div>
+              <strong>Parthiv’s Kitchen</strong>
+              <div style={{ width: '1.5rem' }} />
             </div>
-          );
-        })}
-
-      <div className="d-flex justify-content-between mt-4">
-        <button className="btn btn-danger w-50 me-2" onClick={() => setShowCartModal(false)}>
-          Close
-        </button>
-
-        {mode === 'view' ? (
-          <button className="btn btn-warning w-50" disabled={!hasModification} onClick={handlePlaceOrder}>
-            Update Order
-          </button>
-        ) : (
-          <button className="btn btn-success w-50" onClick={handlePlaceOrder}>
-            Place Order
-          </button>
+            <MobileNavBar open={menuOpen} onClose={() => setMenuOpen(false)} />
+          </>
         )}
-      </div>
 
-      {mode === 'view' && (
-        <button className="btn btn-primary w-100 mt-3" onClick={handlePayNow}>
-          Pay Now
-        </button>
-      )}
-    </div>
-  </div>
-)}
+        {/* Main scrollable content */}
+        <div
+          className="main-content"
+          style={{
+            overflowY: 'auto',
+            paddingBottom: '80px',
+            paddingTop: isMobile ? '56px' : undefined,
+            flex: 1,
+          }}
+        >
+          <div className="mobile-table-wrapper">
+            <div className="mobile-table-menu">
+              <div className="category-scroll">
+                {categories.map((cat, index) => (
+                  <button
+                    key={cat}
+                    className={cat === selectedCategory ? 'active' : ''}
+                    onClick={() => setSelectedCategory(cat)}
+                    style={{
+                      '--i': index,
+                      '--total': categories.length,
+                      flex: '0 0 auto',
+                      marginRight: '8px',
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              <div className="items-grid">
+                {menuItems
+                  .filter(i => selectedCategory === 'All' || i.category === selectedCategory)
+                  .map(item => {
+                    const inCart = cart.find(ci => ci._id === item._id);
+                    return (
+                      <div
+                        key={item._id}
+                        className={`item-card ${clickedItems[item._id] ? 'clicked' : ''} ${item.outOfStock ? 'out-of-stock' : ''}`}
+                      >
+                        <div className="item-name">{item.name}</div>
+                        <div className="item-price">${item.price.toFixed(2)}</div>
+                        {item.outOfStock ? (
+                          <div className="item-status">Out of Stock</div>
+                        ) : (
+                          <div className="qty-controls">
+                            <button onClick={() => updateQuantity(item._id, -1)} disabled={!inCart}>-</button>
+                            <span className="quantity-badge">{inCart ? inCart.quantity : 0}</span>
+                            <button onClick={() => addToCart(item)}>+</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Fixed bottom cart bar */}
+        <div
+          className="mobile-cart-bar d-flex justify-content-between align-items-center px-3 py-2 bg-primary text-white shadow"
+          style={{
+            position: 'fixed',
+            bottom: '1rem',
+            left: 0,
+            right: 0,
+            zIndex: 1050,
+            height: '48px',
+          }}
+        >
+          <div
+            className="d-flex align-items-center gap-2"
+            onClick={() => cart.length > 0 && setShowCartModal(true)}
+            style={{ cursor: cart.length > 0 ? 'pointer' : 'default' }}
+          >
+            <i className="bi bi-cart-fill fs-5"></i>
+            <strong>
+              {cart.length > 0
+                ? `${cart.reduce((sum, item) => sum + item.quantity, 0)} items`
+                : 'No items'}
+            </strong>
+          </div>
+          <button
+            className="btn btn-success fw-bold"
+            style={{ padding: '0.4rem 1rem' }}
+            onClick={handlePayNow}
+            disabled={cart.length === 0}
+          >
+            Pay Now <i className="bi bi-arrow-right-circle-fill ms-1"></i>
+          </button>
+        </div>
+
+        {/* Cart modal (direct child of pos-wrapper) */}
+        {showCartModal && (
+          <div className="cart-modal" style={{ zIndex: 1000 }} onClick={() => setShowCartModal(false)}>
+            <div
+              className="cart-modal-content bg-white rounded-3 p-3 shadow"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxHeight: '60vh', overflowY: 'auto' }}
+            >
+              <div className="mb-3">
+                <textarea
+                  className="form-control"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Special notes..."
+                  rows={2}
+                />
+              </div>
+              {[...cart]
+                .sort((a, b) => {
+                  const aStatus = getItemStatus(a);
+                  const bStatus = getItemStatus(b);
+                  if (aStatus === 'deleted' && bStatus !== 'deleted') return 1;
+                  if (aStatus !== 'deleted' && bStatus === 'deleted') return -1;
+                  return 0;
+                })
+                .map((item) => {
+                  const status = getItemStatus(item);
+                  const statusStyles = {
+                    new: 'text-primary',
+                    increased: 'text-warning',
+                    decreased: 'text-warning',
+                    deleted: 'text-danger text-decoration-line-through',
+                  };
+                  const statusSymbols = {
+                    new: '🔹',
+                    increased: '🔺',
+                    decreased: '🔻',
+                    deleted: '❌',
+                  };
+                  const styleClass = statusStyles[status] || '';
+                  const symbol = statusSymbols[status] || '';
+                  return (
+                    <div
+                      key={item._id}
+                      className={`d-flex justify-content-between align-items-center mb-2 p-2 border rounded ${styleClass}`}
+                    >
+                      <strong className={styleClass}>
+                        {item.name} {symbol}
+                      </strong>
+                      <div className="d-flex align-items-center gap-2">
+                        <button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => updateQuantity(item._id, -1, 'decrement')}
+                          disabled={status === 'deleted'}
+                        >
+                          -
+                        </button>
+                        <span className={styleClass}>{item.quantity}</span>
+                        <button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => updateQuantity(item._id, 1)}
+                          disabled={status === 'deleted'}
+                        >
+                          +
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => removeItem(item._id, 'delete')}
+                          disabled={status === 'deleted'}
+                        >
+                          <i className="bi bi-trash" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              <div className="d-flex justify-content-between mt-4">
+                <button className="btn btn-danger w-50 me-2" onClick={() => setShowCartModal(false)}>
+                  Close
+                </button>
+                {mode === 'view' ? (
+                  <button className="btn btn-warning w-50" disabled={!hasModification} onClick={handlePlaceOrder}>
+                    Update Order
+                  </button>
+                ) : (
+                  <button className="btn btn-success w-50" onClick={handlePlaceOrder}>
+                    Place Order
+                  </button>
+                )}
+              </div>
+              {mode === 'view' && (
+                <button className="btn btn-primary w-100 mt-3" onClick={handlePayNow}>
+                  Pay Now
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        {/* PinReasonModal (direct child of pos-wrapper) */}
         {showPinModal && (
           <PinReasonModal
             show={showPinModal}
@@ -527,7 +536,6 @@ useEffect(() => {
               if (itemPendingDelete) {
                 const isSameItem = (i) => i._id === itemPendingDelete._id;
                 let updatedItems;
-
                 if (pinAction === 'delete') {
                   updatedItems = cart.filter(i => !isSameItem(i));
                 } else if (pinAction === 'decrement') {
@@ -535,7 +543,6 @@ useEffect(() => {
                     isSameItem(i) ? { ...i, quantity: itemPendingDelete.newQty } : i
                   ).filter(i => i.quantity > 0);
                 }
-
                 setCart(updatedItems);
                 setClickedItems(prev => {
                   const updatedClicks = { ...prev };
@@ -555,10 +562,25 @@ useEffect(() => {
             }}
           />
         )}
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 
 export default MobileTableServicesPage;
+
+// --- Global CSS for pos-wrapper and main-content ---
+// If not already present, add this to your global CSS (e.g., index.css or App.css):
+/*
+.pos-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+*/

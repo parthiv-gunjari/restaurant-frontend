@@ -1,37 +1,127 @@
+/* Main layout */
+.pos-layout-container {
+  min-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-width: 100vw;
 
-.menu-heading {
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  scroll-behavior: smooth;
 }
 
+.menu-fixed-heading {
+  position: fixed;
+  top: 0;
+  left: 2rem;
+  width: 100%;
+  z-index: 1050;
+  background-color: #ffffff;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+.menu-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+html, body {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Category section vertical stack */
+.category-section {
+  margin-bottom: 3rem;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Category heading style */
 .category-heading {
-  margin-top: 2rem;
+  margin: 1rem 0 1rem 0; /* top, right, bottom, left */
   font-weight: 600;
   border-left: 5px solid #007bff;
   padding-left: 10px;
 }
 
-.menu-card {
-  transition: transform 0.2s;
+/* Menu grid fixes */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  overflow: visible;
 }
 
+/* Card tweaks */
+/* Card tweaks */
+.menu-card {
+  transition: transform 0.2s;
+  border: none !important;
+  background: transparent;
+  box-shadow: none;
+}
 .menu-card:hover {
   transform: scale(1.02);
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
+.card-img-top,
 .menu-img {
-  height: 200px;
+  height: 220px;
   object-fit: cover;
   border-radius: 5px;
+  width: 100%;
+  max-width: 100%;
 }
+
 @media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    overflow-y: hidden;
+    padding-left: 0;
+  }
+  
+
   .menu-img {
     height: 160px;
   }
+
+  .pos-layout-container {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
 }
+
+/* Badges */
 .custom-badge {
   padding: 0.4em 0.8em;
   border-radius: 999px;
@@ -41,20 +131,33 @@
   display: inline-block;
   margin-right: 0.4rem;
 }
-
 .badge-new {
   animation: pulse 2s infinite;
   background: linear-gradient(to right, #00c6ff, #0072ff);
-  color: white;
 }
-
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
 
-.cart-items-wrapper {
-  overflow-y: auto;
-  flex: 1;
-  margin-bottom: 1rem;
+/* Quantity controls */
+.card-body .d-flex {
+  margin-top: 12px;
+}
+
+.card-body .btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.1rem;
 }

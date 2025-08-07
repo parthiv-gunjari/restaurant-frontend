@@ -41,25 +41,28 @@
 /* Menu grid layout */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
+  overflow-x: hidden; /* added */
 }
 
 @media (max-width: 1024px) {
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
+
   }
 }
 
 @media (max-width: 600px) {
   .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* updated */
   }
 }
 
 /* Grid item for menu card */
 .menu-grid-item {
   height: 100%;
+  min-height: 320px;
 }
 
 /* Menu item card */
@@ -71,10 +74,12 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 0.75rem;
-  min-height: 160px;
+  min-height: 9em;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  width: 12rem; /* reduced from 14rem */
+  max-width: 100%; /* added */
 }
 .menu-item-card:hover {
   transform: scale(1.02);
@@ -120,6 +125,7 @@
 .pos-update-panel {
   overflow-y: auto;
   max-height: 100vh;
+ 
 }
 /* Heading and Button Section */
 .update-menu-header {

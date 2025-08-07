@@ -191,31 +191,31 @@ const POSKitchenDisplay = () => {
   };
 
   return (
-    <>
-      {isMobile && <MobileNavBar open={isNavOpen} onClose={() => setIsNavOpen(false)} />}
-      {isMobile && (
-        <div
-          className="mobile-nav-toggle"
-          style={{
-            position: 'fixed',
-            top: '12px',
-            left: '12px',
-            zIndex: 1400,
-            backgroundColor: '#0563bb',
-            color: 'white',
-            padding: '8px 10px',
-            borderRadius: '6px',
-            fontSize: '18px',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-          }}
-          onClick={() => setIsNavOpen(true)}
-        >
-          ☰
-        </div>
-      )}
-      <div style={{ display: 'flex' }}>
-        <div className="kitchen-container" style={{ flex: 1 }}>
-         <div className="filter-bar">
+    <div className="pos-layout-container">
+      <div className="pos-wrapper d-flex">
+        {isMobile && <MobileNavBar open={isNavOpen} onClose={() => setIsNavOpen(false)} />}
+        {isMobile && (
+          <div
+            className="mobile-nav-toggle"
+            style={{
+              position: 'fixed',
+              top: '12px',
+              left: '12px',
+              zIndex: 1400,
+              backgroundColor: '#0563bb',
+              color: 'white',
+              padding: '8px 10px',
+              borderRadius: '6px',
+              fontSize: '18px',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+            }}
+            onClick={() => setIsNavOpen(true)}
+          >
+            ☰
+          </div>
+        )}
+        <div className="main-content kitchen-container flex-grow-1">
+        <div className="filter-bar">
   <button className="back-btn" onClick={() => navigate(-1)}>⬅️ Back</button>
   <select value={filterType} onChange={e => setFilterType(e.target.value)}>
     <option value="all">All Types</option>
@@ -236,24 +236,22 @@ const POSKitchenDisplay = () => {
   />
 </div>
 
-<div className="common-items-bar">
-  <strong>🍽️ Common Items:</strong>
-  {getCommonItemsSummary().map((item, i) => {
-    const colors = ['#f94144', '#f3722c', '#f9c74f', '#90be6d', '#43aa8b', '#577590', '#277da1'];
-    return (
-      <span
-        key={item.name}
-        className="common-badge"
-        style={{ backgroundColor: colors[i % colors.length] }}
-      >
-        {item.name} x{item.count}
-      </span>
-    );
-  })}
-</div>
-
-<div className="kitchen-container" style={{ flex: 1 }}>
-  <div className="order-grid">
+        <div className="common-items-bar">
+          <strong>🍽️ Common Items:</strong>
+          {getCommonItemsSummary().map((item, i) => {
+            const colors = ['#f94144', '#f3722c', '#f9c74f', '#90be6d', '#43aa8b', '#577590', '#277da1'];
+            return (
+              <span
+                key={item.name}
+                className="common-badge"
+                style={{ backgroundColor: colors[i % colors.length] }}
+              >
+                {item.name} x{item.count}
+              </span>
+            );
+          })}
+        </div>
+        <div className="order-grid">
     
             {orders
               .filter(order => {
@@ -390,34 +388,30 @@ const POSKitchenDisplay = () => {
                 );
               })}
        
-  </div>
- 
-</div>
-  <div className="fixed-pagination">
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
-              disabled={currentPage === 0}
-            >
-              ⬅️ Previous
-            </button>
-            <button
-              className="btn btn-outline-primary"
-              onClick={() =>
-                setCurrentPage(prev =>
-                  (prev + 1) * ITEMS_PER_PAGE < orders.length ? prev + 1 : prev
-                )
-              }
-              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}
-            >
-              Next ➡️
-            </button>
-          </div>
-          
-        
+        </div>
+        <div className="fixed-pagination">
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+            disabled={currentPage === 0}
+          >
+            ⬅️ Previous
+          </button>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() =>
+              setCurrentPage(prev =>
+                (prev + 1) * ITEMS_PER_PAGE < orders.length ? prev + 1 : prev
+              )
+            }
+            disabled={(currentPage + 1) * ITEMS_PER_PAGE >= orders.length}
+          >
+            Next ➡️
+          </button>
+        </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

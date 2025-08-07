@@ -84,7 +84,8 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="homepage-container">
+    <div className="pos-layout-container">
+      <div className="homepage-container">
       {/* Thin Top Bar for Mobile */}
       <div className="mobile-topbar d-lg-none text-white text-center py-1 px-2">
         🔥 Order Now & Taste the Spice of Telangana!
@@ -369,6 +370,7 @@ function HomePage() {
       © 2025 Parthiv's Kitchen | All rights reserved | Designed by Parthiv Kumar
     </footer>
     <ToastContainer />
+      </div>
     </div>
   );
 }

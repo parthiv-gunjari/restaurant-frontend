@@ -20,25 +20,23 @@ body {
 html,
 body,
 #root {
-  height: 100%;
-  overflow: hidden;
+  height: auto !important; /* not 100% */
+  overflow-y: auto !important; /* allow scrolling */
 }
-
 /* Flexible Scroll for Desktop */
-.pos-container {
+.pos-layout-container {
   display: flex;
-  min-height: 100vh;
-  overflow: auto;
-  flex-direction: row;
+  flex-direction: row; /* stack sidebar + content side by side in desktop */
+  height: 100vh;
+  overflow: hidden;
   background-color: var(--bg-light);
 }
-
 /* Scrollable main content area */
 .main-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  padding: 1rem;
   height: 100vh;
   overflow: hidden;
   box-sizing: border-box;
@@ -50,8 +48,30 @@ body,
   top: 0;
   z-index: 20;
   background-color: var(--bg-light);
-  padding: 1rem;
+  padding: 1rem  0.5rem;
   border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.order-customer-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0;
+}
+
+.order-customer-row select,
+.order-customer-row input {
+  flex: 1 1 140px;
+  min-width: 120px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
 /* Fixed sticky category buttons */
@@ -71,39 +91,23 @@ body,
 .items-grid-wrapper {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  max-height: 100%;
+
+  overflow-x: hidden;
 }
 
 /* Items Grid */
 .items-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 2rem;
-}
-
-/* Mobile layout: 2 items per row */
-@media (max-width: 768px) {
-  .items-grid {
-    grid-template-columns: repeat(2, 1fr);
-     
-  }
-
-  .item-card {
-    aspect-ratio: 1 / 1;
-    height: auto;
-    overflow-x: hidden;
-  }
-  .search-bar-row{
-    padding-top: 3.5rem;
-    padding-bottom: 1rem;
-}
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem 1.5rem;
 }
 
 /* Item Card Styles */
 .item-card {
   background-color: whitesmoke;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
+  padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 10px;
   cursor: pointer;
@@ -111,20 +115,22 @@ body,
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 170px;
+  min-height: 140px;
   position: relative;
   overflow-x: hidden;
-
+  gap: 0.5rem;
+  margin: 0.5rem;
+  box-sizing: border-box;
 }
 
 .item-card .item-name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-bottom: 0.25rem;
 }
 
 .item-card .item-price {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #444;
   margin-bottom: 0.75rem;
 }
@@ -138,10 +144,10 @@ body,
 }
 
 .item-card .qty-controls button {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   border: none;
   background-color: #eee;
   cursor: pointer;
@@ -156,55 +162,89 @@ body,
 .item-card.clicked {
   background-color: #cdeeff;
 }
-@media (max-width: 768px) {
-  /* Apply margin and scroll fix for content below the mobile nav bar */
- 
-  .accounts-page,
-  .filter-bar,
-  .AuditLogs,
-  .mobile-table-wrapper,
-  .allOrders,
-  .paymentHeader,
-  .reservations-header
- {
-    margin-top: 56px !important;
 
+/* POS Layout */
+.pos-layout-container main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+/* Mobile layout and responsive adjustments */
+@media (max-width: 768px) {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pos-layout-container {
+    flex-direction: column;
+    overflow-y: auto;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .pos-layout-container main{
+    overflow-y: hidden;
+  }
+  .item-card {
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
+
+  .search-bar-row {
+    padding-top: 3.5rem;
+    padding-bottom: 0.75rem;
+    padding-left: 0px;
+    padding-right: 0px;
+
+  }
+
+  .accounts-page,
+  .reservations-main,
+
+
+  
+  .root,
+  
+  .pos-update-panel,
+
+
+  .order-grid {
+    padding-top: 56px !important;
+    padding-bottom: 60px !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 56px) !important;
+    -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
   }
-
-  /* Optional: make scrollable wrapper scroll correctly on mobile */
-  .mobile-table-wrapper,
-  .main-panel,
-  .container,
-  .pos-update-panel {
-    max-height: calc(100vh - 56px);
-    overflow-y: auto;
-  }
-  .search-bar-row{
-    padding-bottom: 0px;
-  }
-}
-@media (max-width: 768px) {
-  .reservations-main,
-  .mobile-table-wrapper,
-  .items-grid-wrapper,
-  .orders-table-container,
-  .category-section,
-    .order-grid,
-  .accounts-page,
-  .table-responsive,
-  .root {
-    padding-bottom: 80px !important; /* ensure space below for fixed bottom nav/cart */
-    overflow-y: auto !important;
-    max-height: calc(100vh - 56px) !important; /* 56px = navbar height */
+  .AuditLogsHeading {
+  
+   
   }
 
-  /* Optional: smooth scroll */
-  .reservations-main,
-  .mobile-table-wrapper,
-  .items-grid-wrapper,
-  .orders-table-container,
-  .kitchen-container {
-    -webkit-overflow-scrolling: touch;
+  .pos-layout-container main {
+    padding-bottom: 80px !important;
+  }
+
+  .order-customer-row {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    justify-content: space-between;
+  }
+
+  .order-customer-row select,
+  .order-customer-row input {
+    flex: 1 1 33%;
+    min-width: 100px;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    box-sizing: border-box;
+  }
+  .kitchen-container{
+    padding-bottom: 10px;
+    padding-top: 56px
   }
 }
