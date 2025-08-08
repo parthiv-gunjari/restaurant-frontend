@@ -80,6 +80,10 @@ body {
   .home-heading {
     font-size: 1.8rem;
   }
+  .pos-layout-container{
+    padding-top: 0px !important;
+
+  }
 
   .order-button {
     font-size: 1rem;

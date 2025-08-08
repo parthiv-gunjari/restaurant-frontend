@@ -307,7 +307,7 @@ const UpdateMenu = () => {
           ).map(([category, items]) => (
             <div key={category} className="mb-5 category-section">
               <h4 className="mb-3 ps-3 category-title">{category}</h4>
-              <div className="menu-grid" style={{ width: '100%', maxWidth: '100%' ,paddingLeft:0}}>
+              <div className="menu-grid" style={{ width: '100%', maxWidth: '100%' ,padding:'10px'}}>
                 {items.map((item) => (
                   <div key={item._id} className="menu-item-card">
                     <div className="menu-item-image-wrapper">

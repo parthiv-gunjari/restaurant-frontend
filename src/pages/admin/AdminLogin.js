@@ -56,8 +56,8 @@ const UserLogin = () => {
   ];
 
   return (
-    <div className="admin-login-container container mt-5" style={{ maxWidth: '500px' }}>
-      {loggedInName && <p className="logged-in-user">Logged in as: {loggedInName}</p>}
+    <div className="admin-login-container container" style={{ maxWidth: '500px' }}>
+     
       <p className="alert alert-info">Free-tier server may take a few seconds. Please wait after logging in.</p>
       <h2 className="mb-4">Login</h2>
       <form onSubmit={handleLogin}>

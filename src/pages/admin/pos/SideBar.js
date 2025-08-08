@@ -13,7 +13,7 @@ const isActive = (path) => location.pathname === `/admin/pos/${path}`;
   const isManagerOrWaiter = role === 'manager' || role === 'waiter';
 
   return (
-    <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <aside className="sidebar pos-layout-container" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <div
         style={{
           padding: '1rem 0.6rem 0.2rem 0.1rem',

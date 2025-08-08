@@ -395,7 +395,7 @@ useEffect(() => {
           className="mobile-cart-bar d-flex justify-content-between align-items-center px-3 py-2 bg-primary text-white shadow"
           style={{
             position: 'fixed',
-            bottom: '1rem',
+           
             left: 0,
             right: 0,
             zIndex: 1050,
